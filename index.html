@@ -436,13 +436,65 @@ body.offline #netbadge{display:block}
 body.has-player #netbadge{bottom:96px}
 @media (max-width:860px){ .arch-hero{grid-template-columns:1fr;gap:20px} }
 @media (max-width:560px){ #nav-arch{display:none} .archgrid{grid-template-columns:1fr;gap:8px} .atile{padding:10px 12px} .works{grid-template-columns:1fr 1fr;gap:10px} }
+.searchbtn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font:500 13.5px var(--f-body);color:var(--muted);padding:7px 10px 7px 12px;border:1px solid var(--line);border-radius:999px;margin-left:8px;background:rgba(255,255,255,.5)}
+.searchbtn:hover{color:var(--ink);background:#fff}
+.searchbtn:focus-visible{outline:2px solid var(--patina);outline-offset:2px}
+.searchbtn kbd{font:500 11px var(--f-mono);border:1px solid var(--line);border-radius:4px;padding:0 5px;color:var(--muted)}
+.quick{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.quick a,.quick button{all:unset;cursor:pointer;font:500 13px var(--f-body);padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.55);border:1px solid rgba(25,28,30,.12);color:#2b3033}
+.quick a:hover,.quick button:hover{background:#fff}
+.quick a:focus-visible,.quick button:focus-visible{outline:2px solid var(--patina);outline-offset:2px}
+#search{position:fixed;inset:0;z-index:60;background:rgba(20,24,26,.45);backdrop-filter:blur(3px);display:flex;justify-content:center;align-items:flex-start;padding:9vh 12px 12px}
+#search[hidden]{display:none}
+body.s-open{overflow:hidden}
+.s-box{width:min(640px,100%);max-height:78vh;display:flex;flex-direction:column;background:#f6f5f1;border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.35);overflow:hidden}
+.s-in{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);background:#fff}
+.s-in .ico{color:var(--muted);width:20px;height:20px}
+.s-in input::-webkit-search-cancel-button{display:none}
+.s-in input{flex:1;border:0;outline:0;font:500 17px var(--f-body);background:transparent;color:var(--ink);min-width:0}
+.s-in button{all:unset;cursor:pointer;font:600 12.5px var(--f-body);color:var(--muted);padding:6px 10px;border-radius:8px}
+.s-in button:hover{background:#f0efea}
+#s-res{overflow:auto;padding:6px 8px 12px}
+.s-g{font:600 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--patina);padding:12px 10px 6px}
+.s-it{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:12px;width:100%;padding:8px 10px;border-radius:10px}
+.s-it.on{background:#fff;box-shadow:0 1px 0 var(--line)}
+.s-th{flex:none;width:44px;height:44px;border-radius:8px;overflow:hidden;background:#dfe5e8}
+.s-th img{width:100%;height:100%;object-fit:cover;display:block}
+.s-mono{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font:500 14px var(--f-display);color:#fff;background:var(--c)}
+.s-tx{flex:1;min-width:0;display:flex;flex-direction:column}
+.s-tx b{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-tx small{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-dot{flex:none;width:9px;height:9px;border-radius:50%}
+.s-none{padding:20px 12px;color:var(--muted);font-size:14.5px;line-height:1.5}
+#tabbar{display:none}
+@media (max-width:760px){
+  nav.top .links a{display:none}
+  .searchbtn span,.searchbtn kbd{display:none}
+  .searchbtn{padding:8px;margin-left:0}
+  #tabbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(246,245,241,.96);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:4px 2px calc(4px + env(safe-area-inset-bottom))}
+  #tabbar a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;text-decoration:none;color:var(--muted);font:500 10.5px var(--f-body);border-radius:10px}
+  #tabbar a .ico{width:22px;height:22px}
+  #tabbar a.on{color:var(--patina)}
+  #tabbar a.on .ico{stroke-width:2.3}
+  #tabbar a:focus-visible{outline:2px solid var(--patina)}
+  body.map-on #tabbar{display:none}
+  body{padding-bottom:calc(62px + env(safe-area-inset-bottom))}
+  body.map-on{padding-bottom:0}
+  #player{bottom:calc(70px + env(safe-area-inset-bottom))!important}
+  body.has-player #view-cards{padding-bottom:150px}
+  #netbadge{bottom:calc(72px + env(safe-area-inset-bottom))}
+  body.has-player #netbadge{bottom:calc(150px + env(safe-area-inset-bottom))}
+  #toastmsg{bottom:calc(140px + env(safe-area-inset-bottom))!important}
+  #search{padding-top:12px}
+  .s-box{max-height:calc(100vh - 24px)}
+}
 </style>
 </head>
 <body>
 <div id="app">
   <nav class="top" aria-label="Päävalikko" data-i18n-al="nav">
     <a class="brand" href="#koti">Kivi <em>&amp;</em> valo<small data-i18n="guide">Arkkitehtuuriopas</small></a>
-    <div class="links"><a href="#koti" id="nav-home" data-i18n="home">Etusivu</a><a href="#alue-senaatintori" id="nav-cards" data-i18n="sights">Kohteet</a><a href="#lahella" id="nav-near" data-i18n="near">Lähellä</a><a href="#arkkitehdit" id="nav-arch" data-i18n="archs">Arkkitehdit</a><a href="#kartta-helsinki" id="nav-map" data-i18n="map3d">3D-kartta</a><button type="button" id="langbtn" class="langbtn" lang="en">EN</button></div>
+    <div class="links"><a href="#koti" id="nav-home" data-i18n="home">Etusivu</a><a href="#alue-senaatintori" id="nav-cards" data-i18n="sights">Kohteet</a><a href="#lahella" id="nav-near" data-i18n="near">Lähellä</a><a href="#arkkitehdit" id="nav-arch" data-i18n="archs">Arkkitehdit</a><a href="#kartta-helsinki" id="nav-map" data-i18n="map3d">3D-kartta</a><button type="button" id="searchbtn" class="searchbtn" data-i18n-al="search_al" aria-label="Hae"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span data-i18n="search">Hae</span><kbd>/</kbd></button><button type="button" id="langbtn" class="langbtn" lang="en">EN</button></div>
   </nav>
 
   <main id="view-home" class="view">
@@ -455,6 +507,7 @@ body.has-player #netbadge{bottom:96px}
         <div>
           <p class="lede" id="lede"></p>
           <div class="cta"><a class="btn primary" href="#alue-senaatintori" data-i18n="start">Aloita kierros →</a><a class="btn" href="#kartta-helsinki" data-i18n="openmap">Avaa 3D-kartta</a></div>
+          <div class="quick" aria-label="Pikalinkit"><button type="button" data-scroll="areas" data-i18n="q_tours">Kierrokset</button><button type="button" data-scroll="styles" data-i18n="q_styles">Tyylit</button><a href="#arkkitehdit" data-i18n="q_archs">Arkkitehdit</a><a href="#lahella" data-i18n="q_near">Lähellä minua</a><button type="button" data-search="1" data-i18n="q_search">Hae…</button></div>
         </div>
       </div>
       <div class="skyline" id="skyline" data-i18n-al="sky" aria-label="Piirretty Helsingin siluetti: Huvilakadun talot, Kallion kirkko, Kansallismuseo, rautatieasema, Tuomiokirkko, Olympiastadionin torni ja Tapiolan tornit"></div>
@@ -1391,7 +1444,7 @@ const UI={
   hint:["Vedä kääntääksesi · nipistä tai rullaa zoomataksesi · napauta rakennusta.<br>Kohteet todellisessa mittakaavassa. Taustakorttelit ja puut ovat havainnollistavia.","Drag to rotate · pinch or scroll to zoom · tap a building.<br>Sights are at true scale. Background blocks and trees are illustrative."],
   q:["Hae nimellä, arkkitehdilla tai vuodella…","Search by name, architect or year…"], close:["Sulje","Close"],
   capdraw:["Julkisivupiirros todellisten värien, materiaalien ja muotojen mukaan – ei valokuva.","Facade drawing based on the real colours, materials and forms – not a photograph."],
-  archs:["Arkkitehdit","Architects"], ah_e:["Arkkitehdit","Architects"], ah_h:["Ihmiset kiven takana","The people behind the stone"], ah_p:["Engelin empirestä Aallon ja Pietilöiden orgaaniseen modernismiin. Lue suunnittelijoiden tarinat ja katso, mitä kukin rakensi.","From Engel’s Empire to the organic modernism of Aalto and the Pietiläs. Read the designers’ stories and see what each of them built."], ah_all:["Kaikki arkkitehdit ja muut suunnittelijat →","All architects and other designers →"],
+  archs:["Arkkitehdit","Architects"], search:["Hae","Search"], search_al:["Hae kohteita ja arkkitehteja","Search sights and architects"], q_tours:["Kierrokset","Tours"], q_styles:["Tyylit","Styles"], q_archs:["Arkkitehdit","Architects"], q_near:["Lähellä minua","Near me"], q_search:["Hae…","Search…"], ah_e:["Arkkitehdit","Architects"], ah_h:["Ihmiset kiven takana","The people behind the stone"], ah_p:["Engelin empirestä Aallon ja Pietilöiden orgaaniseen modernismiin. Lue suunnittelijoiden tarinat ja katso, mitä kukin rakensi.","From Engel’s Empire to the organic modernism of Aalto and the Pietiläs. Read the designers’ stories and see what each of them built."], ah_all:["Kaikki arkkitehdit ja muut suunnittelijat →","All architects and other designers →"],
   arch:["Arkkitehti","Architect"], built:["Valmistunut","Completed"], addr:["Osoite","Address"]
 };
 function applyStatic(){
@@ -2059,6 +2112,81 @@ const Off={ sw:null, state:store.get('offline','none'), done:0, total:0, failed:
   }
 };
 
+
+/* ---------------- Haku ja mobiilinavigaatio ---------------- */
+const NORM=s=>(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+const Search={
+  el:null, idx:[], sel:0, items:[],
+  build(){
+    this.idx=[];
+    ALL.forEach(e=>this.idx.push({k:'s',e,txt:NORM([e.it.n,IN(e.it),e.it.ar,e.it.a,e.it.y,AN(e.area)].join(' '))}));
+    ARCH.forEach(a=>{ if(archWorks(a).length) this.idx.push({k:'a',a,txt:NORM(a.n+' '+a.y)}); });
+    AREAS.forEach(a=>this.idx.push({k:'r',a,txt:NORM(a.name+' '+AN(a))}));
+    Object.entries(STY).forEach(([k,s])=>{ if(ALL.some(e=>styOf(e)===s)) this.idx.push({k:'t',key:k,s,txt:NORM(s.name+' '+SN(s))}); });
+  },
+  init(){
+    const o=document.createElement('div'); o.id='search'; o.setAttribute('role','dialog'); o.setAttribute('aria-modal','true'); o.hidden=true;
+    o.innerHTML=`<div class="s-box"><div class="s-in"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="s-q" type="search" autocomplete="off" spellcheck="false"><button type="button" id="s-x"></button></div><div id="s-res" role="listbox"></div></div>`;
+    document.body.appendChild(o); this.el=o;
+    o.addEventListener('click',ev=>{ if(ev.target===o) this.close(); });
+    o.querySelector('#s-x').onclick=()=>this.close();
+    const q=o.querySelector('#s-q');
+    q.addEventListener('input',()=>this.run(q.value));
+    q.addEventListener('keydown',ev=>{
+      if(ev.key==='ArrowDown'){ ev.preventDefault(); this.move(1); }
+      else if(ev.key==='ArrowUp'){ ev.preventDefault(); this.move(-1); }
+      else if(ev.key==='Enter'){ ev.preventDefault(); const it=this.items[this.sel]; if(it) this.go(it); }
+      else if(ev.key==='Escape'){ this.close(); }
+    });
+    addEventListener('keydown',ev=>{ if((ev.key==='/'||(ev.key==='k'&&(ev.ctrlKey||ev.metaKey)))&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){ ev.preventDefault(); this.open(); } });
+  },
+  open(){ this.build(); const q=this.el.querySelector('#s-q'); q.placeholder=T('Hae kohdetta, arkkitehtia, aluetta tai tyyliä…','Search sights, architects, areas or styles…'); this.el.querySelector('#s-x').textContent=T('Sulje','Close'); this.el.setAttribute('aria-label',T('Haku','Search'));
+    this.el.hidden=false; document.body.classList.add('s-open'); q.value=''; this.run(''); q.focus(); },
+  close(){ this.el.hidden=true; document.body.classList.remove('s-open'); },
+  run(v){
+    const q=NORM(v.trim()); const box=this.el.querySelector('#s-res');
+    let hits;
+    if(!q){ // pikavalinnat
+      hits=[...ARCH.filter(a=>['engel','gls','sonck','aalto','pietila'].includes(a.id)).map(a=>({k:'a',a})), ...AREAS.slice(0,4).map(a=>({k:'r',a}))];
+    } else {
+      const words=q.split(/\s+/);
+      hits=this.idx.map(x=>{ if(!words.every(w=>x.txt.includes(w))) return null; let sc=0; words.forEach(w=>{ if(x.txt.startsWith(w)) sc+=3; if(new RegExp('(^|\\s)'+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).test(x.txt)) sc+=2; }); sc+= {a:2,r:1.5,t:1,s:0}[x.k]; return {...x,sc}; }).filter(Boolean).sort((a,b)=>b.sc-a.sc).slice(0,24);
+    }
+    const G={a:T('Arkkitehdit','Architects'),r:T('Kierrokset','Tours'),t:T('Tyylit','Styles'),s:T('Kohteet','Sights')};
+    this.items=[]; let html='';
+    ['a','r','t','s'].forEach(k=>{ const g=hits.filter(h=>h.k===k); if(!g.length) return;
+      html+=`<div class="s-g">${q?G[k]:(k==='a'?T('Tunnetuimmat arkkitehdit','Featured architects'):T('Kierroksia','Tours'))}</div>`;
+      g.forEach(h=>{ const i=this.items.push(h)-1; html+=`<button type="button" class="s-it" role="option" data-i="${i}">${this.row(h)}</button>`; }); });
+    if(q&&!hits.length) html=`<p class="s-none">${T('Ei osumia. Kokeile esimerkiksi arkkitehdin sukunimeä, kadunnimeä tai vuosilukua.','No results. Try an architect’s surname, a street name or a year.')}</p>`;
+    box.innerHTML=html; this.sel=0; this.hl();
+    box.querySelectorAll('.s-it').forEach(b=>{ b.onclick=()=>this.go(this.items[+b.dataset.i]); b.onmouseenter=()=>{ this.sel=+b.dataset.i; this.hl(); }; });
+  },
+  row(h){
+    if(h.k==='s'){ const it=h.e.it, s=styOf(h.e); return `<span class="s-th">${it.photo?`<img src="${it.photo.src}" alt="" loading="lazy">`:''}</span><span class="s-tx"><b>${esc(IN(it))}</b><small>${esc(IA(it))} · ${esc(IY(it))} · ${AN(h.e.area)}</small></span><i class="s-dot" style="background:${s.col}"></i>`; }
+    if(h.k==='a'){ const a=h.a; return `<span class="s-mono" style="--c:${ERACOL(a.era)}">${initials(a.n)}</span><span class="s-tx"><b>${esc(a.n)}</b><small>${a.y.replace('toimisto',T('toimisto','firm'))} · ${archWorks(a).length} ${T('kohdetta','sights')}</small></span>`; }
+    if(h.k==='r'){ const a=h.a; return `<span class="s-mono" style="--c:#2b7865">${a.list.length}</span><span class="s-tx"><b>${AN(a)}</b><small>${CITY[a.city].name} · ${T('kävelykierros','walking tour')}</small></span>`; }
+    const s=h.s; return `<span class="s-mono" style="--c:${s.col}">${s.yrs?String(s.yrs).slice(0,4):''}</span><span class="s-tx"><b>${SN(s)}</b><small>${T('tyylisuuntaus','style')} · ${s.yrs||''}</small></span>`;
+  },
+  move(d){ if(!this.items.length) return; this.sel=(this.sel+d+this.items.length)%this.items.length; this.hl(); },
+  hl(){ this.el.querySelectorAll('.s-it').forEach(b=>{ const on=+b.dataset.i===this.sel; b.classList.toggle('on',on); if(on) b.scrollIntoView({block:'nearest'}); }); },
+  go(h){ this.close();
+    if(h.k==='s') openCard(h.e);
+    else if(h.k==='a') location.hash='#arkkitehti-'+h.a.id;
+    else if(h.k==='r') location.hash='#alue-'+h.a.id;
+    else location.hash='#tyyli-'+h.key; }
+};
+const TABS=[['koti','home',`<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>`],['alue-senaatintori','sights',`<rect x="3" y="5" width="13" height="15" rx="2"/><path d="M19 7v13"/>`],['lahella','near',`<path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.6"/>`],['arkkitehdit','archs',`<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>`],['kartta-helsinki','map3d',`<path d="M3 7l6-3 6 3 6-3v13l-6 3-6-3-6 3z"/><path d="M9 4v13M15 7v13"/>`]];
+function initTabbar(){
+  const t=document.createElement('nav'); t.id='tabbar'; t.setAttribute('aria-label',T('Päävalikko','Main menu'));
+  t.innerHTML=TABS.map(([h,k,svg])=>`<a href="#${h}" data-tab="${h.split('-')[0]}"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${svg}</svg><span data-i18n="${k}">${UI[k][EN()?1:0]}</span></a>`).join('');
+  document.body.appendChild(t);
+}
+function markTab(){
+  const h=(location.hash||'#koti').slice(1);
+  const key = h.startsWith('alue-')||h.startsWith('tyyli-') ? 'alue' : h.startsWith('arkkiteh') ? 'arkkitehdit' : h.startsWith('kartta') ? 'kartta' : h==='lahella' ? 'lahella' : 'koti';
+  document.querySelectorAll('#tabbar a').forEach(a=>{ const on=a.dataset.tab===key; a.classList.toggle('on',on); on?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'); });
+}
+
 /* ---------- map bridge ---------- */
 let lastGuide='#koti', pendingSel=null;
 function openOnMap(name){ const e=BYNAME[name]; pendingSel=name; location.hash= e.city==='tap'?'#kartta-tapiola':'#kartta-helsinki'; }
@@ -2090,9 +2218,14 @@ applyStatic();
 document.getElementById('langbtn').onclick=()=>setLang(EN()?'fi':'en');
 Player.init();
 Off.init();
+Search.init(); initTabbar();
+document.getElementById('searchbtn').onclick=()=>Search.open();
+document.querySelectorAll('[data-search]').forEach(b=>b.onclick=()=>Search.open());
+document.querySelectorAll('[data-scroll]').forEach(b=>b.onclick=()=>{ const t=document.getElementById(b.dataset.scroll); if(t) t.closest('section').scrollIntoView({behavior:'smooth'}); });
+addEventListener('hashchange',markTab);
 document.getElementById('home-off').onclick=()=>{ if(Off.state==='done'){ toast(T('Opas on jo tallennettu laitteelle.','The guide is already saved on this device.')); return; } Off.start(); if(Off.supported()) toast(T('Tallennus aloitettu. Edistyminen näkyy kierroksen työkaluriviltä.','Saving started. Progress is shown in the tour toolbar.')); };
 document.getElementById('locbtn').onclick=()=>locateOnMap();
-renderHome(); renderArchGrid(); route();
+renderHome(); renderArchGrid(); route(); markTab();
 requestAnimationFrame(tick);
 
 </script>

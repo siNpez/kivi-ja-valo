@@ -1,5 +1,5 @@
 /* Kivi & valo – offline-tuki */
-const VERSION = 'kv-2026-11-22b';
+const VERSION = 'kv-2026-11-22c';
 const CORE = 'kv-core-' + VERSION;
 const IMG = 'kv-img-v1';          // kuvat säilyvät versiopäivitysten yli
 const EXT = 'kv-ext-v1';          // kirjastot ja fontit
