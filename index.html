@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Kivi & valo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--panel:rgba(18,22,26,.86);--line:rgba(255,255,255,.12);--ink:#f1f2ee;--muted:#a3abad;--accent:#e0b25a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#9fb3c4;color:var(--ink);font-family:var(--f-body);overflow:hidden}
+#scene{position:fixed;inset:0} canvas{display:block;touch-action:none}
+#view-map>header{position:fixed;top:0;left:0;right:0;padding:12px 14px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;pointer-events:none;z-index:5}
+#view-map>header>*{pointer-events:auto}
+#view-map h1{font-family:var(--f-display);font-weight:600;font-size:19px;margin:0 8px 0 2px;text-shadow:0 1px 10px rgba(0,0,0,.7)}
+#view-map h1 small{display:block;font:600 11px var(--f-body);color:#e6e9e4;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.tabs{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px;backdrop-filter:blur(10px)}
+.tabs button{all:unset;cursor:pointer;padding:7px 13px;border-radius:999px;font-size:13px;font-weight:600;color:var(--muted)}
+.tabs button.on{background:var(--accent);color:#1a1a1a}
+.iconbtn{all:unset;cursor:pointer;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600;backdrop-filter:blur(10px)}
+.sun{display:flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;backdrop-filter:blur(10px)}
+.sun input{width:110px;accent-color:var(--accent)}
+#legend{position:fixed;left:12px;bottom:12px;z-index:4;display:flex;flex-wrap:wrap;gap:6px;max-width:min(640px,calc(100vw - 24px))}
+.chip{all:unset;cursor:pointer;display:flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:5px 10px 5px 7px;font-size:12px;backdrop-filter:blur(10px)}
+.chip i{width:11px;height:11px;border-radius:50%;display:block;box-shadow:0 0 0 2px rgba(255,255,255,.15)}
+.chip.off{opacity:.38} .chip.ctx i{border-radius:2px;background:#b9b3a8}
+#hint{position:fixed;right:12px;bottom:12px;z-index:3;font-size:11px;color:#eef0ec;text-align:right;max-width:250px;line-height:1.45;text-shadow:0 1px 5px rgba(0,0,0,.8)}
+#labels{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+.lab{position:absolute;transform:translate(-50%,-100%);display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;white-space:nowrap;padding:3px 7px 3px 5px;border-radius:999px;background:rgba(14,18,21,.78);border:1px solid var(--line);opacity:0;transition:opacity .25s}
+.lab i{width:8px;height:8px;border-radius:50%;flex:none}
+.lab.far{padding:3px;background:rgba(14,18,21,.6)} .lab.far span{display:none}
+.lab.sel{background:var(--accent);color:#111;opacity:1!important}
+.dlab{position:absolute;transform:translate(-50%,-50%);font:700 10px var(--f-body);letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.8);text-shadow:0 1px 6px rgba(0,0,0,.85)}
+#info{position:fixed;z-index:8;right:12px;top:64px;width:380px;max-height:calc(100vh - 80px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;backdrop-filter:blur(16px);transform:translateX(120%);transition:transform .35s cubic-bezier(.2,.8,.2,1);box-shadow:0 20px 60px rgba(0,0,0,.45)}
+#info.open{transform:none}
+#closeinfo{all:unset;cursor:pointer;position:absolute;top:10px;right:14px;font-size:22px;color:var(--muted)}
+#info h2{font-family:var(--f-display);font-size:22px;line-height:1.15;margin:4px 26px 8px 0}
+.stylechip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.stylechip i{width:9px;height:9px;border-radius:50%;display:block}
+.facade{border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#cfdbe4}
+.facade svg{display:block;width:100%;height:auto}
+.cap{font-size:11px;color:var(--muted);margin:5px 2px 0}
+.photos{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:10px 0 2px}
+.photos a{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;color:var(--ink);font-size:11.5px;font-weight:600;background:rgba(224,178,90,.14);border:1px solid rgba(224,178,90,.45);border-radius:10px;padding:9px 4px}
+.photos a b{font-size:17px;line-height:1}
+dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:14px 0;font-size:13.5px}
+dt{color:var(--muted)} dd{margin:0;font-weight:500}
+#info p{font-size:13.5px;line-height:1.55;color:#dde2dd;margin:0 0 10px}
+.approx{font-size:11.5px;color:#e2bd72}
+.src{display:block;margin-top:10px;font-size:12px;color:var(--muted)} .src a{color:var(--ink)}
+#list{position:fixed;z-index:9;left:12px;top:64px;width:330px;max-height:calc(100vh - 140px);display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(16px);transform:translateX(-120%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+#list.open{transform:none}
+#list input{all:unset;margin:12px;padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.07);border:1px solid var(--line);font-size:14px}
+#list ul{list-style:none;margin:0;padding:0 6px 8px;overflow:auto}
+#list li{padding:8px 10px;border-radius:9px;cursor:pointer;display:grid;grid-template-columns:12px 1fr auto;gap:9px;align-items:center}
+#list li:hover{background:rgba(255,255,255,.07)}
+#list li i{width:10px;height:10px;border-radius:50%}
+#list li b{font-weight:600;font-size:13.5px;display:block} #list li small{color:var(--muted);font-size:11.5px} #list li em{font-style:normal;color:var(--muted);font-size:12px}
+#loading{position:fixed;inset:0;display:none;background:rgba(15,20,24,.55);color:#eef0ec!important;z-index:40!important;place-items:center;color:#1d2a33;font-size:13px;z-index:1}
+@media (max-width:700px){
+  #view-map h1{font-size:15px;width:100%} .sun input{width:80px}
+  #info{left:0;right:0;top:auto;bottom:0;width:auto;max-height:64vh;border-radius:18px 18px 0 0;transform:translateY(110%)}
+  #info.open{transform:none}
+  #list{left:8px;right:8px;width:auto;top:132px;max-height:58vh}
+  #hint{display:none} #legend{bottom:10px;left:8px} .chip{font-size:11px;padding:4px 8px 4px 6px}
+}
+/* ===================== GUIDE (home + cards) ===================== */
+:root{
+  --paper:#ecebe6;      /* vaalea graniitti */
+  --paper-2:#e1dfd8;
+  --ink:#191c1e;        /* grafiitti */
+  --muted:#5d6264;
+  --line:rgba(25,28,30,.14);
+  --patina:#2b7865;     /* Tuomiokirkon kuparikatto */
+  --ochre:#c48f22;      /* Engelin keltainen */
+  --f-display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --f-body:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  /* layout: broadsheet — Didone headline over a drawn dusk skyline; areas as an index; objects as swipeable plates */
+  color-scheme:light;
+}
+html,body{background:var(--paper)!important;color:var(--ink);font-family:var(--f-body);overflow:auto!important;height:auto!important}
+body.map-on{overflow:hidden!important;height:100%!important}
+#app{min-height:100%}
+body.map-on #app{display:none}
+#view-map{display:none;--ink:#f1f2ee;--muted:#a3abad;--line:rgba(255,255,255,.12);color:#f1f2ee}
+body.map-on #view-map{display:block}
+.view{display:none}.view.on{display:block}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--patina);outline-offset:3px}
+.mono{font-family:var(--f-mono);letter-spacing:.02em}
+.display{font-family:var(--f-display);font-weight:500;text-wrap:balance}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+
+nav.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:20px;padding:12px clamp(16px,4vw,40px);background:rgba(236,235,230,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.brand{font-family:var(--f-display);font-size:21px;font-weight:600;text-decoration:none;letter-spacing:-.01em}
+.brand em{font-style:italic;color:var(--patina)}
+.brand small{font:500 10.5px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-left:10px}
+nav.top .links{margin-left:auto;display:flex;gap:4px}
+nav.top .links a{text-decoration:none;font-size:14px;font-weight:500;padding:7px 12px;border-radius:999px;color:var(--muted)}
+nav.top .links a.on,nav.top .links a:hover{color:var(--ink);background:rgba(25,28,30,.06)}
+
+.btn{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:999px;border:1px solid var(--ink);font:600 14.5px var(--f-body);color:var(--ink);text-decoration:none;transition:background .2s,color .2s}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn.primary:hover{background:var(--patina);border-color:var(--patina)}
+.btn.sm{padding:8px 13px;font-size:13px}
+
+/* hero */
+.hero{position:relative;background:linear-gradient(180deg,#d5dee3 0%,#e3e3dc 45%,#f0dcc0 100%);overflow:hidden;border-bottom:1px solid var(--line)}
+.hero-text{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:clamp(40px,7vw,90px) clamp(16px,4vw,40px) 0;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:40px;align-items:end}
+.kicker{font-size:12px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin:0 0 18px}
+.hero h1{font-size:clamp(60px,10.5vw,148px);line-height:.86;letter-spacing:-.035em;margin:0;font-weight:500}
+.hero h1 em{font-style:italic;color:var(--patina);font-weight:400}
+.lede{font-size:clamp(16px,1.5vw,19px);line-height:1.55;max-width:42ch;margin:0 0 22px;color:#2c3133}
+.cta{display:flex;flex-wrap:wrap;gap:10px}
+.skyline{display:block;width:100%;height:clamp(260px,34vw,440px);margin-top:-30px}
+.skyline svg{display:block;width:100%;height:100%}
+.rise{transform-box:fill-box;transform-origin:50% 100%;animation:rise 1.4s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--d,0s)}
+@keyframes rise{from{transform:scaleY(.02)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.rise{animation:none}}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line)}
+.stats div{padding:22px clamp(16px,3vw,32px);border-right:1px solid var(--line)}
+.stats div:last-child{border-right:0}
+.stats b{display:block;font-family:var(--f-display);font-size:clamp(34px,4.5vw,56px);font-weight:500;line-height:1;font-variant-numeric:lining-nums tabular-nums}
+.stats span{font-size:13px;color:var(--muted)}
+
+section.block{padding:clamp(48px,7vw,96px) 0;border-bottom:1px solid var(--line)}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:32px;align-items:end;margin-bottom:36px}
+.sec-head h2{font-size:clamp(34px,4.6vw,60px);line-height:1;margin:0;letter-spacing:-.02em}
+.sec-head p{margin:0;color:var(--muted);font-size:16px;line-height:1.55;max-width:56ch}
+.eyebrow{font:500 11.5px var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--patina);margin:0 0 10px}
+
+/* timeline */
+.tl{position:relative}
+.tl-axis{display:grid;grid-template-columns:200px 1fr;font:500 11px var(--f-mono);color:var(--muted)}
+.tl-axis .ticks{position:relative;height:22px;border-bottom:1px solid var(--line)}
+.tl-axis .ticks span{position:absolute;transform:translateX(-50%);bottom:5px}
+.tl-row{display:grid;grid-template-columns:200px 1fr;align-items:center;min-height:44px;border-bottom:1px solid var(--line);cursor:pointer;text-decoration:none}
+.tl-row:hover{background:rgba(25,28,30,.035)}
+.tl-row .nm{font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:9px}
+.tl-row .nm i{width:10px;height:10px;border-radius:50%}
+.tl-row .nm small{font:500 11px var(--f-mono);color:var(--muted);font-weight:500}
+.tl-row .lane{position:relative;height:44px}
+.tl-row .bar{position:absolute;top:14px;height:16px;border-radius:8px;min-width:8px}
+.tl-row .dot{position:absolute;top:18px;width:8px;height:8px;border-radius:50%;transform:translateX(-50%);background:var(--paper);border:2px solid currentColor}
+.tl-row .tlab{position:absolute;top:13px;font:500 11.5px var(--f-mono);white-space:nowrap;color:var(--muted)}
+
+/* areas index */
+.city-h{display:flex;align-items:baseline;gap:14px;margin:8px 0 14px}
+.city-h h3{font-family:var(--f-display);font-size:28px;font-weight:500;margin:0}
+.city-h span{font:500 12px var(--f-mono);color:var(--muted)}
+.areas{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line);margin-bottom:44px}
+.area{background:var(--paper);border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:22px 22px 18px;text-decoration:none;display:flex;flex-direction:column;gap:10px;transition:background .2s}
+.area:hover{background:#f4f3ef}
+.area .no{font:500 11.5px var(--f-mono);color:var(--muted);display:flex;justify-content:space-between}
+.area h4{font-family:var(--f-display);font-size:25px;line-height:1.05;font-weight:500;margin:0;text-wrap:balance}
+.area p{margin:0;font-size:14px;line-height:1.5;color:#3d4244}
+.area .dots{display:flex;gap:4px;margin-top:auto;padding-top:6px}
+.area .dots i{width:8px;height:8px;border-radius:50%}
+.area .go{font-size:13px;font-weight:600;color:var(--patina)}
+
+/* styles */
+.styles{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.style{display:flex;flex-direction:column;gap:12px;text-decoration:none}
+.style .fig{border-radius:4px;overflow:hidden;border:1px solid var(--line);aspect-ratio:380/230;background:#cfdbe4}
+.style .fig svg{display:block;width:100%;height:100%}
+.style .yrs{font:500 12px var(--f-mono);color:var(--muted)}
+.style h4{font-family:var(--f-display);font-size:26px;font-weight:500;margin:0;display:flex;align-items:center;gap:10px}
+.style h4 i{width:11px;height:11px;border-radius:50%}
+.style p{margin:0;font-size:14.5px;line-height:1.55;color:#363b3d}
+.style .ex{font-size:13px;color:var(--muted)}
+footer.foot{padding:40px 0 60px;font-size:13px;color:var(--muted);line-height:1.6}
+footer.foot .wrap{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+
+/* cards view */
+.cards-head{padding-top:22px;padding-bottom:6px}
+.crumbs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;overflow-x:auto}
+.crumbs a{text-decoration:none;font-size:13px;font-weight:500;padding:6px 12px;border-radius:999px;border:1px solid var(--line);white-space:nowrap;color:var(--muted)}
+.crumbs a.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.crumbs .sep{font:500 11px var(--f-mono);color:var(--muted);align-self:center;padding:0 6px;letter-spacing:.12em;text-transform:uppercase}
+.area-title{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:28px;align-items:end}
+.area-title h2{font-size:clamp(38px,5.4vw,72px);line-height:.95;margin:0;letter-spacing:-.025em}
+.area-title p{margin:0 0 10px;color:#353a3c;line-height:1.55;font-size:15.5px}
+.area-meta{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font:500 12px var(--f-mono);color:var(--muted)}
+.track{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;padding:26px max(16px,calc(50vw - 560px)) 30px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.track::-webkit-scrollbar{display:none}
+.card{flex:0 0 min(1120px,calc(100vw - 32px));scroll-snap-align:center;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);background:#f6f5f1;border:1px solid var(--line);border-radius:6px;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,.03),0 18px 40px -24px rgba(20,25,28,.35)}
+.card-fig{position:relative;background:#cfdbe4;display:flex;align-items:flex-end;min-height:100%}
+.card-fig svg{display:block;width:100%;height:auto}
+.card-no{position:absolute;top:14px;left:16px;font:500 12px var(--f-mono);color:#1d2a33;background:rgba(246,245,241,.85);padding:4px 9px;border-radius:999px}
+.card-body{padding:26px 28px 24px;display:flex;flex-direction:column;gap:14px}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.sty{display:inline-flex;align-items:center;gap:7px;font:500 11.5px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.sty i{width:9px;height:9px;border-radius:50%}
+.yr{font-family:var(--f-display);font-size:54px;line-height:.8;font-weight:500;font-variant-numeric:lining-nums;color:var(--ink);letter-spacing:-.02em}
+.card h3{font-family:var(--f-display);font-size:clamp(28px,3vw,38px);line-height:1.02;margin:0;font-weight:500;text-wrap:balance}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;margin:0;font-size:14px}
+.meta dt{color:var(--muted)} .meta dd{margin:0;font-weight:500}
+.card p.txt{margin:0;font-size:15px;line-height:1.6;color:#2f3436;max-width:60ch}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:6px}
+.note{font:500 11.5px var(--f-mono);color:#9a7420;margin:0}
+.card.end{grid-template-columns:1fr;place-items:center;text-align:center;background:var(--ink);color:var(--paper)}
+.card.end .inner{padding:50px 30px;display:flex;flex-direction:column;gap:16px;align-items:center;max-width:520px}
+.card.end h3{font-size:clamp(34px,4vw,52px)}
+.card.end .btn{border-color:var(--paper);color:var(--paper)} .card.end .btn.primary{background:var(--paper);color:var(--ink)}
+.cards-nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:0 0 40px}
+.cards-nav button{all:unset;cursor:pointer;width:46px;height:46px;border-radius:50%;border:1px solid var(--ink);display:grid;place-items:center;font-size:18px}
+.cards-nav button:hover{background:var(--ink);color:var(--paper)}
+.cards-nav button:disabled{opacity:.25;cursor:default;background:none;color:var(--ink)}
+.prog{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:200px}
+.prog .count{font:500 13px var(--f-mono)}
+.prog .bar{width:200px;height:2px;background:var(--line);position:relative}
+.prog .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--patina);transition:width .3s}
+
+
+.card-fig .photo{margin:0;position:absolute;inset:0;display:flex;flex-direction:column}
+.card-fig .photo img{flex:1;width:100%;min-height:0;object-fit:cover;display:block;background:#cfd6da}
+.card-fig .photo figcaption{font:500 10.5px var(--f-mono);color:#e8e6df;background:rgba(18,22,26,.72);padding:6px 10px;line-height:1.4}
+.card-fig .photo figcaption a{color:#fff}
+.card-fig.has-photo{min-height:420px}
+.card-fig.has-photo .drawing{display:none;width:100%}
+.card-fig.has-photo.show-drawing .drawing{display:block}
+.card-fig.has-photo.show-drawing .photo{display:none}
+.card-fig .swap{all:unset;cursor:pointer;position:absolute;top:12px;right:14px;font:600 12px var(--f-body);background:rgba(246,245,241,.9);color:#1d2a33;padding:6px 11px;border-radius:999px}
+.card-fig .swap:focus-visible{outline:2px solid var(--patina)}
+.style .fig img{display:block;width:100%;height:100%;object-fit:cover}
+@media (max-width:860px){.card-fig.has-photo{min-height:0;aspect-ratio:4/3}}
+@media (max-width:860px){
+  .hero-text{grid-template-columns:1fr;gap:18px}
+  .sec-head,.area-title{grid-template-columns:1fr;gap:12px}
+  .styles{grid-template-columns:1fr 1fr}
+  .card{grid-template-columns:minmax(0,1fr);flex-basis:calc(100vw - 40px);max-width:calc(100vw - 40px)}
+  .card-fig{min-height:0}
+  .crumbs{flex-wrap:nowrap;margin-inline:calc(-1*clamp(16px,4vw,40px));padding-inline:clamp(16px,4vw,40px);scrollbar-width:none}
+  .card-body{padding:20px 20px 22px}
+  .yr{font-size:44px}
+  .track{padding:18px 20px 24px;gap:14px}
+  footer.foot .wrap{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .stats{grid-template-columns:1fr 1fr}.stats div:nth-child(2){border-right:0}.stats div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .styles{grid-template-columns:1fr}
+  .tl-axis,.tl-row{grid-template-columns:118px 1fr}
+  .tl-row .nm{font-size:12.5px}.tl-row .nm small{display:none}
+  .brand small{display:none} nav.top{gap:8px} nav.top .links a{padding:6px 9px;font-size:13px}
+  .skyline{height:250px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <nav class="top" aria-label="Päävalikko">
+    <a class="brand" href="#koti">Kivi <em>&amp;</em> valo<small>Arkkitehtuuriopas</small></a>
+    <div class="links"><a href="#koti" id="nav-home">Etusivu</a><a href="#alue-senaatintori" id="nav-cards">Kohteet</a><a href="#kartta-helsinki" id="nav-map">3D-kartta</a></div>
+  </nav>
+
+  <main id="view-home" class="view">
+    <header class="hero">
+      <div class="hero-text">
+        <div>
+          <p class="kicker mono" id="kicker">Helsinki · Espoo</p>
+          <h1 class="display">Kivi,<br>rappaus <em>&amp;</em><br>valo</h1>
+        </div>
+        <div>
+          <p class="lede" id="lede"></p>
+          <div class="cta"><a class="btn primary" href="#alue-senaatintori">Aloita kierros →</a><a class="btn" href="#kartta-helsinki">Avaa 3D-kartta</a></div>
+        </div>
+      </div>
+      <div class="skyline" id="skyline" aria-label="Piirretty Helsingin siluetti: Huvilakadun talot, Kallion kirkko, Kansallismuseo, rautatieasema, Tuomiokirkko, Olympiastadionin torni ja Tapiolan tornit"></div>
+    </header>
+    <div class="stats" id="stats"></div>
+
+    <section class="block"><div class="wrap">
+      <div class="sec-head">
+        <div><p class="eyebrow">Aikajana</p><h2 class="display">Kaksi vuosisataa, kymmenen tyyliä</h2></div>
+        <p>Jokainen palkki kattaa kohteiden valmistumisvuodet. Napauta tyyliä, niin näet sen kohteet aikajärjestyksessä.</p>
+      </div>
+      <div class="tl" id="timeline"></div>
+    </div></section>
+
+    <section class="block"><div class="wrap">
+      <div class="sec-head">
+        <div><p class="eyebrow">Alueet</p><h2 class="display">Yksitoista kävelykierrosta</h2></div>
+        <p>Kohteet on järjestetty alueittain kävelyjärjestykseen. Kortteja voi selata kotisohvalta, tai ne voi ottaa mukaan kadulle. Jokaisesta kohteesta pääsee Googlen katunäkymään ja jokaisesta alueesta kävelyreitille.</p>
+      </div>
+      <div id="areas"></div>
+    </div></section>
+
+    <section class="block"><div class="wrap">
+      <div class="sec-head">
+        <div><p class="eyebrow">Tunnistusopas</p><h2 class="display">Miten tyylit erottaa kadulla</h2></div>
+        <p>Kuusi aikakautta ja niiden tuntomerkit. Kuvituksena on kunkin tyylin tyyppiesimerkki.</p>
+      </div>
+      <div class="styles" id="styles"></div>
+    </div></section>
+
+    <footer class="foot"><div class="wrap">
+      <p><b>Lähteet.</b> Helsingin kaupunginmuseon jugendopas (finnisharchitecture.fi), Espoon kaupungin Tapiolan kävelyreitit sekä Wikipedia. Jokaisen kohteen oma lähde on merkitty korttiin.</p>
+      <p><b>Huomioita.</b> Valokuvat ovat Wikimedia Commonsista, ja kuvaaja sekä lisenssi on merkitty jokaiseen kuvaan. Tarinat on koottu Wikipedian, Helsingin kaupunginmuseon jugendoppaan ja Espoon kaupungin aineistojen pohjalta. Julkisivupiirrokset ja 3D-mallit ovat tyyliteltyjä kuvituksia. Osa sijainneista on likimääräisiä; ne on merkitty kortteihin.</p>
+    </div></footer>
+  </main>
+
+  <main id="view-cards" class="view">
+    <div class="wrap cards-head">
+      <div class="crumbs" id="crumbs"></div>
+      <div class="area-title">
+        <div><p class="eyebrow" id="area-eyebrow"></p><h2 class="display" id="area-name"></h2></div>
+        <div><p id="area-intro"></p><div class="area-meta" id="area-meta"></div></div>
+      </div>
+    </div>
+    <div class="track" id="track" tabindex="0" aria-label="Kohdekortit"></div>
+    <div class="cards-nav">
+      <button id="prev" aria-label="Edellinen kohde">←</button>
+      <div class="prog"><span class="count" id="count"></span><span class="bar"><i id="progbar"></i></span></div>
+      <button id="next" aria-label="Seuraava kohde">→</button>
+    </div>
+  </main>
+</div>
+
+<section id="view-map">
+<div id="loading">Rakennetaan kaupunkia…</div>
+<div id="scene"></div>
+<div id="labels"></div>
+<header>
+  <button class="iconbtn" id="backbtn">← Opas</button>
+  <h1>Arkkitehtuurikartta<small id="subtitle"></small></h1>
+  <div class="tabs"><button id="tab-hki" class="on">Helsinki</button><button id="tab-tap">Tapiola</button></div>
+  <button class="iconbtn" id="listbtn">☰ Kohteet</button>
+  <button class="iconbtn" id="resetbtn" title="Palauta näkymä">⟲</button>
+  <label class="sun" title="Auringon korkeus">☀<input id="sunr" type="range" min="2" max="50" value="20"></label>
+</header>
+<div id="legend"></div>
+<div id="hint">Vedä kääntääksesi · nipistä tai rullaa zoomataksesi · napauta rakennusta.<br>Kohteet todellisessa mittakaavassa. Taustakorttelit ja puut ovat havainnollistavia.</div>
+<aside id="list"><input id="q" placeholder="Hae nimellä, arkkitehdilla tai vuodella…"><ul id="items"></ul></aside>
+<aside id="info" aria-live="polite">
+  <button id="closeinfo" aria-label="Sulje">×</button>
+  <div class="stylechip" id="i-style"></div>
+  <h2 id="i-name"></h2>
+  <div class="facade" id="i-facade"></div>
+  <div class="cap">Julkisivupiirros todellisten värien, materiaalien ja muotojen mukaan – ei valokuva.</div>
+  <div class="photos" id="i-photos"></div>
+  <dl><dt>Arkkitehti</dt><dd id="i-arch"></dd><dt>Valmistunut</dt><dd id="i-year"></dd><dt>Osoite</dt><dd id="i-addr"></dd></dl>
+  <p id="i-text"></p>
+  <div class="approx" id="i-approx"></div>
+  <span class="src" id="i-src"></span>
+</aside>
+
+</section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/objects/Sky.js"></script>
+<script>
+/* ============================== DATA ============================== */
+const FA = s => "https://www.finnisharchitecture.fi/projects/" + s;
+const WP = s => "https://fi.wikipedia.org/wiki/" + s;
+const ESP = "https://www.espoo.fi/en/urban-walks-tapiola";
+
+const HKI = {
+  key:"hki", title:"Helsinki · empire, jugend ja funktionalismi", city:"Helsinki",
+  center:[60.1705,24.9450], camDist:3300, groundColor:"#6d6e69",
+  styles:{
+    em:{name:"Empire 1810–1850", c:"#f3d36b", def:{c:"#e6d3a1",roof:"hip",rh:4,rc:"#7f8c8e",win:"rect",base:"#d4cec2",trim:"#f6f3ea"}},
+    nr:{name:"Kansallisromantiikka", c:"#b59cf0", def:{c:"#8d8a83",roof:"hip",rh:9,rc:"#3a3f41",win:"small",base:"#625e58",trim:"#77736c"}},
+    jg:{name:"Jugend", c:"#ff9f5a", def:{c:"#ddd0b0",roof:"hip",rh:7,rc:"#46403c",win:"arch",base:"#8a857c",trim:"#efe6d2"}},
+    rj:{name:"Rationaalinen jugend", c:"#4fd1b5", def:{c:"#aaa69e",roof:"hip",rh:5,rc:"#4b5150",win:"tall",base:"#7d7a73",trim:"#c5c1b8"}},
+    al:{name:"Jugendalueet", c:"#ffe066", def:{roof:"hip",rh:6,rc:"#56473f",win:"rect",base:"#8a857c",trim:"#f4eee0"}},
+    fk:{name:"Funktionalismi 1930-l", c:"#5ab8ff", def:{c:"#eeebe3",roof:"flat",rh:0,rc:"#8e8e8a",win:"ribbon",trim:"#ffffff"}}
+  },
+  land:[[24.904,60.198],[24.994,60.198],[24.994,60.193],[24.986,60.191],[24.982,60.188],[24.980,60.184],[24.975,60.181],[24.968,60.1778],[24.962,60.1766],[24.957,60.1772],[24.951,60.1777],[24.9490,60.1774],[24.9465,60.1782],[24.9462,60.1810],[24.9475,60.1836],[24.9452,60.1840],[24.9442,60.1806],[24.9448,60.1772],[24.9493,60.1763],[24.951,60.1762],[24.958,60.1760],[24.9615,60.1755],[24.9620,60.1730],[24.9600,60.1712],[24.9585,60.1702],[24.9605,60.1702],[24.968,60.1710],[24.976,60.1700],[24.982,60.1680],[24.9815,60.1655],[24.974,60.1640],[24.966,60.1645],[24.9600,60.1662],[24.9585,60.1672],[24.9545,60.1674],[24.9525,60.1665],[24.9520,60.1630],[24.9545,60.1612],[24.9575,60.1600],[24.9585,60.1570],[24.9560,60.1552],[24.9480,60.1543],[24.9400,60.1543],[24.9350,60.1548],[24.9320,60.1565],[24.9310,60.1600],[24.9300,60.1618],[24.9285,60.1622],[24.9265,60.1612],[24.9265,60.1580],[24.9240,60.1555],[24.918,60.1540],[24.909,60.1550],[24.906,60.1590],[24.911,60.1625],[24.914,60.1650],[24.910,60.1690],[24.906,60.1740],[24.910,60.1790],[24.913,60.1840],[24.906,60.1900],[24.904,60.198]],
+  lakes:[[[24.9330,60.1765],[24.9400,60.1768],[24.9425,60.1790],[24.9390,60.1822],[24.9345,60.1806]]],
+  parks:[
+    [[24.9425,60.1742],[24.9478,60.1750],[24.9458,60.1770],[24.9422,60.1773]],
+    [[24.9446,60.1673],[24.9522,60.1674],[24.9522,60.1678],[24.9446,60.1677]],
+    [[24.9490,60.1556],[24.9560,60.1554],[24.9578,60.1590],[24.9520,60.1596]],
+    [[24.9505,60.1604],[24.9542,60.1608],[24.9545,60.1630],[24.9510,60.1632]],
+    [[24.9330,60.1596],[24.9365,60.1596],[24.9365,60.1614],[24.9330,60.1614]],
+    [[24.9150,60.1725],[24.9220,60.1722],[24.9232,60.1792],[24.9145,60.1795]],
+    [[24.9140,60.1690],[24.9228,60.1690],[24.9228,60.1718],[24.9150,60.1720]],
+    [[24.9380,60.1868],[24.9442,60.1868],[24.9452,60.1900],[24.9390,60.1905]],
+    [[24.9310,60.1758],[24.9332,60.1750],[24.9442,60.1782],[24.9425,60.1840],[24.9330,60.1830]],
+    [[24.9376,60.1647],[24.9399,60.1647],[24.9399,60.1660],[24.9376,60.1660]],
+    [[24.9616,60.1686],[24.9640,60.1688],[24.9640,60.1697],[24.9618,60.1697]]
+  ],
+  nobuild:[
+    [[24.9390,60.1724],[24.9436,60.1724],[24.9432,60.1800],[24.9402,60.1855],[24.9358,60.1855],[24.9380,60.1780]],
+    [[24.9510,60.1689],[24.9536,60.1689],[24.9536,60.1700],[24.9510,60.1700]],
+    [[24.9524,60.1664],[24.9562,60.1664],[24.9562,60.1681],[24.9524,60.1681]],
+    [[24.9418,60.1704],[24.9446,60.1704],[24.9446,60.1720],[24.9418,60.1720]],
+    [[24.9230,60.1555],[24.9300,60.1560],[24.9300,60.1615],[24.9262,60.1612]],
+    [[24.9240,60.1835],[24.9330,60.1835],[24.9340,60.1912],[24.9250,60.1912]]
+  ],
+  roads:[
+    [[24.9430,60.1667],[24.9405,60.1690],[24.9385,60.1712],[24.9345,60.1735],[24.9315,60.1760],[24.9285,60.1800],[24.9240,60.1860],[24.9180,60.1940]],
+    [[24.9440,60.1672],[24.9530,60.1673]],[[24.9440,60.1679],[24.9530,60.1680]],
+    [[24.9440,60.1690],[24.9560,60.1695]],
+    [[24.9425,60.1660],[24.9300,60.1624]],
+    [[24.9495,60.1690],[24.9496,60.1763],[24.9498,60.1776],[24.9510,60.1795],[24.9580,60.1850],[24.9640,60.1925]],
+    [[24.9300,60.1582],[24.9560,60.1592]],
+    [[24.9440,60.1667],[24.9450,60.1600],[24.9455,60.1560]],
+    [[24.9525,60.1700],[24.9600,60.1702]],
+    [[24.9320,60.1690],[24.9440,60.1690]]
+  ],
+  rail:[[24.9414,60.1722],[24.9408,60.1790],[24.9395,60.1850],[24.9370,60.1920],[24.9350,60.1980]],
+  zones:[[60.1690,24.9480,0,21],[60.1725,24.9555,0,19],[60.1680,24.9720,8,20],[60.1660,24.9330,30,22],[60.1610,24.9390,30,21],[60.1600,24.9480,0,20],[60.1565,24.9360,14,17],[60.1800,24.9230,32,21],[60.1700,24.9150,32,20],[60.1830,24.9560,-27,20],[60.1840,24.9690,-27,19],[60.1900,24.9420,-27,19],[60.1945,24.9620,-20,17]],
+  districts:[["Keskusta",60.1702,24.9480],["Kruununhaka",60.1728,24.9555],["Katajanokka",60.1668,24.9730],["Kamppi",60.1680,24.9320],["Punavuori",60.1605,24.9385],["Ullanlinna",60.1595,24.9500],["Eira",60.1560,24.9345],["Töölö",60.1800,24.9200],["Kallio",60.1832,24.9580],["Sörnäinen",60.1835,24.9700],["Alppila",60.1900,24.9420],["Vallila",60.1950,24.9620]],
+  items:[
+    /* ---------- EMPIRE ---------- */
+    {n:"Helsingin tuomiokirkko",a:"Unioninkatu 29",ar:"C. L. Engel; muutokset Ernst Lohrmann",y:"1852",st:"em",lat:60.1704,lon:24.9522,w:64,d:64,h:22,special:"cathedral",c:"#f4f2ec",rc:"#5f9a80",approx:true,
+     t:"Engelin pääteos ja Helsingin tunnusmerkki Senaatintorin pohjoislaidalla. Kreikkalaisen ristin muotoinen kirkko valmistui 1852 Engelin kuoleman jälkeen; Ernst Lohrmann lisäsi neljä kulmatornia ja katon apostolipatsaat. Valkoiset seinät, korinttilaiset pylväiköt ja vihreä keskuskupoli noin 60 metrin korkeudessa.",src:WP("Helsingin_tuomiokirkko")},
+    {n:"Valtioneuvoston linna",a:"Snellmaninkatu 1",ar:"C. L. Engel",y:"1822",st:"em",lat:60.1694,lon:24.9546,w:30,d:96,h:17,c:"#dcc78e",por:{side:"w",n:8},approx:true,
+     t:"Senaatintorin itälaidan hallintopalatsi rakennettiin Keisarillisen Senaatin käyttöön; nykyisin valtioneuvoston ja pääministerin virkapaikka. Torin puoleista julkisivua hallitsee korinttilainen pylväikkö ja päätykolmio.",src:WP("Valtioneuvoston_linna")},
+    {n:"Helsingin yliopiston päärakennus",a:"Unioninkatu 34",ar:"C. L. Engel",y:"1832",st:"em",lat:60.1692,lon:24.9500,w:30,d:90,h:17,c:"#e6d7ae",por:{side:"e",n:6},approx:true,
+     t:"Yliopisto siirrettiin Turusta Helsinkiin 1828. Engelin päärakennus valmistui 1832 torin länsilaidalle Senaatintalon vastinpariksi. Pylväikön takana on juhlasali ja Suomen empiren kauneimpiin kuuluva porrashalli.",src:WP("Helsingin_yliopiston_päärakennus")},
+    {n:"Kansalliskirjasto",a:"Unioninkatu 36",ar:"C. L. Engel",y:"1845",st:"em",lat:60.1705,lon:24.9499,w:26,d:68,h:16,c:"#e8dcb9",por:{side:"e",n:10},approx:true,
+     t:"Yliopiston kirjastoksi rakennettu talo valmistui 1845 Engelin viimeisten suunnitelmien mukaan. Korinttilaiset pylväsrivit ja kupolein katetut salit tekevät siitä Suomen empiren hienoimpia sisätiloja.",src:WP("Kansalliskirjaston_rakennus")},
+    {n:"Kaupungintalo (ent. Seurahuone)",a:"Pohjoisesplanadi 11–13",ar:"C. L. Engel",y:"1833",st:"em",lat:60.1679,lon:24.9530,w:50,d:30,h:18,c:"#a8bccd",approx:true,
+     t:"Rakennettiin Seurahuoneeksi eli hotelliksi ja juhlatiloiksi. Kaupungin hallinto muutti taloon 1930. Vaaleansininen empirejulkisivu rajaa Kauppatoria pohjoisesta.",src:WP("Helsingin_kaupungintalo")},
+    {n:"Presidentinlinna",a:"Mariankatu 1 / Pohjoisesplanadi 1",ar:"Pehr Granstedt; muutokset C. L. Engel",y:"1820 / 1845",st:"em",lat:60.1686,lon:24.9563,w:62,d:40,h:17,c:"#e4d29e",approx:true,
+     t:"Alun perin kauppias Johan Henrik Heidenstrauchin asuintalo (1820). Engel muutti sen keisarilliseksi palatsiksi 1843–1845, ja itsenäisyyden jälkeen siitä tuli tasavallan presidentin virka-asunto ja edustustila.",src:WP("Presidentinlinna")},
+    {n:"Pyhän Kolminaisuuden kirkko",a:"Unioninkatu 31",ar:"C. L. Engel",y:"1827",st:"em",lat:60.1716,lon:24.9518,w:24,d:28,h:12,c:"#e0c486",tw:20,ts:"round",tt:"dome",tc:"#e0c486",tx:0,tz:0,approx:true,
+     t:"Helsingin vanhin ortodoksinen kirkko ja Engelin varhainen työ. Hillitty, keltainen empirekirkko kupolitorneineen.",src:WP("Pyhän_Kolminaisuuden_kirkko_(Helsinki)")},
+    {n:"Kaartin kasarmi",a:"Kasarmikatu / Kasarmitori",ar:"C. L. Engel",y:"1822",st:"em",lat:60.1655,lon:24.9487,w:90,d:20,h:14,c:"#dfc68e",por:{side:"s",n:6},approx:true,
+     t:"Henkikaartin Suomen kaartille rakennettu kasarmi; nykyisin puolustusministeriön talo. Engel suunnitteli myös edustan Kasarmitorin.",src:WP("Kaartin_kasarmi")},
+    {n:"Tähtitorni",a:"Kopernikuksentie 1",ar:"C. L. Engel (yhdessä F. W. A. Argelanderin kanssa)",y:"1834",st:"em",lat:60.1619,lon:24.9528,w:42,d:18,h:10,special:"observatory",c:"#f0ebde",approx:true,
+     t:"Yliopiston tähtitorni Tähtitorninvuorella; Engel suunnitteli sen yhdessä tähtitieteilijä Argelanderin kanssa. Kolme pyörivää kupolia. Nykyään tiedekeskus.",src:WP("Helsingin_yliopiston_tähtitorni")},
+    {n:"Vanha kirkko",a:"Lönnrotinkatu 6",ar:"C. L. Engel",y:"1826",st:"em",lat:60.1653,lon:24.9388,w:32,d:32,h:9,special:"woodchurch",c:"#ece3c8",rc:"#6c7377",approx:true,
+     t:"Helsingin vanhin säilynyt kirkko: Engelin suunnittelema ristinmuotoinen puukirkko. Tarkoitettiin väliaikaiseksi Nikolainkirkon rakentamisen ajaksi, mutta jäi pysyväksi.",src:WP("Vanha_kirkko_(Helsinki)")},
+    {n:"Lapinlahden sairaala",a:"Lapinlahdenpolku 8",ar:"C. L. Engel",y:"1841",st:"em",lat:60.1677,lon:24.9130,w:90,d:18,h:12,c:"#e8d29a",approx:true,
+     t:"Suomen ensimmäinen mielisairaala ja Engelin viimeisiä töitä, merenrantaan puistoon rakennettu. Nykyään kulttuuri- ja hyvinvointikeskus.",src:WP("Lapinlahden_sairaala")},
+    {n:"Hakasalmen huvila",a:"Mannerheimintie 13b",ar:"Ernst Lohrmann",y:"1847",st:"em",lat:60.1737,lon:24.9357,w:30,d:18,h:10,c:"#ead18f",por:{side:"e",n:4},rot:32,approx:true,
+     t:"Kauppaneuvos Carl Johan Walleenin huvila, myöhemmin Aurora Karamzinin koti. Nykyään Helsingin kaupunginmuseon näyttelytila.",src:WP("Hakasalmen_huvila")},
+
+    /* ---------- JUGEND / KANSALLISROMANTIIKKA ---------- */
+    {n:"Tallbergin talo",a:"Luotsikatu 1",ar:"Gesellius–Lindgren–Saarinen",y:"1898",st:"jg",lat:60.1681,lon:24.9626,w:24,d:20,h:20,c:"#d4c8ae",tw:28,ts:"round",tt:"spire",
+     t:"Nuoren arkkitehtikolmikon läpimurto: he voittivat kauppaneuvos Julius Tallbergin asuintalon kilpailun 1897. Talo käynnisti jugendin Helsingissä.",src:FA("tallberg-house")},
+    {n:"Aeolus (Eol)",a:"Luotsikatu 2",ar:"Selim A. Lindqvist",y:"1903",st:"jg",lat:60.1676,lon:24.9635,w:24,d:20,h:20,c:"#d8cfa8",tw:28,ts:"round",tt:"spire",
+     t:"Ammentaa eurooppalaisesta romantiikasta. Tove Janssonin puiston puoleinen julkisivu päättyy suippokattoiseen erkkeritorniin, joka muistuttaa eteläsaksalaista linnaromantiikkaa.",src:FA("aeolus-house")},
+    {n:"Olofsborg",a:"Katajanokankatu 1",ar:"Gesellius–Lindgren–Saarinen",y:"1902",st:"nr",lat:60.16729,lon:24.96575,w:34,d:26,h:21,c:"#b6b9a0",tw:26,ts:"round",tt:"spire",
+     t:"Nimi viittaa Olavinlinnaan; linnasta muistuttaa lähinnä pyöreä torni. Kulmaikkunat avaavat näkymiä, ja talosta tuli esikuva myöhemmille asuinkerrostaloille.",src:FA("olofsborg")},
+    {n:"Luotsikadun jugendkorttelit",a:"Luotsikatu, Katajanokka",ar:"Useita arkkitehteja",y:"1901–1910",st:"al",lat:60.1692,lon:24.9668,area:[[-60,-40],[-28,-18],[4,4],[36,26],[68,48],[24,-46],[56,-24]],h:20,pal:["#e7c9a9","#c9d6b6","#e3d39b","#c2c9cf","#e8b9a4","#d9c7e0","#f0e2c4"],
+     t:"Katajanokan jugendkorttelit muodostavat Suomen laajimman yhtenäisen jugend-asuinalueen. Pastelliset julkisivut, tornit, erkkerit ja kiviveistokset.",src:"https://www.helsinginkaupunginmuseo.fi/"},
+    {n:"Pohjola-talo",a:"Aleksanterinkatu 44",ar:"Gesellius–Lindgren–Saarinen",y:"1901",st:"nr",lat:60.16877,lon:24.94595,w:30,d:34,h:23,c:"#6f6b64",base:"#57544f",tw:31,ts:"square",tt:"pyramid",tc:"#6f6b64",
+     t:"Kilpailu (1899) vaati katujulkisivuun suomalaista kiveä. Norjalaiset kivenveistäjät veistivät vuolukiveen karhut, oravat, peikot ja muut pohjoisen mytologian hahmot. Tekniikka oli edistyksellistä: rautarunko, oma sähkökeskus ja hissi.",src:FA("pohjola-insurance-company")},
+    {n:"Suomen Kansallisteatteri",a:"Läntinen Teatterikuja 1",ar:"Onni Tarjanne (Törnqvist)",y:"1902",st:"nr",lat:60.17242,lon:24.94356,w:48,d:60,h:22,c:"#a7a39b",rc:"#3b4245",tw:32,ts:"square",tt:"pyramid",tc:"#a7a39b",
+     t:"Graniittinen, vuolukivellä koristeltu teatteritalo on jugendin ja kansallisromantiikan maamerkki. Teatteri toimi kiertävänä seurueena kolme vuosikymmentä ennen omaa taloa.",src:FA("finnish-national-theatre")},
+    {n:"Helsingin päärautatieasema",a:"Kaivokatu 1",ar:"Eliel Saarinen",y:"1919 (kilpailu 1904)",st:"rj",lat:60.1711,lon:24.9414,w:120,d:46,h:20,c:"#a59789",base:"#8f8276",rc:"#5c8e7c",roof:"barrel",rh:9,win:"tall",tw:48,ts:"square",tt:"clock",tc:"#a59789",tx:0.38,tz:-0.5,approx:true,
+     t:"Saarinen voitti kilpailun 1904 kansallisromanttisella ehdotuksella ja muokkasi sitä kritiikin jälkeen rationaalisemmaksi. Punertavan harmaa graniitti, kuparikatot, 48-metrinen kellotorni ja Emil Wikströmin lyhdynkantajat.",src:WP("Helsingin_päärautatieasema")},
+    {n:"Kansallismuseo",a:"Mannerheimintie 34",ar:"Gesellius–Lindgren–Saarinen",y:"1916 (kilpailu 1902)",st:"nr",lat:60.17497,lon:24.93200,w:50,d:85,h:18,c:"#c6c1b4",rc:"#3e4442",tw:40,ts:"square",tt:"spire",tc:"#c6c1b4",tx:0,tz:0,rot:32,
+     t:"Rakennettiin venäläistämisen aikana vahvistamaan suomalaista kulttuuri-identiteettiä. Keskiaikaisia kirkkoja ja linnoja mukaileva kokonaisuus, jota hallitsee korkea torni. Lindgren viimeisteli suunnitelmat.",src:FA("national-museum")},
+    {n:"Uusi ylioppilastalo",a:"Mannerheimintie 5",ar:"Armas Lindgren & Wivi Lönn",y:"1910",st:"jg",lat:60.16947,lon:24.93984,w:40,d:30,h:24,c:"#b09784",tw:31,ts:"round",tt:"dome",tc:"#b09784",rot:32,
+     t:"Pyöreä kupolitorni merkitsee hotelli- ja toimistosiiven sekä osakuntasiiven liitoskohtaa. Kaksi lisäkerrosta rakennettiin 1925.",src:FA("new-student-house")},
+    {n:"Kalevan talo",a:"Mannerheimintie 7",ar:"Armas Lindgren",y:"1914",st:"rj",lat:60.17030,lon:24.93930,w:30,d:26,h:26,c:"#a39e95",rh:3,rot:32,
+     t:"Ikkunajako ja räystäs antavat toimistotalolle firenzeläisen renessanssipalatsin ilmeen. Teräsbetonipaaluperustukset olivat ensimmäiset Suomessa.",src:FA("kaleva-insurance-company")},
+    {n:"Pörssitalo",a:"Fabianinkatu 14",ar:"Lars Sonck",y:"1911",st:"rj",lat:60.16840,lon:24.94867,w:22,d:44,h:24,c:"#8f8c86",
+     t:"Holvattu sisäänkäynti johtaa lasikattoiseen pihahalliin. Sileä graniittijulkisivu ja punatiilinen sisäpiha tekevät siitä Sonckin pääteoksen.",src:FA("stock-exchange-building")},
+    {n:"Jugendsali",a:"Pohjoisesplanadi 19",ar:"Lars Sonck & Valter Jung",y:"1904",st:"jg",lat:60.16796,lon:24.95081,w:22,d:26,h:14,c:"#e0cb9a",
+     t:"Entinen pankkisali, jonka holvikatto muistuttaa ylösalaista viikinkilaivaa. Luonnonvalo tulee vain ylhäältä.",src:FA("jugend-hall")},
+    {n:"Hypoteekkiyhdistyksen talo",a:"Eteläesplanadi 16",ar:"Lars Sonck",y:"1908",st:"rj",lat:60.16702,lon:24.94687,w:28,d:26,h:24,c:"#9a978f",
+     t:"Harmaa graniittijulkisivu yhdistää jugendin ja pohjoismaisen klassismin; nykyisin ministeriön talo.",src:FA("mortgage-house")},
+    {n:"Wuorion liiketalo",a:"Unioninkatu 30",ar:"Herman Gesellius; laajennus Armas Lindgren",y:"1909",st:"rj",lat:60.16885,lon:24.95060,w:24,d:22,h:24,c:"#9c8d80",approx:true,
+     t:"Koristemaalari Salomo Wuorion liiketalo: viistetyt graniittipilarit kehystävät suuria lasipintoja, porraskäytävässä mosaiikit.",src:FA("wuorio-commercial-building")},
+    {n:"Agronomitalo",a:"Fabianinkatu 17",ar:"Gesellius–Lindgren–Saarinen",y:"1901",st:"nr",lat:60.1666,lon:24.9492,w:24,d:22,h:21,c:"#d3cab1",approx:true,
+     t:"Kokonaistaideteos, jonka yksityiskohdat kaakeliuuneja myöten on suunniteltu arkkitehtien toimesta.",src:FA("doctors-house")},
+    {n:"Uudenmaankatu 5",a:"Uudenmaankatu 5",ar:"G. A. Lindberg (Grahn–Hedman–Wasastjerna)",y:"1905",st:"jg",lat:60.16537,lon:24.94313,w:24,d:20,h:22,c:"#d9c7a5",
+     t:"Valtio osti talon 1913; vuonna 1944 jugendtornit muutettiin funktionalistisiksi.",src:FA("uudenmaankatu-5")},
+    {n:"Otavan talo",a:"Uudenmaankatu 8",ar:"Karl Lindahl & Valter Thomé",y:"1906",st:"jg",lat:60.16460,lon:24.94164,w:30,d:30,h:22,c:"#c8b89c",
+     t:"Yhä alkuperäisen rakennuttajansa omistuksessa ja käytössä; painolaajennus 1908 tehtiin betonista.",src:FA("otava-publishing-house")},
+    {n:"Sanmarkin talo",a:"Bulevardi 13",ar:"Grahn, Hedman & Wasastjerna",y:"1903",st:"jg",lat:60.16432,lon:24.93667,w:24,d:22,h:22,c:"#d7c39c",tw:29,ts:"round",tt:"spire",
+     t:"Kulmatorni antaa talolle jugendluonteen; pilastereita kannattelevat työkaluja pitelevät hahmot.",src:FA("sanmark-house")},
+    {n:"Vanha Poli (Sampo)",a:"Lönnrotinkatu 29",ar:"Karl Lindahl & Valter Thomé",y:"1903",st:"nr",lat:60.16425,lon:24.93211,w:30,d:24,h:20,c:"#8f8b84",tw:27,ts:"square",tt:"pyramid",tc:"#8f8b84",
+     t:"Nimettiin aluksi Kalevalan Sammon mukaan. Graniittinen ulkoasu kätkee holvikattoja, kivipilareita ja hirsiseiniä.",src:FA("vanha-poli-student-union-building")},
+    {n:"Hietalahden kauppahalli",a:"Lönnrotinkatu 34",ar:"Selim A. Lindqvist",y:"1904",st:"jg",lat:60.16302,lon:24.92928,w:60,d:28,h:11,c:"#9c4e3b",base:"#7f7b74",roof:"gable",rh:7,rc:"#4a4e50",win:"arch",
+     t:"Punatiilinen kauppahalli, Helsingin toiseksi vanhin. Kaupunki rakennutti sen elintarvikehygienian parantamiseksi.",src:FA("hietalahti-market-hall")},
+    {n:"Puhelinyhdistyksen talo",a:"Korkeavuorenkatu 35",ar:"Lars Sonck",y:"1905",st:"nr",lat:60.1640,lon:24.9462,w:26,d:26,h:24,c:"#7f7c76",approx:true,
+     t:"Sonckin kansallisromanttisen kivijugendin pääteoksia: rouhittua graniittia, kapeita pystyikkunoita ja linnamaisia muotoja.",src:WP("Puhelinyhdistyksen_talo")},
+    {n:"Tehtaankadun koulu",a:"Tehtaankatu 15",ar:"Albert Nyberg",y:"1908",st:"jg",lat:60.15849,lon:24.94356,w:44,d:24,h:20,c:"#dccaa6",
+     t:"Kilpailuvoiton pohjalta rakennettu koulu, jonka jugendpiirteet ovat säilyneet sekä julkisivuissa että sisätiloissa.",src:FA("tehtaankatu-school")},
+    {n:"Eiran sairaala",a:"Laivurinkatu 29",ar:"Lars Sonck",y:"1905",st:"jg",lat:60.15770,lon:24.94174,w:30,d:24,h:16,c:"#e6dcc6",rc:"#8a3b2b",tw:22,ts:"round",tt:"spire",
+     t:"Lääkärien perustama yksityissairaala; nimen sai koko Eira. Huvilamainen, kodikas ulkoasu punaisine kattoineen.",src:FA("eira-hospital")},
+    {n:"Villa Ensi",a:"Merikatu 23",ar:"Selim A. Lindqvist",y:"1910",st:"rj",lat:60.15509,lon:24.94137,w:28,d:22,h:18,c:"#ece8de",roof:"mansard",rh:6,rc:"#2f3133",
+     t:"Pelkistetty, Wienin vaikutteinen jugend; rakennusta on verrattu Josef Hoffmannin Palais Stocletiin.",src:FA("villa-ensi")},
+    {n:"Huvilakatu",a:"Huvilakatu, Ullanlinna",ar:"Tarjanne, Gesellius–Lindgren–Saarinen, Oiva Kallio, Sonck & Lindahl ym.",y:"1904–1910",st:"al",lat:60.15613,lon:24.94341,area:[[0,-70],[-22,-42],[22,-36],[-22,-8],[22,-2],[-22,28],[22,34],[0,62]],h:15,pal:["#e9b7a8","#f0d9a0","#bcd2b7","#b9c9da","#e6cfe0","#f2e4c4","#d7e3c8","#f1c7b0"],
+     t:"Värikkäiden julkisivujen rivistö on Helsingin jugendin kuvatuimpia näkymiä. Merenpuoleisessa päässä matalia huvilamaisia kerrostaloja, pohjoispäässä korkeampia.",src:FA("huvilakatu-area")},
+    {n:"Eiran huvila-alue",a:"Engelinaukio",ar:"Lindqvist, Eklund, Tarjanne, Penttilä ym.",y:"1910-luku",st:"al",lat:60.15642,lon:24.93729,area:[[-50,-30],[-10,-45],[30,-30],[-45,10],[0,0],[40,15],[-20,40],[25,45]],h:12,pal:["#efe4cf","#e7cdb5","#d5dccb","#f3e9d2","#dfd0c0"],
+     t:"Puutarhakaupunkiaatteen mukaan kaavoitettu huvila-alue; korkea kivimuuri suojasi taloja rantaradalta.",src:FA("eira-villa-district")},
+    {n:"Pohjalaisten osakuntatalo «Botta»",a:"Museokatu 10",ar:"W. G. Palmqvist & Einar Sjöström",y:"1912",st:"rj",lat:60.17417,lon:24.93138,w:28,d:26,h:20,c:"#bdb3a2",
+     t:"Symmetrinen, jykevä kuutiomuoto; punagraniittiset yksityiskohdat sitovat sen jugendiin.",src:FA("ostrobotnia-student-association-building")},
+    {n:"Karjalaisen osakunnan talo",a:"Liisankatu 17",ar:"Onni Tarjanne",y:"1911",st:"nr",lat:60.17424,lon:24.95474,w:24,d:22,h:20,c:"#8fa293",base:"#6b6863",
+     t:"Harmaata graniittia ja vihreäksi rapattuja seiniä. Vuonna 1915 talossa toimi jääkäriliikkeen värväystoimisto.",src:FA("the-karelian-house")},
+    {n:"Semigradskyn koulu",a:"Oikokatu 7",ar:"Emil Fabritius & Valter Jung",y:"1905",st:"jg",lat:60.17478,lon:24.95520,w:26,d:22,h:16,c:"#e0c77e",base:"#77736c",tw:22,ts:"square",tt:"pyramid",tc:"#e0c77e",
+     t:"Harmaa graniittipohjakerros, keltaiseksi rapatut yläkerrat ja tornimainen päätyjulkisivu.",src:FA("semigradsky-school")},
+    {n:"Paasitorni",a:"Paasivuorenkatu 5",ar:"Karl Lindahl",y:"1908",st:"nr",lat:60.17854,lon:24.94739,w:40,d:30,h:20,c:"#8c8780",tw:36,ts:"square",tt:"pyramid",tc:"#8c8780",
+     t:"Työväentalo, jonka torni ja juhlasali vaurioituivat tykistötulessa 1918. Restauroitiin Lindahlin alkuperäisiin suunnitelmiin 1996–2007.",src:FA("paasitorni-helsinki-workers-house")},
+    {n:"Kallion kirkko",a:"Itäinen Papinkatu 2",ar:"Lars Sonck",y:"1912",st:"rj",lat:60.18421,lon:24.94936,w:34,d:58,h:20,c:"#aaa69d",rc:"#55605b",tw:65,ts:"square",tt:"pyramid",tc:"#aaa69d",tx:0,tz:0.5,
+     t:"Symmetrinen, geometrinen graniittikirkko kertoo siirtymästä kohti rationalismia. Tornin seitsemän kelloa soittavat Sibeliuksen kirkolle säveltämää koraalia.",src:FA("kallio-church")},
+    {n:"Ihantola",a:"Viides linja 18",ar:"O. E. Koskinen",y:"1906",st:"jg",lat:60.18403,lon:24.95116,w:30,d:24,h:22,c:"#d9a7a0",
+     t:"Vaaleanpunainen rappaus, upotetut luonnonkivet sekä kasvi- ja geometriset aiheet.",src:FA("ihantola")},
+    {n:"Kallion kirjasto",a:"Viides linja 11",ar:"Karl Hård af Segerstad",y:"1912",st:"jg",lat:60.1829,lon:24.9505,w:28,d:24,h:17,c:"#d6c08f",tw:24,ts:"round",tt:"dome",tc:"#d6c08f",approx:true,
+     t:"Helsingin vanhimpia toimivia kirjastorakennuksia; tornimainen kulma kuuluu Kallion tunnusmerkkeihin.",src:WP("Kallion_kirjasto")},
+    {n:"Ebeneser",a:"Harjukatu 1",ar:"Wivi Lönn",y:"1908",st:"jg",lat:60.18769,lon:24.95809,w:28,d:22,h:15,c:"#e3d7bc",
+     t:"Työläisperheiden lastentarha ja Suomen ensimmäinen lastentarhanopettajien koulutuspaikka; nykyään myös Lastentarhamuseo.",src:FA("ebeneser-kindergarten")},
+    {n:"Työväenasuntomuseo",a:"Kirstinkuja 4",ar:"Albert Nyberg",y:"1909",st:"jg",lat:60.18954,lon:24.94581,w:34,d:14,h:8,c:"#c9a46b",roof:"gable",rh:5,rc:"#6b4a3a",
+     t:"Helsingin vanhimmat säilyneet kunnalliset työväen asuintalot: pieniä yhden huoneen asuntoja.",src:FA("worker-housing-museum")},
+    {n:"Puu-Vallila",a:"Keuruuntie 11 ym.",ar:"Karl Hård af Segerstad (asemakaava)",y:"1910–1913",st:"al",lat:60.19270,lon:24.95779,area:[[-60,-30],[-20,-35],[20,-30],[60,-25],[-55,10],[-15,5],[25,10],[65,15],[-40,45],[0,45],[40,50]],h:8,roof:"gable",pal:["#e0c46a","#b65a3c","#9fb68a","#e6ddc6","#c98b5a","#d9b98a"],
+     t:"Helsingin ensimmäinen suunnitelmallinen työväen asuinalue puutarhakaupunkiperiaattein; suojeltiin 1980.",src:FA("puu-vallila-wooden-house-district")},
+    {n:"Suvilahden voimalaitos",a:"Sörnäisten rantatie 22",ar:"Selim A. Lindqvist",y:"1913",st:"rj",lat:60.18727,lon:24.97046,w:50,d:30,h:22,c:"#e7e3da",rh:3,
+     t:"Varhainen teräsbetoninen teollisuusrakennus; sileät, Wienin vaikutteiset muodot ja rytmikkäät julkisivut.",src:FA("suvilahti-power-plant")},
+
+    /* ---------- FUNKTIONALISMI ---------- */
+    {n:"Lasipalatsi",a:"Mannerheimintie 22–24",ar:"Niilo Kokko, Viljo Revell & Heimo Riihimäki",y:"1936",st:"fk",lat:60.1700,lon:24.9365,w:28,d:120,h:9,c:"#f1ede2",win:"glass",tw:24,ts:"square",tt:"flat",tc:"#f1ede2",tx:0.3,tz:-0.45,rot:32,approx:true,
+     t:"Kolmen nuoren arkkitehtiopiskelijan suunnittelema, alun perin väliaikaiseksi tarkoitettu liikerakennus. Nauhaikkunat, lasipinnat ja Bio Rex -elokuvateatteri tekivät siitä funktionalismin symbolin; nykyään osa Amos Rex -museota.",src:WP("Lasipalatsi")},
+    {n:"Postitalo",a:"Mannerheimintie 11",ar:"Jussi & Toivo Paatela",y:"1938",st:"fk",lat:60.1717,lon:24.9378,w:45,d:110,h:26,c:"#a19a90",win:"band",rot:10,approx:true,
+     t:"Päärautatieaseman viereen rakennettu postin pääkonttori. Pitkä, graniittiverhoiltu massa ja tiukka ikkunarytmi edustavat 1930-luvun hallinnollista funktionalismia.",src:WP("Postitalo_(Helsinki)")},
+    {n:"Tennispalatsi",a:"Salomonkatu 15",ar:"Helge Lundström",y:"1938",st:"fk",lat:60.1688,lon:24.9325,w:45,d:130,h:14,c:"#efede6",win:"ribbon",rot:30,approx:true,
+     t:"Rakennettiin autotalliksi ja tennishalliksi; vuoden 1952 olympialaisissa koripallon kilpailupaikka. Nykyään elokuvateatteri ja museoita.",src:WP("Tennispalatsi")},
+    {n:"Olympiastadion",a:"Paavo Nurmen tie 1",ar:"Yrjö Lindegren & Toivo Jäntti",y:"1938",st:"fk",lat:60.1868,lon:24.9272,w:170,d:243,h:20,special:"stadium",c:"#f2f1ec",tw:72.7,approx:true,
+     t:"Vuoden 1940 kisoihin rakennettu stadion; olympialaiset pidettiin lopulta 1952. Valkoista, pelkistettyä funktionalismia ja 72,71 metrin torni – mitta Matti Järvisen keihäsennätyksen mukaan.",src:WP("Helsingin_olympiastadion")},
+    {n:"Uimastadion",a:"Hammarskjöldintie 3",ar:"Jorma Järvi",y:"1938",st:"fk",lat:60.1902,lon:24.9312,w:90,d:60,h:6,special:"pool",c:"#f0efea",approx:true,
+     t:"Olympialaisia varten rakennettu maauimala valkoisine katsomoineen ja hyppytorneineen – yksi Helsingin rakastetuimmista kesäpaikoista.",src:WP("Helsingin_uimastadion")},
+    {n:"Messuhalli (Kisahalli)",a:"Paavo Nurmen tie 1",ar:"Aarne Hytönen & Risto-Veikko Luukkonen",y:"1935",st:"fk",lat:60.1842,lon:24.9268,w:60,d:110,h:16,c:"#ecebe4",win:"ribbon",rot:32,approx:true,
+     t:"Messuja varten rakennettu suuri halli, vuoden 1952 olympialaisten kamppailulajien kilpailupaikka. Nykyään Töölön kisahalli.",src:WP("Kisahalli")},
+    {n:"Mikael Agricolan kirkko",a:"Tehtaankatu 23",ar:"Lars Sonck",y:"1935",st:"fk",lat:60.1591,lon:24.9386,w:30,d:50,h:18,c:"#a0503c",win:"tall",tw:90,ts:"square",tt:"spire",tc:"#a0503c",tx:0,tz:0.5,approx:true,
+     t:"Sonckin viimeinen suuri kirkko: punatiilinen, pelkistetty funkiskirkko. Tornin neulamainen huippu voitiin laskea tornin sisään sodan aikana, ettei se toimisi pommikoneiden maamerkkinä.",src:WP("Mikael_Agricolan_kirkko")}
+  ]
+};
+
+const TAP = {
+  key:"tap", title:"Tapiola & Otaniemi · modernismi 1952–2001", city:"Espoo",
+  center:[60.1775,24.8100], camDist:2600, groundColor:"#55603f",
+  styles:{
+    m5:{name:"Puutarhakaupunki 1950-l", c:"#7ee0b5", def:{c:"#ecebe4",roof:"flat",win:"band"}},
+    m6:{name:"Modernismi 1960–70-l", c:"#f1e7c7", def:{c:"#ebe9e2",roof:"flat",win:"band"}},
+    aa:{name:"Alvar Aalto", c:"#ff7a59", def:{c:"#f1efe8",roof:"flat",win:"band"}},
+    or:{name:"Orgaaninen / konstruktivismi", c:"#c08cff", def:{c:"#8a7a68",roof:"flat",win:"small"}},
+    pm:{name:"Postmoderni & nykyaika", c:"#62a8ff", def:{c:"#cdd5dc",roof:"flat",win:"glass"}}
+  },
+  land:[[24.776,60.197],[24.825,60.197],[24.828,60.1915],[24.838,60.1905],[24.843,60.1880],[24.850,60.1880],[24.850,60.1810],[24.843,60.1800],[24.837,60.1790],[24.834,60.1740],[24.836,60.1680],[24.832,60.1640],[24.820,60.1645],[24.812,60.1650],[24.8105,60.1688],[24.8085,60.1718],[24.8020,60.1718],[24.7985,60.1690],[24.7995,60.1652],[24.790,60.1640],[24.776,60.1640]],
+  lakes:[[[24.8028,60.1764],[24.8058,60.1764],[24.8066,60.1778],[24.8040,60.1786],[24.8022,60.1778]]],
+  parks:[], nobuild:[],
+  roads:[
+    [[24.776,60.1700],[24.790,60.1705],[24.800,60.1722],[24.812,60.1726],[24.823,60.1735],[24.834,60.1752],[24.850,60.1770]],
+    [[24.8235,60.1640],[24.8240,60.1735],[24.8250,60.1800],[24.8262,60.1900],[24.827,60.197]],
+    [[24.790,60.1770],[24.800,60.1760],[24.812,60.1765],[24.8235,60.1772]],
+    [[24.8050,60.1735],[24.8056,60.1800],[24.8065,60.1880]]
+  ],
+  rail:[[24.776,60.1735],[24.790,60.1740],[24.8053,60.1751],[24.820,60.1755],[24.8290,60.1763],[24.850,60.1785]],
+  forest:true, zones:[],
+  districts:[["Tapiolan keskus",60.1740,24.8020],["Itäkartano",60.1795,24.8195],["Länsikorkee",60.1782,24.7880],["Otaniemi",60.1875,24.8290],["Keilaniemi",60.1735,24.8300],["Otsolahti",60.1680,24.8045],["Suvikumpu",60.1728,24.7845],["Hagalund",60.1845,24.8110]],
+  items:[
+    {n:"Keskustorni",a:"Tapiontori",ar:"Aarne Ervi",y:"1961",st:"m6",lat:60.1754,lon:24.8056,w:20,d:20,h:46,c:"#e9e7e0",
+     t:"13-kerroksinen toimistotorni, jonka ylimmässä kerroksessa toimi pitkään näköalaravintola; Ervin keskustasuunnitelman maamerkki.",src:ESP},
+    {n:"Tapiolan ostoskeskus",a:"Tapiontori",ar:"Aarne Ervi",y:"1961",st:"m6",lat:60.1747,lon:24.8072,w:70,d:36,h:10,c:"#dedad0",win:"glass",
+     t:"Suomen ensimmäinen moderni kävelykeskusta; Ervin kilpailuvoitto 1954 brittiläisen civic centre -mallin hengessä.",src:ESP},
+    {n:"Keskusallas",a:"Tapiolan keskus",ar:"Aarne Ervi (suunnitelma)",y:"1963",st:"m6",lat:60.1774,lon:24.8043,w:6,d:6,h:1,special:"none",
+     t:"Ervin idea oli täyttää vanha sorakuoppa vesialtaalla ja ryhmittää keskeiset palvelut sen ympärille.",src:ESP},
+    {n:"Espoon kulttuurikeskus",a:"Kulttuuriaukio 2",ar:"Arto Sipinen",y:"1989",st:"pm",lat:60.1777,lon:24.8010,w:70,d:50,h:16,c:"#d9d4c8",win:"band",
+     t:"Ervin keskustasuunnitelman viimeinen osa; Tapiola-salissa on 812 paikkaa.",src:ESP},
+    {n:"Hotelli Tapiola Garden",a:"Tapiola",ar:"Aarne Ervi (alkuperäinen suunnitelma)",y:"1974",st:"m6",lat:60.1765,lon:24.8075,w:40,d:22,h:20,c:"#e6e2d8",approx:true,
+     t:"Valmistuessaan 154 huonetta; laajennus 2008.",src:ESP},
+    {n:"Tapiolan uimahalli",a:"Tapiola",ar:"Aarne Ervi",y:"1965",st:"m6",lat:60.1791,lon:24.8034,w:50,d:30,h:11,c:"#e2ddd2",win:"glass",approx:true,
+     t:"Avattiin 1965; peruskorjaus ja laajennus 2005.",src:ESP},
+    {n:"Tapiolan kirkko",a:"Kirkkopolku",ar:"Aarno Ruusuvuori",y:"1965",st:"m6",lat:60.1783,lon:24.8083,w:30,d:44,h:16,c:"#b6b3ac",win:"small",tw:28,ts:"square",tt:"flat",tc:"#b6b3ac",
+     t:"Pelkistetty betonikirkko, Ruusuvuoren askeettisen kubismin huippuja.",src:ESP},
+    {n:"Heikintori",a:"Tapionraitti",ar:"Aarne Ervi",y:"1968",st:"m6",lat:60.1750,lon:24.8032,w:60,d:30,h:9,c:"#d8d3c8",win:"glass",approx:true,
+     t:"Katettu ostoskatu Ervin keskustakokonaisuudessa.",src:ESP},
+    {n:"Mäntytorni",a:"Itäkartano",ar:"Aarne Ervi",y:"1954",st:"m5",lat:60.1768,lon:24.8168,w:16,d:16,h:28,c:"#efede6",approx:true,
+     t:"Puutarhakaupungin tunnus: 66 yksiötä männikön keskellä.",src:ESP},
+    {n:"Kino Tapiola & Lasipalatsi",a:"Itäkartano",ar:"Aarne Ervi",y:"1954–1955",st:"m5",lat:60.1776,lon:24.8148,w:34,d:20,h:9,c:"#e9e6dd",approx:true,
+     t:"Elokuvateatteri ja liiketalo, jossa toimivat posti ja pankki.",src:ESP},
+    {n:"Mäntyviita ja Sufika",a:"Itäkartano",ar:"Viljo Revell",y:"1954",st:"m5",lat:60.1786,lon:24.8165,area:[[-30,-10],[0,-15],[30,-10],[-15,25],[20,25]],h:12,pal:["#ece9df","#e3dfd3"],approx:true,
+     t:"Ensimmäiset Suomessa rakennetut talot, joissa kokeiltiin elementtitekniikkaa.",src:ESP},
+    {n:"Kontiontien rivitalot",a:"Kontiontie",ar:"Kaija & Heikki Siren",y:"1955",st:"m5",lat:60.1802,lon:24.8125,area:[[-40,0],[-15,6],[10,12],[35,18]],h:5,pal:["#9b7b5d","#a8875f"],approx:true,
+     t:"Puuverhoillut rivitalot omine sisäpihoineen.",src:ESP},
+    {n:"Menninkäisentien talot",a:"Menninkäisentie",ar:"Aulis Blomstedt",y:"1954",st:"m5",lat:60.1815,lon:24.8088,area:[[-30,-15],[0,-15],[30,-15],[-20,20],[20,20]],h:8,pal:["#a8553d","#ece8de"],approx:true,
+     t:"Kaksikerroksiset «kanalat» ja punatiiliset kerrostalot Blomstedtin mittasuhdeteorian mukaan.",src:ESP},
+    {n:"Tapiolan koulu ja lukio",a:"Opintie",ar:"Jorma Järvi",y:"1960",st:"m6",lat:60.1810,lon:24.8000,w:60,d:36,h:10,c:"#e3ded3",approx:true,
+     t:"Kuusikulmaiset luokkahuoneet; Tapiolan kuoron koti.",src:ESP},
+    {n:"Aarnivalkean koulu",a:"Aarnivalkea",ar:"Kaija & Heikki Siren",y:"1957",st:"m5",lat:60.1832,lon:24.8015,w:50,d:24,h:8,c:"#d8d1c3",approx:true,
+     t:"Ala- ja yläluokille omat siivet keskuskäytävän ympärillä.",src:ESP},
+    {n:"Taskumatit",a:"Länsikorkee",ar:"Viljo Revell",y:"1959–1961",st:"m6",lat:60.1768,lon:24.7925,area:[[-45,-10],[0,0],[45,10]],h:30,pal:["#f0eee8"],approx:true,
+     t:"Läntisen asuinalueen korkeimmalla kohdalla kohoavat tornitalot, Tapiolan symboli.",src:ESP},
+    {n:"Oravannahkatori",a:"Länsikorkee",ar:"Veijo Malmio",y:"1960–1963",st:"m6",lat:60.1755,lon:24.7905,w:40,d:30,h:9,c:"#ddd6c9",approx:true,
+     t:"Läntisen lähiökeskuksen pikkukaupunkimainen tori.",src:ESP},
+    {n:"WeeGee-talo",a:"Ahertajantie 5",ar:"Aarno Ruusuvuori",y:"1964–1967",st:"or",lat:60.1797,lon:24.7972,w:60,d:40,h:16,c:"#d9d6cf",win:"band",approx:true,
+     t:"Konstruktivismin maamerkki, alun perin Weilin & Göösin kirjapaino; pienoismalli MoMA:n kokoelmissa. Nykyään museokeskus.",src:ESP},
+    {n:"Suvikumpu",a:"Suvikummuntie",ar:"Raili & Reima Pietilä",y:"1969–1983",st:"or",lat:60.1748,lon:24.7858,area:[[-40,-20],[-10,-30],[20,-15],[40,10],[-20,20],[10,30]],h:16,pal:["#5f5a4c","#6b6656","#57524a"],approx:true,
+     t:"Talot seuraavat maaston muotoja; orgaaninen vastakohta elementtimodernismille.",src:ESP},
+    {n:"Arabikylä",a:"Hakalehto",ar:"Pentti Ahola",y:"1964",st:"m6",lat:60.1720,lon:24.7925,area:[[-30,-15],[-10,-15],[10,-15],[30,-15],[-30,10],[-10,10],[10,10],[30,10]],h:4,pal:["#f2f0ea"],approx:true,
+     t:"17 valkoseinäistä atriumtaloa.",src:ESP},
+    {n:"Länsiranta",a:"Otsolahden länsiranta",ar:"Aarne Ehojoki, Sakari Nironen",y:"1961–1965",st:"m6",lat:60.1695,lon:24.7960,area:[[-20,-40],[-25,0],[-20,40],[20,-20],[20,20]],h:30,pal:["#ecebe5"],approx:true,
+     t:"Tornitaloja, lamellitaloja ja rivitaloja Otsolahden rannalla.",src:ESP},
+    {n:"Itärannan Aalto-tornit",a:"Itäranta",ar:"Alvar Aalto",y:"1960–1967",st:"aa",lat:60.1705,lon:24.8130,area:[[-25,-50],[10,-25],[-15,5],[20,30],[-5,55]],h:30,pal:["#f3f1ea"],approx:true,
+     t:"Tapiolan ainoat Aallon asuinrakennukset: viuhkamaiset tornitalot.",src:ESP},
+    {n:"Aalto-yliopiston päärakennus",a:"Otakaari 1",ar:"Elissa & Alvar Aalto",y:"1964",st:"aa",lat:60.1856,lon:24.8277,w:120,d:60,h:16,c:"#9b4b38",base:"#9b4b38",win:"band",tw:24,ts:"square",tt:"flat",tc:"#efece4",approx:true,
+     t:"Punatiilinen kampuksen sydän; auditorion porrastettu katto muodostaa amfiteatterimaisen terassin.",src:ESP},
+    {n:"Teknillisen korkeakoulun kirjasto",a:"Otaniemi",ar:"Alvar Aalto",y:"1970",st:"aa",lat:60.1843,lon:24.8297,w:50,d:40,h:12,c:"#a3533f",win:"band",approx:true,
+     t:"Aalto suunnitteli ovenkahvoja ja valaisimia myöten.",src:ESP},
+    {n:"Dipoli",a:"Otaniemi",ar:"Reima Pietilä & Raili Paatelainen",y:"1966",st:"or",lat:60.1849,lon:24.8327,w:70,d:50,h:12,c:"#6f5d4c",rc:"#3f4a46",approx:true,
+     t:"Orgaanisen arkkitehtuurin ikoni, yli 300 ikkunaa; muistuttaa kalliosta kasvavaa muodostelmaa.",src:ESP},
+    {n:"Otaniemen kappeli",a:"Jämeräntaival",ar:"Kaija & Heikki Siren",y:"1957 / 1978",st:"m5",lat:60.1853,lon:24.8383,w:16,d:30,h:7,c:"#9a4f3b",roof:"gable",rh:6,rc:"#4e3b2e",approx:true,
+     t:"Alttariseinän sijaan lasiseinä metsään. Paloi 1976 ja rakennettiin identtisenä uudelleen.",src:ESP},
+    {n:"Otahalli",a:"Otaniemi",ar:"Alvar Aalto",y:"1952",st:"aa",lat:60.1880,lon:24.8310,w:70,d:44,h:12,c:"#a35a43",roof:"barrel",rh:8,rc:"#7c8380",approx:true,
+     t:"Valmistuessaan Suomen suurin halli.",src:ESP},
+    {n:"Otaniemen vesitorni",a:"Otaniemi",ar:"Alvar Aalto",y:"1972",st:"aa",lat:60.1890,lon:24.8215,w:20,d:20,h:52,special:"watertower",c:"#c8c4bb",approx:true,
+     t:"12-kulmainen, 52 metriä korkea torni, säiliössä 6 000 m³ vettä.",src:ESP},
+    {n:"Neste-torni «Raaden hammas»",a:"Keilaniemi",ar:"Castrén–Jauhiainen–Nuuttila",y:"1976",st:"m6",lat:60.1765,lon:24.8310,w:24,d:24,h:87,c:"#5d5953",win:"band",approx:true,
+     t:"Suomen ensimmäinen todellinen pilvenpiirtäjä, 87 metriä.",src:ESP},
+    {n:"Kone-talo",a:"Keilaniemi",ar:"Antti-Matti Siikala",y:"2001",st:"pm",lat:60.1750,lon:24.8285,w:26,d:22,h:62,c:"#8fb0cc",win:"glass",approx:true,
+     t:"18-kerroksinen lasitorni Keilalahden rannalla.",src:ESP}
+  ]
+};
+
+/* ---- valokuvat (Wikimedia Commons), laajennetut tarinat ja korjaukset ---- */
+const PHOTOS={"Keskustorni": {"src": "img/keskustorni.jpg", "by": "Drefer", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Tapiolan_Keskustorni_100716.jpg", "w": 1200, "h": 1200}, "Eiran huvila-alue": {"src": "img/eiran-huvila-alue.jpg", "by": "Joneikifi", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Eira_2021-05-23.jpg", "w": 1200, "h": 675}, "Kaupungintalo (ent. Seurahuone)": {"src": "img/kaupungintalo-ent-seurahuone.jpg", "by": "Leonhard Lenz", "lic": "CC0", "licurl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en", "page": "https://commons.wikimedia.org/wiki/File:Helsingin_kaupungintalo_2022-09-17_01.jpg", "w": 1200, "h": 801}, "Heikintori": {"src": "img/heikintori.jpg", "by": "JIP at English Wikipedia", "lic": "CC BY 2.5", "licurl": "https://creativecommons.org/licenses/by/2.5", "page": "https://commons.wikimedia.org/wiki/File:Heikintori.jpg", "w": 1200, "h": 900}, "Kalevan talo": {"src": "img/kalevan-talo.jpg", "by": "MyName (Mahlum)", "lic": "Public domain", "licurl": "", "page": "https://commons.wikimedia.org/wiki/File:Mannerheimintie_7.jpg", "w": 800, "h": 544}, "Ebeneser": {"src": "img/ebeneser.jpg", "by": "Tuula Sipilä", "lic": "CC BY 4.0", "licurl": "https://creativecommons.org/licenses/by/4.0", "page": "https://commons.wikimedia.org/wiki/File:Ebeneser-talo_2023_(202327;%2BG72497).jpg", "w": 1200, "h": 690}, "Aeolus (Eol)": {"src": "img/aeolus-eol.jpg", "by": "Óðinn", "lic": "CC BY-SA 2.5 ca", "licurl": "https://creativecommons.org/licenses/by-sa/2.5/ca/deed.en", "page": "https://commons.wikimedia.org/wiki/File:Luotsikatu_7.jpg", "w": 1200, "h": 1834}, "Hypoteekkiyhdistyksen talo": {"src": "img/hypoteekkiyhdistyksen-talo.jpg", "by": "I99pema", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Hypoteekkiyhdistys,Etel%C3%A4esplanadi_02.jpg", "w": 1200, "h": 965}, "Wuorion liiketalo": {"src": "img/wuorion-liiketalo.jpg", "by": "MyName (Mahlum)(Charpentier)", "lic": "Public domain", "licurl": "", "page": "https://commons.wikimedia.org/wiki/File:Unioninkatu_30_Helsinki.jpg", "w": 1200, "h": 1097}, "Ihantola": {"src": "img/ihantola.jpg", "by": "Pöllö", "lic": "CC BY 3.0", "licurl": "https://creativecommons.org/licenses/by/3.0", "page": "https://commons.wikimedia.org/wiki/File:Ihantola_is_a_jugend_style_building.jpg", "w": 1200, "h": 893}, "Tallbergin talo": {"src": "img/tallbergin-talo.jpg", "by": "Dalbera", "lic": "CC0", "licurl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en", "page": "https://commons.wikimedia.org/wiki/File:Luotsikatu.jpg", "w": 900, "h": 1200}, "Mäntytorni": {"src": "img/mantytorni.jpg", "by": "Mpusa", "lic": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0", "page": "https://commons.wikimedia.org/wiki/File:TapiolaMantytorniH.jpg", "w": 1200, "h": 1600}, "Villa Ensi": {"src": "img/villa-ensi.jpg", "by": "MyName (Mahlum)", "lic": "Public domain", "licurl": "", "page": "https://commons.wikimedia.org/wiki/File:Villa_Ensi_Helsinki.jpg", "w": 1200, "h": 785}, "Lapinlahden sairaala": {"src": "img/lapinlahden-sairaala.jpg", "by": "Leonhard Lenz", "lic": "CC0", "licurl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en", "page": "https://commons.wikimedia.org/wiki/File:Lapinlahden_sairaala_Helsinki_2022-09-19_01.jpg", "w": 1200, "h": 801}, "WeeGee-talo": {"src": "img/weegee-talo.jpg", "by": "Markus Säynevirta", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:WeeGee-talo.JPG", "w": 1200, "h": 674}, "Työväenasuntomuseo": {"src": "img/tyovaenasuntomuseo.jpg", "by": "Tuula Sipilä", "lic": "CC BY 4.0", "licurl": "https://creativecommons.org/licenses/by/4.0", "page": "https://commons.wikimedia.org/wiki/File:Ty%C3%B6v%C3%A4enasuntomuseo_Alppiharjussa_2022_(202247;%2BG71153).jpg", "w": 1200, "h": 653}, "Suvikumpu": {"src": "img/suvikumpu.jpg", "by": "Bengt Oberger", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Suvikumpu_Solh%C3%B6jden_01.JPG", "w": 1200, "h": 795}, "Otahalli": {"src": "img/otahalli.jpg", "by": "Markus Säynevirta", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Otahalli.JPG", "w": 1200, "h": 674}, "Vanha Poli (Sampo)": {"src": "img/vanha-poli-sampo.jpg", "by": "Constantin Grünberg", "lic": "CC BY 4.0", "licurl": "https://creativecommons.org/licenses/by/4.0", "page": "https://commons.wikimedia.org/wiki/File:L%C3%B6nnrotinkatu_29,_27_-_XLVIII-1331_-_hkm.HKMS000005-km0000m3km.jpg", "w": 1200, "h": 848}, "Puu-Vallila": {"src": "img/puu-vallila.jpg", "by": "Tuula Sipilä", "lic": "CC BY 4.0", "licurl": "https://creativecommons.org/licenses/by/4.0", "page": "https://commons.wikimedia.org/wiki/File:Puu-Vallila_2023_(202327;%2BG72582).jpg", "w": 1200, "h": 735}, "Keskusallas": {"src": "img/keskusallas.jpg", "by": "MeetMeInLasVegas", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:TapiolanKeskusallas.jpg", "w": 1200, "h": 301}, "Helsingin tuomiokirkko": {"src": "img/helsingin-tuomiokirkko.jpg", "by": "Alvesgaspar", "lic": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0", "page": "https://commons.wikimedia.org/wiki/File:Helsinki_July_2013-27a.jpg", "w": 1200, "h": 956}, "Pohjola-talo": {"src": "img/pohjola-talo.jpg", "by": "Susannaanas", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Pohjolan_talo.png", "w": 1200, "h": 1037}, "Agronomitalo": {"src": "img/agronomitalo.jpg", "by": "Htm", "lic": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0", "page": "https://commons.wikimedia.org/wiki/File:Agronomitalo_01.JPG", "w": 1200, "h": 962}, "Kone-talo": {"src": "img/kone-talo.jpg", "by": "Drefer", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Kone_Building_Espoo_230918.jpg", "w": 1200, "h": 800}, "Puhelinyhdistyksen talo": {"src": "img/puhelinyhdistyksen-talo.jpg", "by": "Daderot", "lic": "CC0", "licurl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en", "page": "https://commons.wikimedia.org/wiki/File:Korkeavuorenkatu_35,_Helsinki_-_DSC05585.JPG", "w": 1200, "h": 900}, "Suvilahden voimalaitos": {"src": "img/suvilahden-voimalaitos.jpg", "by": "Juho Nurmi", "lic": "CC BY 4.0", "licurl": "https://creativecommons.org/licenses/by/4.0", "page": "https://commons.wikimedia.org/wiki/File:Suvilahden_voimalaitosalue,_Kiinteist%C3%B6_Oy_Kaapelitalo_-_G27776_-_hkm.HKMS000005-km0000nq4m.jpg", "w": 1200, "h": 801}, "Pohjalaisten osakuntatalo «Botta»": {"src": "img/pohjalaisten-osakuntatalo-botta.jpg", "by": "Mysid", "lic": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0", "page": "https://commons.wikimedia.org/wiki/File:Ostrobotnia.jpg", "w": 1200, "h": 800}, "Valtioneuvoston linna": {"src": "img/valtioneuvoston-linna.jpg", "by": "Óðinn", "lic": "CC BY-SA 2.5 ca", "licurl": "https://creativecommons.org/licenses/by-sa/2.5/ca/deed.en", "page": "https://commons.wikimedia.org/wiki/File:Valtioneuvoston_linna.jpg", "w": 1200, "h": 556}, "Tapiolan kirkko": {"src": "img/tapiolan-kirkko.jpg", "by": "J-P Kärnä", "lic": "CC BY-SA 3.0", "licurl": "http://creativecommons.org/licenses/by-sa/3.0/", "page": "https://commons.wikimedia.org/wiki/File:Tapiolan_kirkko_talvella.jpg", "w": 731, "h": 580}, "Aalto-yliopiston päärakennus": {"src": "img/aalto-yliopiston-paarakennus.jpg", "by": "Markus Säynevirta", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Aalto_University_Undergraduate_Centre,_Otaniemi,_Espoo_(January_2017).jpg", "w": 1200, "h": 674}, "Aarnivalkean koulu": {"src": "img/aarnivalkean-koulu.jpg", "by": "J-P Kärnä", "lic": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0", "page": "https://commons.wikimedia.org/wiki/File:Aarnivalkean_koulu_Tapiolassa.jpg", "w": 1200, "h": 528}, "Tapiolan uimahalli": {"src": "img/tapiolan-uimahalli.jpg", "by": "J-P Kärnä", "lic": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0", "page": "https://commons.wikimedia.org/wiki/File:Tapiolan_uimahalli_2005.jpg", "w": 1200, "h": 617}, "Suomen Kansallisteatteri": {"src": "img/suomen-kansallisteatteri.jpg", "by": "Diego Delso", "lic": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0", "page": "https://commons.wikimedia.org/wiki/File:Teatro_Nacional_de_Finlandia,_Helsinki,_Finlandia,_2012-08-14,_DD_02.JPG", "w": 1200, "h": 898}, "Kino Tapiola & Lasipalatsi": {"src": "img/kino-tapiola-lasipalatsi.jpg", "by": "Mikkoau", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Kino_Tapiola.jpg", "w": 1200, "h": 1600}, "Kansallismuseo": {"src": "img/kansallismuseo.jpg", "by": "Ranerana", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Kansallismuseo_IMG_2284.jpg", "w": 1200, "h": 900}, "Hietalahden kauppahalli": {"src": "img/hietalahden-kauppahalli.jpg", "by": "--Jisis (talk) 13:13, 8 September 2008 (UTC)", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Hietalahdenhalli2008a.jpg", "w": 1200, "h": 749}, "Tennispalatsi": {"src": "img/tennispalatsi.jpg", "by": "Arkkipuudeli", "lic": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0", "page": "https://commons.wikimedia.org/wiki/File:Tennispalatsi_Helsinki.jpg", "w": 1200, "h": 783}, "Huvilakatu": {"src": "img/huvilakatu.jpg", "by": "Lasse Keskinen", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Huvilakatu_(Merikadulta_p%C3%A4in).jpg", "w": 1200, "h": 900}, "Lasipalatsi": {"src": "img/lasipalatsi.jpg", "by": "Mahlum", "lic": "Public domain", "licurl": "", "page": "https://commons.wikimedia.org/wiki/File:Lasipalatsi.jpg", "w": 1200, "h": 511}, "Sanmarkin talo": {"src": "img/sanmarkin-talo.jpg", "by": "Matti Similä", "lic": "CC BY 4.0", "licurl": "https://creativecommons.org/licenses/by/4.0", "page": "https://commons.wikimedia.org/wiki/File:Bulevardi_13,_Arkkitehtitoimisto_Grahn,_Hedman_%26_Wasastjernan_suunnittelema_rakennus_-_G39243_-_hkm.HKMS000005-km0000p703.jpg", "w": 1200, "h": 1012}, "Neste-torni «Raaden hammas»": {"src": "img/neste-torni-raaden-hammas.jpg", "by": "Lasse Keskinen", "lic": "CC BY 4.0", "licurl": "https://creativecommons.org/licenses/by/4.0", "page": "https://commons.wikimedia.org/wiki/File:Finago_Tower,_former_Neste_and_Fortum_headquarters_(Keilaniemi,_Espoo,_Finland)_Jun_16,_2026.jpg", "w": 1200, "h": 2133}, "Espoon kulttuurikeskus": {"src": "img/espoon-kulttuurikeskus.jpg", "by": "kallerna", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Espoo_Cultural_Centre_Tapiola.jpg", "w": 1200, "h": 756}, "Hakasalmen huvila": {"src": "img/hakasalmen-huvila.jpg", "by": "Cope Baronet", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Hakasalmen_huvila_(Helsinki,_Finland).jpg", "w": 1200, "h": 675}, "Pyhän Kolminaisuuden kirkko": {"src": "img/pyhan-kolminaisuuden-kirkko.jpg", "by": "Tomisti", "lic": "CC BY-SA 3.0", "licurl": "http://creativecommons.org/licenses/by-sa/3.0/", "page": "https://commons.wikimedia.org/wiki/File:Pyh%C3%A4n_Kolminaisuuden_kirkko,_Helsinki.jpg", "w": 1200, "h": 900}, "Kaartin kasarmi": {"src": "img/kaartin-kasarmi.jpg", "by": "Leonhard Lenz", "lic": "CC0", "licurl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en", "page": "https://commons.wikimedia.org/wiki/File:Puolustusministeri%C3%B6_Helsinki_2022-09-18_01.jpg", "w": 1200, "h": 801}, "Paasitorni": {"src": "img/paasitorni.jpg", "by": "MyName (Mahlum)", "lic": "Public domain", "licurl": "", "page": "https://commons.wikimedia.org/wiki/File:Folkets_hus_Bergh%C3%A4ll.jpg", "w": 1200, "h": 984}, "Kallion kirkko": {"src": "img/kallion-kirkko.jpg", "by": "Juuso Autiosalo", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Kallion_kirkko_papinkujan_suunnasta.jpg", "w": 1200, "h": 900}, "Helsingin yliopiston päärakennus": {"src": "img/helsingin-yliopiston-paarakennus.jpg", "by": "Marty B", "lic": "CC BY-SA 2.0", "licurl": "https://creativecommons.org/licenses/by-sa/2.0", "page": "https://commons.wikimedia.org/wiki/File:University_of_Helsinki,_Main_Building_(52890870759).jpg", "w": 1200, "h": 675}, "Eiran sairaala": {"src": "img/eiran-sairaala.jpg", "by": "Ximonic (Simo Räsänen)", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Eira_Hospital_at_Tehtaankatu_and_Laivurinkatu_in_Ullanlinna,_Helsinki,_Finland,_2021_June.jpg", "w": 1200, "h": 687}, "Otaniemen vesitorni": {"src": "img/otaniemen-vesitorni.jpg", "by": "Vilho Syvähuoko", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Otaniemen_vesitorni.jpg", "w": 1200, "h": 675}, "Helsingin päärautatieasema": {"src": "img/helsingin-paarautatieasema.jpg", "by": "Leonhard Lenz", "lic": "CC0", "licurl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en", "page": "https://commons.wikimedia.org/wiki/File:Helsingin_p%C3%A4%C3%A4rautatieasema_Helsinki_2026-01-04_02.jpg", "w": 1200, "h": 799}, "Mikael Agricolan kirkko": {"src": "img/mikael-agricolan-kirkko.jpg", "by": "Leonhard Lenz", "lic": "CC0", "licurl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en", "page": "https://commons.wikimedia.org/wiki/File:Mikael_Agricolan_kirkko_Helsinki_2022-09-18_02.jpg", "w": 1200, "h": 1798}, "Messuhalli (Kisahalli)": {"src": "img/messuhalli-kisahalli.jpg", "by": "Mikkoau", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:T%C3%B6%C3%B6l%C3%B6n_kisahalli_Mannerheimintie.jpg", "w": 1200, "h": 900}, "Uimastadion": {"src": "img/uimastadion.jpg", "by": "Kallerna", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Uimastadion_2018.jpg", "w": 1200, "h": 900}, "Otaniemen kappeli": {"src": "img/otaniemen-kappeli.jpg", "by": "Halaszo", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:OtaniemiChapel.jpg", "w": 1200, "h": 716}, "Dipoli": {"src": "img/dipoli.jpg", "by": "Ypsilon from Finland", "lic": "CC0", "licurl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en", "page": "https://commons.wikimedia.org/wiki/File:Dipoli_September_2025.jpg", "w": 1200, "h": 900}, "Postitalo": {"src": "img/postitalo.jpg", "by": "Mysid", "lic": "CC BY-SA 1.0 fi", "licurl": "https://creativecommons.org/licenses/by-sa/1.0/fi/deed.en", "page": "https://commons.wikimedia.org/wiki/File:Postitalo.jpg", "w": 1200, "h": 800}, "Kallion kirjasto": {"src": "img/kallion-kirjasto.jpg", "by": "Matti Paavonen", "lic": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0", "page": "https://commons.wikimedia.org/wiki/File:Kallion_kirjasto_2008.jpg", "w": 1200, "h": 800}, "Presidentinlinna": {"src": "img/presidentinlinna.jpg", "by": "Leonhard Lenz", "lic": "CC0", "licurl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en", "page": "https://commons.wikimedia.org/wiki/File:Presidentinlinna_Helsinki_2022-09-17_01.jpg", "w": 1200, "h": 801}, "Teknillisen korkeakoulun kirjasto": {"src": "img/teknillisen-korkeakoulun-kirjasto.jpg", "by": "Juutilai", "lic": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0", "page": "https://commons.wikimedia.org/wiki/File:Otaniemi_campus_library.jpg", "w": 1200, "h": 828}, "Jugendsali": {"src": "img/jugendsali.jpg", "by": "Juho Nurmi", "lic": "CC BY 4.0", "licurl": "https://creativecommons.org/licenses/by/4.0", "page": "https://commons.wikimedia.org/wiki/File:Jugendsali,_Pohjoisesplanadi_19,_Uschakoffin_talo_-_G27365_-_hkm.HKMS000005-km0000n6fc.jpg", "w": 1200, "h": 794}, "Uusi ylioppilastalo": {"src": "img/uusi-ylioppilastalo.jpg", "by": "Aukusti Heinonen", "lic": "CC BY 4.0", "licurl": "https://creativecommons.org/licenses/by/4.0", "page": "https://commons.wikimedia.org/wiki/File:New_Student_House_in_Kluuvi,_Helsinki,_Finland,_2021.jpg", "w": 1200, "h": 800}, "Olofsborg": {"src": "img/olofsborg.jpg", "by": "I99pema", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Olofsborg,_Helsinki.jpg", "w": 1200, "h": 989}, "Otavan talo": {"src": "img/otavan-talo.jpg", "by": "jampe", "lic": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0", "page": "https://commons.wikimedia.org/wiki/File:Kirjankustantamo_OTAVA_Uudenmaankatu_10_-_panoramio.jpg", "w": 1200, "h": 900}, "Tehtaankadun koulu": {"src": "img/tehtaankadun-koulu.jpg", "by": "Matti Similä", "lic": "CC BY 4.0", "licurl": "https://creativecommons.org/licenses/by/4.0", "page": "https://commons.wikimedia.org/wiki/File:Tehtaankadun_ala-asteen_koulu_-_G39744_-_hkm.HKMS000005-km0000p99k.jpg", "w": 1200, "h": 801}, "Semigradskyn koulu": {"src": "img/semigradskyn-koulu.jpg", "by": "Josefiina Alanen", "lic": "CC BY 4.0", "licurl": "https://creativecommons.org/licenses/by/4.0", "page": "https://commons.wikimedia.org/wiki/File:Grundskola_Norsen_Kronohagen-enheten_2021-06-08.jpg", "w": 1200, "h": 800}, "Pörssitalo": {"src": "img/porssitalo.jpg", "by": "Cope Baronet", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:P%C3%B6rssitalo_(Helsinki,_Finland).jpg", "w": 1200, "h": 2134}, "Olympiastadion": {"src": "img/olympiastadion.jpg", "by": "Joneikifi", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Olympiastadion_2_2020-08-12.jpg", "w": 1200, "h": 675}, "Tähtitorni": {"src": "img/tahtitorni.jpg", "by": "kallerna", "lic": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0", "page": "https://commons.wikimedia.org/wiki/File:Kaivopuisto.jpg", "w": 1200, "h": 800}, "Kansalliskirjasto": {"src": "img/kansalliskirjasto.jpg", "by": "library_mistress from Austria", "lic": "CC BY-SA 2.0", "licurl": "https://creativecommons.org/licenses/by-sa/2.0", "page": "https://commons.wikimedia.org/wiki/File:Helsinki_university_library,_building_(1234601868).jpg", "w": 1200, "h": 800}, "Vanha kirkko": {"src": "img/vanha-kirkko.jpg", "by": "Mikkoau", "lic": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0", "page": "https://commons.wikimedia.org/wiki/File:Vanha_kirkko_Helsinki.jpg", "w": 1200, "h": 900}, "Tapiolan koulu ja lukio": {"src": "img/tapiolan-koulu-ja-lukio.jpg", "by": "Kotivalo", "lic": "CC0", "licurl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en", "page": "https://commons.wikimedia.org/wiki/File:Tapiolan_koulu_ja_lukio_piha.jpg", "w": 1200, "h": 629}};
+const STORY={"Helsingin tuomiokirkko": "Ehrenströmin asemakaava varasi Senaatintorin pohjoispuolen kallion luterilaiselle pääkirkolle jo 1812, ja Engel teki ensimmäiset luonnokset 1818. Rakentaminen alkoi vasta 1830, ja kirkko vihittiin Nikolainkirkkona 1852, kaksitoista vuotta Engelin kuoleman jälkeen. Ernst Lohrmann lisäsi neljä kulmatornia ja apostolipatsaat, joita Engel ei ollut piirtänyt. Alun perin seinät olivat keltaiset ja kupolit sinisiä kultatähtineen. Nykyinen 'valkoinen' julkisivu on itse asiassa maalattu kolmella vaaleanharmaan sävyllä. Rakentaminen rahoitettiin keisari Nikolai I:ltä otetulla lainalla.", "Valtioneuvoston linna": "Senaatintalo oli Engelin ensimmäinen suuri työ Helsingissä, ja sen tyyli määräsi koko aukion ilmeen. Torin puoleinen siipi otettiin käyttöön 1822, muut siivet valmistuivat vaiheittain vuoteen 1853 mennessä. Senaatti toimi talossa 1822–1918, ja nykyinen nimi otettiin käyttöön marraskuussa 1918. Linnan portaikossa Eugen Schauman ampui kenraalikuvernööri Bobrikovin 1904, ja paikalla on muistolaatta. Peruskorjauksen on määrä alkaa syksyllä 2026 ja valmistua 2029.", "Helsingin yliopiston päärakennus": "Turun palo 1827 tuhosi Turun akatemian tilat, ja Nikolai I määräsi yliopiston siirrettäväksi Helsinkiin Keisarilliseksi Aleksanterin-Yliopistoksi. Engelin ensimmäiset piirustukset hylättiin liian kalliina, ja supistettu versio hyväksyttiin maaliskuussa 1828. Rakennustyöt alkoivat vappuna 1828, ja talo valmistui 1832 Senaatintalon peilikuvaksi torin länsilaidalle. J. S. Sirén laajensi rakennuksen 1930-luvulla koko korttelin kokoiseksi. Suuressa juhlasalissa vietetään yhä promootiot ja lukuvuoden avajaiset.", "Kansalliskirjasto": "Yliopiston kirjastoksi rakennettu talo oli Engelin viimeisiä suunnitelmia, ja se valmistui 1840-luvulla hänen kuolemansa jälkeen. Kadulle näkyy korinttilainen pylväsjulkisivu. Sisällä on kolme holvattua ja kupolein katettua salia, jotka ovat Suomen empiren upeimpia sisätiloja. Talo on yhä Kansalliskirjaston päärakennus.", "Kaupungintalo (ent. Seurahuone)": "Ehrenström varasi kaupungin huvielämälle seurahuoneen, jossa olisi hotelli ja teatteri. Kun Kasarmitorin tontti meni Kaartin kasarmille, paikaksi tuli Kauppatorin pohjoislaita. Hotelli Seurahuone oli 1800-luvun Helsingin seuraelämän keskus: siellä kantaesitettiin Sibeliuksen Karelia-sarja 1894, ja Lumièren veljesten elokuvanäytöksen kerrotaan olleen Suomen ensimmäinen 1896. Kaupunki osti tontin 1901 ja harkitsi purkamista, mutta talo muutettiin kaupungintaloksi 1913. Aarno Ruusuvuori uudisti sisätilat lähes kokonaan 1965–1970. Julkisivu, juhlasali ja aulan pylväikkö säilyivät.", "Presidentinlinna": "Pehr Granstedt suunnitteli talon Helsingin rikkaimman kauppiaan J. H. Heidenstrauchin kauppiastaloksi, ja se valmistui 1820. Senaatti osti sen keisarin palatsiksi 1837, kun Engelin ehdotukset uudesta palatsista eivät kelvanneet keisarille. Engel muutti talon keisarilliseksi palatsiksi 1843–1845, ja 1907 rakennettiin suuri valtiosali. Ensimmäisen maailmansodan aikana talo oli sotasairaala, ja vuoden 1918 jälkeen sitä kaavailtiin kuninkaan linnaksi. Presidentinlinnaksi se kunnostettiin 1921, ja siellä vietetään vuosittain itsenäisyyspäivän vastaanotto.", "Pyhän Kolminaisuuden kirkko": "Tuomiokirkko ja ortodoksinen kirkko piti rahoittaa samasta suolatullirahastosta, ja ortodoksisen kirkon olisi pitänyt odottaa vuoroaan. Helsingin ortodoksiset kauppiaat, etunenässä Jegor Uschakoff, maksoivat rakennuksen itse. Siksi kirkko valmistui 1826, lähes kolmekymmentä vuotta ennen tuomiokirkkoa. Kellotornin puinen yläosa korvattiin kivisellä parikymmentä vuotta myöhemmin, kun raskaammat kellot eivät olisi mahtuneet puurakenteeseen. Kirkko on Helsingin vanhin säännöllisessä käytössä oleva kirkko.", "Kaartin kasarmi": "Tarinan mukaan kasarmin paikka ratkesi päivällisen voimalla. Ehrenström oli kaavoittanut torin laidalle teatterin ja kasarmin Hietalahteen. Vuonna 1818 tarkastuskäynnillä ollut ministerivaltiosihteeri Rehbinder ei runsaan aterian jälkeen jaksanut kiivetä Hietalahteen asti ja määräsi kasarmin teatterin paikalle. Engelin päärakennus valmistui 1822, ja siihen majoittui Suomen kaarti. Helmikuun 1944 suurpommituksissa talosta jäivät jäljelle vain ulkoseinät. Aulis Blomstedt rakensi sen uudelleen 1956 puolustusministeriön käyttöön.", "Tähtitorni": "Yliopiston tähtitorni valmistui Tähtitorninvuorelle 1834. Engel suunnitteli sen yhdessä tähtitieteilijä F. W. A. Argelanderin kanssa, ja kolme pyörivää kupolia tehtiin havaintoja varten. Rakennus oli aikanaan maailman uudenaikaisimpia observatorioita, ja sen mallia käytettiin myöhemmin Pulkovan observatoriossa Pietarin lähellä. Nykyään se on yleisölle avoin tiedekeskus.", "Vanha kirkko": "Kun Ulrika Eleonoran kirkko purettiin Senaatintorin tieltä, Engel piirsi tilalle 'väliaikaisen kirkon' puusta ja ilman kelloja. Kirkko vihittiin joulukuussa 1826, ja nimi Vanha kirkko vakiintui 1860-luvulla. Alttaritaulu oli alun perin tarkoitettu tuomiokirkkoon, mutta keisari piti sitä liian lempeänä. Kirkkoa ympäröivä puisto on entinen hautausmaa, jonne haudattiin isovihan aikaisen ruton uhreja vuonna 1710. Siksi sitä kutsutaan myös ruttopuistoksi.", "Lapinlahden sairaala": "Keisari Nikolai I piti suomalaista mielisairaanhoitoa surkeana nähtyään sen 1833 ja tilasi Engeliltä ajanmukaisen sairaalan. Lapinlahteen 1841 valmistunut sairaala on Euroopan vanhimpia psykiatriseen hoitoon rakennettuja laitoksia. Ylilääkäri Christian Sibelius, säveltäjän veli, luopui pakkokeinoista 1900-luvun alussa. Sisällissodan aikana Sibeliuksen perhe asui sairaalassa muutaman kuukauden. Potilaiden hoitama puutarha on yhä paikallaan, ja sairaalatoiminta päättyi 2008.", "Hakasalmen huvila": "Ernst Lohrmann suunnitteli kesähuvilan salaneuvos Carl Johan Walleenille 1840-luvulla, kun paikka oli vielä kaupungin ulkopuolella Töölönlahden rannalla. Myöhemmin talossa asui Walleenin tytärpuoli Aurora Karamzin. Kaupunki osti huvilan häneltä 1896 mutta antoi hänen asua siinä kuolemaansa asti. Helsingin kaupunginmuseo on toiminut talossa vuodesta 1911. Empireajan huviloita on Helsingissä säilynyt vain muutama.", "Tallbergin talo": "Kauppaneuvos Julius Tallberg järjesti asuintalostaan kilpailun 1897. Nuoret Gesellius, Lindgren ja Saarinen veivät siitä sekä ensimmäisen että toisen palkinnon, ja voitto avasi kolmikon uran. Luotsikadun ja Satamakadun kulmaan valmistunut talo oli Helsingin ensimmäisiä jugendtaloja. Pitkän toimistokäytön jälkeen se on palautettu asunnoiksi.", "Aeolus (Eol)": "Selim A. Lindqvistin suunnittelema Asunto Oy Aiolos (Luotsikatu 2) valmistui 1902 Luotsikadun eteläpuolelle. Kadun toisella puolella, Luotsikatu 5:ssä, on samannimiseltä kuulostava Gesellius–Lindgren–Saarisen Eol. Aioloksen vaikutteet tulevat eurooppalaisesta romantiikasta. Tove Janssonin puiston puoleinen julkisivu päättyy suippokattoiseen erkkeritorniin, joka tuo mieleen eteläsaksalaiset linnat.", "Olofsborg": "Hjalmar von Bonsdorff osti tontin 1900 ja perusti upseerien ja juristien kanssa kiinteistöyhtiön. Gesellius–Lindgren–Saarisen pääpiirustukset valmistuivat tammikuussa 1901, ja ensimmäiset asukkaat muuttivat sisään muuttopäivänä 1.6.1902. Talo maksoi noin 450 000 markkaa. Talo avautuu valoisaan etelään ja länteen ja sulkeutuu kuin linna pohjoista ja itää vasten. Kauppiaankadun puolen pyöreä torni ja vaihtelevat ikkunat tekevät siitä Katajanokan epäsymmetrisimmän jugendtalon.", "Luotsikadun jugendkorttelit": "Luotsikatu on vain kahden korttelin mittainen, mutta sitä pidetään yhtenä Helsingin kauneimmista kaduista. Lähes jokainen talo on eri arkkitehdin suunnittelema ja valmistunut 1897–1911. Mukana ovat Tallbergin talo ja Eol (Gesellius–Lindgren–Saarinen), Aiolos (Lindqvist), Semafor ja Asuntola (Bruno Granholm), Oihonna (Albert Nyberg) sekä Luotsiola (Vilho Penttilä). Talojen asukkaina on ollut näyttelijöitä, oopperalaulajia ja senaattoreita.", "Pohjola-talo": "Vakuutusyhtiö Pohjolan kilpailu 1899 vaati katujulkisivuun suomalaista kiveä. Gesellius–Lindgren–Saarisen voittanut ehdotus toteutettiin rouhitulla vuolukivellä ja graniitilla. Norjalaiset kivenveistäjät veistivät julkisivuun karhut, oravat, peikot ja muita pohjoisen mytologian hahmoja. Talo valmistui 1901, ja sitä pidetään kansallisromantiikan ensimmäisenä läpimurtona keskustassa. Rautarunko, oma sähkökeskus, höyrylämmitys ja hissi tekivät siitä aikansa edistyneimpiä liiketaloja.", "Suomen Kansallisteatteri": "Suomalainen teatteri perustettiin 1872 Kaarlo Bergbomin johdolla, ja kieliriitojen vuoksi se aloitti Porissa. Teatterilla ei ollut omaa taloa kolmeenkymmeneen vuoteen. Onni Tarjanne voitti suunnittelukilpailun 1898, ja graniittinen, vuolukivellä koristeltu talo avattiin Rautatientorin laidalle 1902. Lavalla ovat esiintyneet muun muassa Ida Aalberg, Tauno Palo ja Ansa Ikonen. Myöhemmät laajennukset suunnittelivat Kaija ja Heikki Siren.", "Helsingin päärautatieasema": "Eliel Saarinen voitti asemakilpailun 1904 kansallisromanttisella ehdotuksella. Sigurd Frosterus ja Gustaf Strengell arvostelivat sitä ankarasti, ja Saarinen muokkasi suunnitelman selkeämmäksi ja rationaalisemmaksi. Asema valmistui graniittisena 1919. Kellotorni ja Emil Wikströmin lyhdynkantajat ovat Suomen rautateiden tunnetuin symboli. Asema on Suomen vilkkain rakennus, ja sen kautta kulkee noin 240 000 ihmistä päivässä. Itäsiivessä on toiminut hotelli vuodesta 2021.", "Kansallismuseo": "Kokoelmille etsittiin taloa vuosikymmeniä, ja paikka vaihtui Tähtitorninvuorelta Töölön Fjälldaliin. Vuoden 1901 kilpailun voitti Gesellius–Lindgren–Saarinen, ja senaatti hyväksyi suunnitelman 1905. Keskiaikaisia kirkkoja ja linnoja mukaileva museo nousi venäläistämisen vuosina kansallisen identiteetin monumentiksi. Talo valmistui 1910, ja museo avattiin 1916. Kansallismuseo on suljettuna peruskorjauksen ja laajennuksen vuoksi, ja sen on määrä avautua uudelleen keväällä 2027.", "Uusi ylioppilastalo": "Ylioppilaskunta rakennutti talon suomenkielisille osakunnille, ja sitä kutsuttiin myös Osakuntataloksi. Armas Lindgren ja Wivi Lönn voittivat vuoden 1907 kutsukilpailun, ja talo valmistui 1910. Juhlasalissa toimi elokuvateatteri Bio Civis, myöhemmin Bio-Bio. Kupolitornissa on nykyään hotellin cocktailbaari. Velkakriisin vuoksi ylioppilaskunta myi talon eläkeyhtiö Kevalle marraskuussa 2025.", "Kalevan talo": "Vakuutusyhtiö Kalevan pääkonttori valmistui 1914 Armas Lindgrenin suunnittelemana. Ruskea, raskas julkisivu, ikkunajako ja räystäs antavat sille firenzeläisen renessanssipalatsin hahmon, ja tyyliltään talo on siirtymää kohti klassismia. Jalmar Castrénin suunnittelemat teräsbetonipaaluperustukset olivat ensimmäiset laatuaan Suomessa.", "Pörssitalo": "Lars Sonck käänsi pitkän ja kapean tontin vahvuudeksi. Fabianinkadun holvattu sisäänkäynti johtaa dramaattisesti lasikattoiseen pihahalliin, joka on kaupungin hienoimpia sisäpihoja. Sileä graniittijulkisivu (1911) näyttää Sonckin siirtymän rouhitusta kansallisromantiikasta hillittyyn rationaaliseen jugendiin. Pörssi toimi talossa vuosikymmeniä.", "Jugendsali": "Talo on alun perin Pehr Granstedtin uusklassinen Uschakoffin talo 1810–20-luvuilta. Privatbanken osti sen ja tilasi muutoksen Lars Sonckilta, jonka oma toimisto oli talon kolmannessa kerroksessa. Entiselle sisäpihalle rakennettiin 1904 kolmilaivainen, holvattu pankkisali, jonka lasikatto on ehkä Suomen ensimmäinen. Koristelun ja kalusteet suunnitteli Valter Jung. Kun talo 1960-luvulla purettiin julkisivuja lukuun ottamatta, sali ja portaikko entistettiin, ja nimi Jugendsali on peräisin tuolta ajalta.", "Hypoteekkiyhdistyksen talo": "Suomen Hypoteekkiyhdistyksen toimitalo valmistui 1909. Sonck käytti siinä ensimmäistä kertaa sileäksi hiottua vaaleanharmaata graniittia rouhitun kiven sijaan. Julkisivua hallitsee neljä kahden kerroksen korkuista pyöreää pylvästä, joita hän käytti myöhemminkin. Talossa ovat toimineet Kela, Kouluhallitus ja 1977–2021 liikenneministeriö. Kahdella kerroksella korotettu talo on ollut myynnissä nimellä Pankkitalo vuodesta 2023.", "Wuorion liiketalo": "Koristemaalari Salomo Wuorio rakennutti talon maalausliikkeensä sekä tapetti- ja mattokauppansa pääkonttoriksi. Herman Geselliuksen suunnittelussa (1909) viistetyt graniittipilarit kehystävät suuria näyteikkunoita, mikä oli liiketalolle rohkea ratkaisu. Armas Lindgren laajensi talon 1913–1914. Porraskäytävän mosaiikit ovat säilyneet.", "Agronomitalo": "Ehrnroothin veljekset ostivat kulmatontin 1898. Talon nimi oli pitkään Lääkäreiden talo, koska siinä asui ja piti vastaanottoa monta lääkäriä. Suurimmat asunnot olivat 150–300 neliötä, ja pienemmissä asui keskiluokkaa ja työläisiä. Asukkaisiin kuului Bobrikovia leikannut kirurgi Richard Faltin. Agronomiliitto osti talon 1953.", "Uudenmaankatu 5": "Vakuutusyhtiö Kaleva rahoitti talon (1905) alun perin asuintaloksi, mutta valtio osti sen jo 1913, ja se on ollut siitä asti virastokäytössä. Vuonna 1944 rakennettiin toimistokerros, ja samalla jugendtornit muutettiin funktionalistisiksi. Talo on harvinainen esimerkki siitä, miten kaksi tyylikautta kohtaavat samassa julkisivussa.", "Otavan talo": "Kustantamo Otavan talo (Lindahl & Thomé, 1906) on yhä alkuperäisen rakennuttajansa omistuksessa ja käytössä. Julkisivussa on talon nimi OTAVA ja kivireliefejä. Pihan puoleinen paino- ja sidomolaajennus tehtiin 1908 betonista raskaiden koneiden vuoksi.", "Sanmarkin talo": "Bulevardin ja Fredrikinkadun kulmatorni antaa talolle sen jugendluonteen. Yhdessä Bulevardi 11:n kanssa se muodostaa portin katujen välille. Grahn, Hedman & Wasastjernan toimisto koristi julkisivun hahmoilla, jotka pitelevät työkaluja ja näyttävät kannattelevan raskaita pilastereita.", "Vanha Poli (Sampo)": "Polyteknillisen opiston opiskelijoiden talo suunniteltiin kilpailun pohjalta kansallisen innostuksen keskellä. Siksi se sai aluksi nimen Kalevalan Sammon mukaan. Lindahlin ja Thomén graniittinen ulkoasu (1903) kätkee holvikattoja, kivipilareita, hirsiseiniä ja puupylväitä. Nykyään talossa toimii hotelli.", "Hietalahden kauppahalli": "Selim A. Lindqvistin 1903 piirtämä punatiilinen halli on toiminut kauppahallina alusta asti, vaikka sen on uskottu olleen venäläisten hevoskasarmi. 1990-luvulla torin salakauppa vaikeutti hallin toimintaa, ja sen jälkeen se on ollut vuorotellen luomuhalli, antiikkihalli ja ruokahalli. Vuodesta 2015 halli on ollut ravintolakeskittymä.", "Puhelinyhdistyksen talo": "Helsingin Puhelinyhdistys tilasi suunnitelman Lars Sonckilta 1901. Talo valmistui 1905, ja puhelinkeskus aloitti ullakkokerroksessa 1907. Seinät on vuorattu karkeiksi lohkotuilla, erivärisillä graniittipaasilla samalla tekniikalla, jota Sonck käytti Tampereen tuomiokirkossa ja Kallion kirkossa. Talo on kansallisromantiikan merkkiteoksia. Alkuperäinen punainen tiilikatto vaihdettiin kuparikattoon 1960.", "Tehtaankadun koulu": "Albert Nyberg voitti koulun suunnittelukilpailun, ja koulu valmistui 1908. Rakennus on suomalaisen koulujugendin parhaita esimerkkejä. Rouhittu kivijalka, rapatut yläkerrat ja epäsymmetriset päädyt näkyvät myös sisätiloissa, jotka ovat säilyneet poikkeuksellisen hyvin.", "Eiran sairaala": "Lääkäreiden perustama yksityissairaala valmistui Sonckin suunnittelemana 1905. Se sai nimensä Tukholman Eira-sairaalasta, ja nimi on peräisin muinaispohjoismaisen lääkintätaidon jumalattaresta Eiristä. Koko Eiran kaupunginosa nimettiin myöhemmin sairaalan mukaan. Huvilamainen ulkoasu punaisine kattoineen poikkeaa tietoisesti laitosmaisuudesta.", "Villa Ensi": "Liikemies Uno Staudinger sai idean naistensairaalaan, kun hänen tyttärensä Ensi syntyi tavalliseen asuintaloon perustetussa synnytyslaitoksessa. Sairaala nimettiin tyttären mukaan, ja sen suunnitteli Selim A. Lindqvist. Pelkistetty, Wienin vaikutteinen jugend on saanut vertailuja Josef Hoffmannin Palais Stocletiin. 1930-luvulla sairaala muutettiin asuintaloksi, jossa myös Ensi asui perheineen. Nykyään talo on palvelutalo.", "Huvilakatu": "Noin 320 metrin katu kaavoitettiin 1906 ja rakennettiin vuoteen 1910 mennessä. Ainoastaan numerot 9–11 on myöhemmin korvattu uudella talolla. Värikkäitä julkisivuja pidetään yhtenä Helsingin kauneimmista katunäkymistä. Salatut elämät kuvasi yli 15 vuotta ulkokohtauksensa täällä, ja keltainen Huvilakatu 23 esitti sarjassa Pihlajakatu 23:a.", "Eiran huvila-alue": "1800-luvun lopulla Eiraan suunniteltiin teollisuutta, mistä muistuttaa Tehtaankadun nimi. Bertel Jungin, Armas Lindgrenin ja Lars Sonckin asemakaava 1907 teki siitä Helsingin ensimmäisen maastoon mukautuvan kaupunginosan ilman ruutukaavaa. Kadut kaartuvat, ja talot seisovat keskellä tontteja. Suurin osa rakennuksista on jugendtyylisiä, kolmikerroksisia ja valmistui muutamassa vuodessa. Alueella on nykyään monta suurlähetystöä.", "Pohjalaisten osakuntatalo «Botta»": "Pohjalaiset osakunnat järjestivät talostaan kilpailun 1910. Palmqvistin ja Sjöströmin toimisto vei kaikki kolme palkintoa. Symmetrinen, jykevä kuutio (1912) katsoo kohti klassismia, mutta punagraniittiset yksityiskohdat sitovat sen jugendiin. Botta on ollut opiskelijaelämän ja juhlien keskus yli sata vuotta.", "Karjalaisen osakunnan talo": "Harmaata graniittia ja vihreäksi rapattuja seiniä. Karjalainen osakunta joutui taloudellisten vaikeuksien vuoksi luopumaan talosta 1916. Vuonna 1915 talossa toimi jääkäriliikkeen värväystoimisto peitenimellä Helsingin metsätoimisto.", "Semigradskyn koulu": "Kolmikerroksinen jugendkoulu (1905), jonka tornimainen päätyjulkisivu, rouhittu graniittipohjakerros ja keltaiseksi rapatut yläkerrat hallitsevat Oikokadun kulmaa. Koulu oli alun perin suomenkielinen alakoulu, ja vuodesta 1980 siinä on toiminut Kruununhaan ruotsinkielinen ala-aste.", "Paasitorni": "Helsingin Työväenyhdistys rakennutti talon 1908. Julkisivun graniitti louhittiin rakennuspaikalta, ja kiveä riitti myös aitaan ja rantakadun päällysteeksi. Koristeissa toistuvat työkalut ja ammattikuntien symbolit. Huhtikuun 1918 taistelussa torni ja juhlasali tuhoutuivat ja rakennettiin uudelleen. Talo restauroitiin Lindahlin alkuperäisiin suunnitelmiin 1990-luvulla. Vuonna 2024 julkisivun yli 4 000 kiveä irrotettiin, puhdistettiin ja asennettiin takaisin.", "Kallion kirkko": "Kirkko rakennettiin 1908–1912 Uudenkaupungin harmaasta graniitista, ja se vihittiin syyskuussa 1912. Se seisoo mäen laella 2,5 kilometrin suoran katulinjan päässä, jonka muodostavat Kopernikuksentie, Unioninkatu ja Siltasaarenkatu. Torni on 65 metriä korkea. Seitsemän kelloa soittavat kahdesti päivässä Sibeliuksen kirkolle säveltämää koraalia. Sodan aikana tornissa oli ilmavalvontapiste, ja kaupungin maanmittaus käytti sitä peruspisteenä 1970-luvulle asti.", "Ihantola": "Työläisten asunto-osakeyhtiö rakennutti talon, ja sen suunnitteli rakennusmestari O. E. Koskinen. Julkisivussa on rakennusvuosi 1907. Talo oli ensimmäinen korkea kivitalo Karhupuiston puutalojen keskellä. Vaaleanpunainen rappaus ja luonnonkiviupotukset pehmentävät linnamaista hahmoa. Vuonna 2024 talo pääsi Lontoon Accidentally Wes Anderson -näyttelyyn satulinnamaisen ulkonäkönsä vuoksi.", "Kallion kirjasto": "Kirjasto sai alkunsa 1889 Sörnäisten kansankirjastona Alli Tryggin kansankodissa. Kaupunginarkkitehti Karl Hård af Segerstadin suunnittelema punatiilinen talo valmistui 1912, ja se on Suomen ensimmäinen kunnan varoilla rakennettu kirjasto. Kupolikattoinen lainaussali on keskellä, ja muut tilat levittäytyvät sen ympärille kuin perhosen siivet yhdysvaltalaisten kirjastojen tapaan. 1920-luvulla Paavo Nurmi asui pohjakerroksessa vahtimestarin alivuokralaisena.", "Ebeneser": "Hanna Rothman ja Elisabeth Alander perustivat Sörnäisten kansanlastentarhan 1890. Wivi Lönnin suunnittelema oma talo valmistui 1908. Lönn vältti laitosmaisuutta, ja julkisivun reliefissä lapset leikkivät ja tekevät työtä. Talossa toimi Suomen ainoa lastentarhanopettajien seminaari vuoteen 1955. Päiväkoti palasi taloon 2018, ja siellä on myös Lastentarhamuseo.", "Työväenasuntomuseo": "Kaupunki halusi parantaa työväen asumista ja rakennutti silloiselle Kristiinankadulle laadukkaita jugendpuutaloja, jotka valmistuivat 1909. Asunnot vuokrattiin ensisijaisesti suurperheisille kaupungin työmiehille. Talot merkittiin purettaviksi 1966 mutta suojeltiin 1986. Peruskorjauksen jälkeen museo avattiin elokuussa 2025 nimellä Duunarimuseo. Yhdeksässä hellahuoneessa on asukkaiden omia huonekaluja.", "Puu-Vallila": "Kaksikerroksisissa puutaloissa asunto oli tyypillisesti yksi tilava huone ja keittiö. 1920-luvulla 70 prosenttia asukkaista oli vähävaraisia työläisiä. Vuoden 1944 pommitukset tuhosivat yli parikymmentä taloa. 1960–70-luvuilla kaupunki halusi korvata alueen kerrostaloilla, mutta asukkaat löysivät talojen alkuperäiset piirustukset ja osoittivat virkamiesten väitteet vääriksi. Talot perusparannettiin 1980–1983, ja Europa Nostra antoi kunniamaininnan 1990.", "Suvilahden voimalaitos": "Kaupungin sähkölaitos rakennutti voimalaitoksen ja kaasulaitoksen Sörnäisten rantaan, ja Selim A. Lindqvistin voimalaitos valmistui 1913. Sileät, Wienin vaikutteiset muodot ja teräsbetonirunko tekevät siitä yhden aikansa vaikuttavimmista teollisuusrakennuksista. Lindqvist suunnitteli myös kaasukellot. Alue toimii nykyään kulttuuri- ja tapahtumakeskuksena.", "Lasipalatsi": "Paikalla oli Turun kasarmi, joka tuhoutui 1918. Kolme nuorta arkkitehtia, Viljo Revell, Heimo Riihimäki ja Niilo Kokko, suunnitteli väliaikaiseksi tarkoitetun liiketalon, joka valmistui 1936. Bio Rex oli avautuessaan Helsingin toiseksi suurin elokuvateatteri. Purkuaikeet lykkääntyivät vuosikymmenestä toiseen, ja kaupunkilaiset puolustivat taloa. Se suojeltiin ja peruskorjattiin mediakeskukseksi 1998, ja 2018 sen yhteyteen avattiin Amos Rex.", "Postitalo": "Posti- ja lennätinlaitoksen yhdistyttyä 1927 tarvittiin uusi pääposti. Kilpailun 1934 voittivat vastavalmistuneet Jorma Järvi ja Erik Lindroos, ja kokeneempi Kaarlo Borg otettiin mukaan. Julkisivun keltaisessa klinkkerissä on postileimakuvio. Talo valmistui 1938, ja sen katolle tehtiin 1950-luvulla Helsingin ensimmäinen helikopterikenttä, jota käytettiin olympialaisissa 1952. Posti Group palasi taloon pääkonttorikseen 2025.", "Tennispalatsi": "Arkkitehtiylioppilas Helge Lundströmin suunnittelema talo valmistui 1937 alun perin autojen huoltorakennukseksi olympialaisia varten. Kaarirakenteet ja neljä tenniskenttää lisättiin vuotta myöhemmin, ja niistä talo sai nimensä. Vuoden 1952 olympialaisissa siellä pelattiin koripalloa. Kaupunki osti talon purkaakseen sen, mutta 1990-luvun lama pelasti sen. Vuodesta 1999 talossa on ollut elokuvateatteri ja HAM.", "Olympiastadion": "Stadion-säätiö perustettiin 1927. Yrjö Lindegrenin ja Toivo Jäntin puhdaslinjainen kilpailuehdotus kulki työnimellä '1500'. Rakentaminen alkoi 1934, ja presidentti Kallio vihki stadionin 1938. Vuoden 1940 kisat peruttiin sodan vuoksi, mutta olympialaiset pidettiin 1952. 72,71 metrin torni on mitoitettu Matti Järvisen keihäsennätyksen mukaan. Stadion peruskorjattiin 2016–2020.", "Uimastadion": "Jorma Järven suunnittelema maauimala tehtiin vuoden 1940 kisoja varten. Sodan vuoksi rakentaminen venyi, ja uimala valmistui kokonaan vasta 1947. Sodan aikana tyhjiä altaita käytettiin silli- ja juuresvarastona. Lämmityslaitteet upposivat niitä kuljettaneen laivan mukana. Olympialaisissa 1952 uimala oli kisapaikka, ja kesäpäivinä siellä käy noin 5 000 uimaria.", "Messuhalli (Kisahalli)": "Suomen Messut rakennutti hallin messuja varten 1935. Siellä nähtiin Suomen ensimmäinen ammattinyrkkeilyottelu ja presidentti Svinhufvudin 75-vuotisjuhlat. Olympialaisissa 1952 hallissa kilpailtiin voimistelussa, painissa, nyrkkeilyssä ja painonnostossa. Louis Armstrong, Deep Purple ja Paul McCartney ovat esiintyneet täällä. Kun Pasilan messukeskus valmistui 1975, halli siirtyi kaupungille ja sai nimen Kisahalli.", "Mikael Agricolan kirkko": "Vuoden 1930 kilpailuun tuli paljon funktionalistisia ehdotuksia, mikä harmitti palkintolautakuntaa. Uusi kilpailu 1932 vaati perinteisiä kirkkomuotoja, mutta sen voitti silti Lars Sonckin pelkistetty funkisehdotus. Punatiilinen kirkko vihittiin 1935. Torni kohoaa 97 metriin, ja sen 30 metrin piikki laskettiin talvi- ja jatkosodassa tornin sisään, ettei kirkko toimisi pommittajien maamerkkinä.", "Keskustorni": "Rakentaminen alkoi 1958, ja torni valmistui virallisesti syyskuussa 1961. Alun perin sitä kutsuttiin Konttoritorniksi. Se on 49 metriä korkea ja 13-kerroksinen, ja julkisivu on verhottu polttomaalatulla teräksellä. 12. kerroksessa toimi ravintola Linnunrata ja kattokerroksessa näköalakahvila Kultakukko, jossa kuvattiin kohtauksia moniin 1960-luvun suomalaisiin elokuviin.", "Tapiolan ostoskeskus": "Asuntosäätiön johtaja Heikki von Hertzen halusi Tapiolaan Helsingin veroisen liikekeskuksen. Aarne Ervi voitti keskustakilpailun 1954, ja sorakuopan reunalle nousivat torni, ostoskeskus, uimahalli ja hotelli. Tapiontorin ympärille rakentui Suomen ensimmäinen moderni kävelykeskusta brittiläisen civic centre -mallin mukaan.", "Keskusallas": "Ervi käänsi vanhan sorakuopan keskusaltaaksi (1962), ja sen rannoille sijoittuivat kirkko, koulu, uimahalli, kulttuurikeskus ja hotelli. Altaasta tuli Tapiolan sydän, jonka ympärillä kaupunki peilautuu. Allasta madallettiin 2013, jotta sillä voi luistella talvisin.", "Espoon kulttuurikeskus": "Ervin vuoden 1954 keskustasuunnitelmassa tämä paikka oli varattu teatterille. Arto Sipisen kulttuurikeskus valmistui lopulta 1989 Keskustornin viereen Kulttuuriaukion ja Keskusaltaan väliin. Talossa on 800-paikkainen Tapiolasali ja 300-paikkainen Louhisali. Siellä toimivat Tapiola Sinfonietta, musiikkiopisto, kirjasto ja työväenopisto.", "Hotelli Tapiola Garden": "Ervin keskustasuunnitelman viimeisiä osia, valmistui 1974 Keskusaltaan reunalle. Valmistuessaan hotellissa oli 154 huonetta, ja vuoden 2008 laajennus toi 60 lisää.", "Tapiolan uimahalli": "Uimahalli avattiin marraskuussa 1965, ja sen suosio yllätti: kävijöitä oli 500–1000 päivässä. Peruskorjaus ja laajennus saivat Europa Nostra -palkinnon 2008, mutta pian rakenne paljastui läpimäräksi, ja halli suljettiin 2016. Museovirasto edellytti hahmon säilyttämistä. Vanha halli purettiin 2025, ja uudelleenrakennuksessa allasosaston alkuperäinen ilme säilytetään.", "Tapiolan kirkko": "Aarno Ruusuvuoren betonikirkko (1965) on kokonaishahmoltaan kuutio, jonka lisäsiiven keskellä on sisäpiha. Kaikki tilat avautuvat lasiseinin pihalle. Toisin kuin lähes kaikissa suomalaiskirkoissa, siinä ei ole tornia lainkaan. Pelkistetyt muodot ja karut materiaalit tekevät salista hiljaisen ja voimakkaan. Takapihalla on Suomen pienimpiin kuuluva uurnalehto.", "Heikintori": "Ervin ja projektiarkkitehti Pertti Sollan Heikintori avattiin lokakuussa 1968, ja se on Suomen toiseksi vanhin kauppakeskus. Liikkeiden välissä oli lasiseinät, katto maalattiin keltaiseksi, ja alakäytävää alettiin kutsua Ikuisen kesän ostokaduksi. Kellarissa avattiin 1968 Espoon ensimmäinen diskoteekki Downsound, jonka sisustivat poptaiteilijat Howard Smith ja Zoltán Popovits.", "Mäntytorni": "Ervin suunnittelema 11-kerroksinen, 31-metrinen torni valmistui keväällä 1954 ja merkitsi Itäkartanon lähiökeskusta. Betonirunko valettiin vain kymmenessä vuorokaudessa liukuvalulla, ja se oli ensimmäinen kerta, kun menetelmää käytettiin Suomessa asuinrakennukseen. Kaikki 54 asuntoa ovat yksiöitä ranskalaisine parvekkeineen. Kattokerroksessa oli alun perin näköalakahvila.", "Kino Tapiola & Lasipalatsi": "Ervin suunnittelema elokuvateatteri avattiin lokakuussa 1955 350-paikkaisena. Puutarhan suunnitteli Jussi Jännes ja värit taiteilija Eino Kauria. Asbestilöydös sulki teatterin 2008, ja ylläpitäjä meni konkurssiin. Kaupunki ja paikalliset aktiivit pelastivat teatterin, joka avautui uudelleen 2010. Se on harvoja alkuperäisessä asussaan säilyneitä vanhoja elokuvateattereita.", "Mäntyviita ja Sufika": "Viljo Revellin talot (1954) olivat ensimmäiset Suomessa, joissa kokeiltiin elementtitekniikkaa ja sen vaikutusta rakenteisiin. Lempinimeksi tuli traktoritehtaat. Kokeilu ennakoi koko 1960–70-lukujen suomalaista elementtirakentamista.", "Kontiontien rivitalot": "Kaija ja Heikki Sirenin puuverhotut rivitalot (1955) omine sisäpihoineen. Myös niissä kokeiltiin esivalmisteisia rakenteita, joissa yhdistyivät teollinen valmistus ja asuntojen intiimi mittakaava.", "Menninkäisentien talot": "Aulis Blomstedtin kaksikerroksiset kanalat ja punatiiliset kerrostalot (1954). Blomstedt kehitti mittasuhdeteoriaa, ja sen rauhallinen rytmi näkyy julkisivuissa.", "Tapiolan koulu ja lukio": "Tapiolan yhteiskoulu aloitti 1956 helsinkiläisen koulun haaraosastona ja itsenäistyi 1958. Jorma Järven suunnittelema rakennus valmistui 1961, ja sen kuusikulmaiset luokkahuoneet olivat kokeellinen ratkaisu. Musiikkipainotus on tehnyt koulusta Tapiolan kuoron kodin. Rakennus peruskorjattiin ja osin rakennettiin uudelleen 2016.", "Aarnivalkean koulu": "Kaija ja Heikki Sirenin koulua (1957) pidetään Tapiolan kokeellisen suunnittelun uranuurtajana: siinä poikettiin monin kohdin aikansa rakennusmääräyksistä. Kattoikkunat, kevyet puuelementtiseinät ja suora yhteys luokista pihalle tekivät koulusta valoisan ja luontoon avautuvan. Vieressä on alun perin opettajille tarkoitettuja rivitaloja.", "Taskumatit": "Viljo Revellin tornitalot (1959–1961) kohoavat Länsikorkeen korkeimmalla kohdalla, ja niistä tuli Tapiolan siluetin tunnus. Ne olivat ensimmäisiä valtion tukemia omistusasuntoja.", "Oravannahkatori": "Veijo Malmion läntinen lähiökeskus (1960–1963) on pikkukaupunkimainen tori, jonka ympärillä ovat liikkeet ja asunnot. Suunniteltu vesiallas jäi rakentamatta.", "WeeGee-talo": "Weilin+Göösin painotalon (1964, toinen vaihe 1967) suunnitteli Aarno Ruusuvuori, ja laajennuksen (1974) Bertel Ekengren. Toistuvat sienipilarit tekevät rakennuksesta konstruktivismin maamerkin, ja sen pienoismalli on New Yorkin MoMA:n kokoelmissa. Vuodesta 2006 talo on ollut Suomen suurin näyttelykeskus: siellä ovat EMMA, Espoon kaupunginmuseo ja pysyvä Mauri Kunnas -näyttely. Pihalla on ensimmäinen sarjavalmisteinen Futuro-talo.", "Suvikumpu": "Raili ja Reima Pietilä voittivat arkkitehtikilpailun 1962. Mäkiseen metsään rakennettiin ensimmäisessä vaiheessa (1964–1969) asunnot 300 hengelle, ja toinen vaihe valmistui 1981–1982. Betonielementtien vaakasuorat kuviot viittaavat hirsirakentamiseen. Tummanvihreät sävyt sulauttavat talot ympäröivään metsään.", "Arabikylä": "Pentti Aholan 17 valkoseinäistä atriumtaloa (1964) ovat matala ja tiivis vastapaino Tapiolan torneille. Jokaisella talolla on oma, suojaisa sisäpiha.", "Länsiranta": "Otsolahden länsirannan tornitalot (Aarne Ehojoki), lamellitalot ja rivitalot (Sakari Nironen) rakennettiin 1961–1965. Ne muodostavat lahden yli näkyvän julkisivun Tapiolan suuntaan.", "Itärannan Aalto-tornit": "Tapiolan ainoat Alvar Aallon suunnittelemat asuinrakennukset: viuhkamaiset tornitalot Otsolahden itärannalla (1960-luku). Viuhkamuodon ansiosta mahdollisimman moni asunto avautuu merelle ja iltapäivän valoon.", "Aalto-yliopiston päärakennus": "Elissa ja Alvar Aalto suunnittelivat Otaniemen kampuksen sydämen entisen Otnäsin kartanon mäelle, ja päärakennus valmistui 1964. Pääauditorion porrastettu katto muodostaa ulkona amfiteatterin, josta tuli koko kampuksen tunnus.", "Teknillisen korkeakoulun kirjasto": "Alvar Aallon kirjasto (1970) täydensi kampuksen keskustan. Aalto suunnitteli kaiken ovenkahvoista ja valaisimista lukusalien kattoikkunoihin. Nykyään talossa toimii Harald Herlin -oppimiskeskus.", "Dipoli": "Reima Pietilä ja Raili Paatelainen voittivat kilpailun 1961, ja teekkarien ylioppilaskuntatalo valmistui 1966. Rakennus kiemurtelee kallion ja männikön mukana, ja siinä on yli 300 ikkunaa. Kiveä, kuparia ja puuta yhdistävä Dipoli on suomalaisen orgaanisen arkkitehtuurin ikoni. Nykyään talossa on Aalto-yliopiston hallinto.", "Otaniemen kappeli": "Vuoden 1953 kilpailun voittivat Erkki Pasanen ja Kauko Tiihonen, mutta rakennettavaksi valittiin lunastettu Kaija ja Heikki Sirenin ehdotus, ja kappeli valmistui 1957. Puulla aidatulta esipihalta kuljetaan matalan tiilisen eteisen läpi saliin, jonka alttarina on lasiseinä metsään. Kappeli paloi tuhopoltossa 1976 ja rakennettiin lähes ennalleen 1978. Kappeli suljettiin 2025 peruskorjausta varten.", "Otahalli": "Alvar Aallon urheiluhalli rakennettiin 1952 olympialaisten valmisteluna, ja se oli aikanaan Suomen suurin urheiluhalli. Hallissa on 158 metrin juoksurata, ja siellä harrastetaan palloilulajeja ja yleisurheilua.", "Otaniemen vesitorni": "Alvar Aallon vesitorni valmistui 1971 aivan Kehä I:n viereen. Luonnonvärinen betonitorni seisoo kahdentoista jalan varassa, ja sen säiliö on kaksitoistakulmainen ja vetää 6 000 kuutiota. Säiliön verhoavat irrotettavat betonilankut. Torni on 52 metriä korkea, ja sen alla on toimistorakennus.", "Neste-torni «Raaden hammas»": "Neste Oy:n pääkonttori valmistui 1976 Keilalahden rannalle. Lempinimi Raaden hammas tuli pääjohtaja Uolevi Raadelta, joka valvoi suunnittelua sisustusta myöten. Hän halusi ylimmästä kerroksesta näköalan Porvoon ja Naantalin jalostamoille, vaikka Naantaliin asti ei näe. 83,6-metrinen torni oli Suomen korkein toimistotalo vuoteen 2025. Julkisivu on Sipoon valkoista kalkkikiveä, ja ikkunat ovat sinisävyiset.", "Kone-talo": "Antti-Matti Siikalan suunnittelema 18-kerroksinen lasitorni (2001) Keilalahden rannalla on KONEen pääkonttori. Se edustaa Keilaniemen yritystornien sukupolvea, joka jatkoi Neste-tornin aloittamaa Espoon rantasiluettia."};
+const FIXES={"Kaupungintalo (ent. Seurahuone)": {"y": "1833"}, "Pyhän Kolminaisuuden kirkko": {"y": "1826 (vihitty 1827)"}, "Hakasalmen huvila": {"y": "1843–1847", "c": "#dc9a7c"}, "Tallbergin talo": {"y": "1897"}, "Aeolus (Eol)": {"n2": "Aiolos (Luotsikatu 2)", "y": "1902"}, "Villa Ensi": {"y": "1910–1912"}, "Tennispalatsi": {"y": "1937–1938"}, "Hypoteekkiyhdistyksen talo": {"y": "1909"}, "Postitalo": {"ar": "Kaarlo Borg, Jorma Järvi & Erik Lindroos", "c": "#d9bf7e"}, "Kallion kirjasto": {"c": "#a4553f"}, "Mäntytorni": {"h": 31}, "Otaniemen vesitorni": {"y": "1971"}, "Neste-torni «Raaden hammas»": {"c": "#e2dfd6", "h": 84}, "Otaniemen kappeli": {"y": "1957 (uudelleen 1978)"}, "Uimastadion": {"y": "1938–1947"}, "Kalevan talo": {"c": "#8a5a44"}, "Hietalahden kauppahalli": {"y": "1903–1904"}, "Keskustorni": {"h": 49}, "Mikael Agricolan kirkko": {"tw": 97}};
+[HKI,TAP].forEach(D=>D.items.forEach(it=>{ const k=it.n; const f=FIXES[k]; if(f){ Object.entries(f).forEach(([a,b])=>{ if(a!=='n2') it[a]=b; }); }
+  if(STORY[k]) it.t=STORY[k]; if(PHOTOS[k]) it.photo=PHOTOS[k]; if(f&&f.n2){ it.n=f.n2; } }));
+
+/* ============================== HELPERS ============================== */
+const isMobile = innerWidth < 700;
+const rnd = (()=>{let s=12345;return ()=>{s=(s*16807)%2147483647;return (s-1)/2147483646;};})();
+function resolve(D,it){ return Object.assign({floors:0}, D.styles[it.st].def, it); }
+function shade(hex,f){const c=new THREE.Color(hex); if(f<1) c.multiplyScalar(f); else c.lerp(new THREE.Color(1,1,1),f-1); return '#'+c.getHexString();}
+function pip(pt,poly){let x=pt.x,y=pt.y,ins=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const xi=poly[i].x,yi=poly[i].y,xj=poly[j].x,yj=poly[j].y; if(((yi>y)!=(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi)) ins=!ins;} return ins;}
+function segDist(p,a,b){const dx=b.x-a.x,dy=b.y-a.y,l=dx*dx+dy*dy;let t=l?((p.x-a.x)*dx+(p.y-a.y)*dy)/l:0;t=Math.max(0,Math.min(1,t));return Math.hypot(p.x-(a.x+t*dx),p.y-(a.y+t*dy));}
+function lineDist(p,pl){let m=1e9;for(let i=1;i<pl.length;i++)m=Math.min(m,segDist(p,pl[i-1],pl[i]));return m;}
+
+/* ---------- procedural textures ---------- */
+function canvasTex(w,h,draw,repeat){
+  const cv=document.createElement('canvas');cv.width=w;cv.height=h;const x=cv.getContext('2d');draw(x,w,h);
+  const t=new THREE.CanvasTexture(cv);t.encoding=THREE.sRGBEncoding;t.anisotropy=4;
+  if(repeat){t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(repeat,repeat);}
+  return t;
+}
+function noise(x,w,h,amt,count){for(let i=0;i<count;i++){x.fillStyle=`rgba(${rnd()<.5?0:255},${rnd()<.5?0:255},${rnd()<.5?0:255},${amt*rnd()})`;x.fillRect(rnd()*w,rnd()*h,1+rnd()*2,1+rnd()*2);}}
+
+function facadeCanvas(lenM,hM,S,wallHex){
+  const ppm=Math.min(7, 1400/Math.max(lenM,hM)); const W=Math.max(32,Math.round(lenM*ppm)), H=Math.max(32,Math.round(hM*ppm));
+  return canvasTex(W,H,(x)=>{
+    x.fillStyle=wallHex; x.fillRect(0,0,W,H);
+    // material grain
+    if(S.st==='nr'||(S.win==='small')){ // rough granite blocks
+      for(let y=0;y<H;y+=ppm*0.7){for(let xx=(y/ppm|0)%2?0:-ppm*0.6;xx<W;xx+=ppm*1.3){x.fillStyle=shade(wallHex,0.86+rnd()*0.26);x.fillRect(xx+1,y+1,ppm*1.3-2,ppm*0.7-2);}}
+    } else if(/9c4e3b|a0503c|9b4b38|a3533f|a35a43|9a4f3b|a8553d/.test(wallHex)){ // brick
+      for(let y=0;y<H;y+=ppm*0.25){x.fillStyle='rgba(255,255,255,.08)';x.fillRect(0,y,W,1);}
+      noise(x,W,H,.12,W*H/40);
+    } else noise(x,W,H,.06,W*H/30);
+    // base plinth
+    const fh=3.6*ppm; const floors=Math.max(1,Math.round(hM/3.6));
+    if(S.base){x.fillStyle=S.base;x.fillRect(0,H-fh*1.05,W,fh*1.05);x.fillStyle='rgba(0,0,0,.15)';for(let i=0;i<W;i+=ppm*1.2)x.fillRect(i,H-fh*1.05,1,fh*1.05);}
+    // windows
+    const bay=(S.win==='band'?2.4:S.win==='glass'?3:S.win==='small'?3.4:4.2)*ppm; const cols=Math.max(1,Math.floor(W/bay));
+    const off=(W-cols*bay)/2;
+    const glass=x.createLinearGradient(0,0,0,fh); glass.addColorStop(0,'#5d7489'); glass.addColorStop(1,'#1d2832');
+    for(let f=0;f<floors;f++){
+      const y0=H-(f+1)*fh;
+      if(S.win==='ribbon'){ x.fillStyle='#24323d'; x.fillRect(ppm*1.2,y0+fh*0.32,W-ppm*2.4,fh*0.42); x.fillStyle='rgba(180,205,225,.25)'; x.fillRect(ppm*1.2,y0+fh*0.32,W-ppm*2.4,fh*0.12); x.fillStyle=S.trim||'#fff'; for(let i=0;i<W;i+=ppm*1.6)x.fillRect(i,y0+fh*0.32,1,fh*0.42); continue; }
+      if(S.win==='glass'){ x.fillStyle='#2b3d4c'; x.fillRect(0,y0+fh*0.08,W,fh*0.84); x.fillStyle='rgba(190,215,235,.22)'; x.fillRect(0,y0+fh*0.08,W,fh*0.25); x.fillStyle='rgba(255,255,255,.55)'; for(let i=0;i<W;i+=ppm*1.5)x.fillRect(i,y0,1.2,fh); x.fillRect(0,y0,W,1.5); continue; }
+      if(S.base && f===0) continue;
+      for(let c=0;c<cols;c++){
+        const cx=off+c*bay+bay/2; let ww=bay*(S.win==='band'?0.7:S.win==='small'?0.34:S.win==='tall'?0.34:0.42), wh=fh*(S.win==='tall'?0.66:S.win==='small'?0.46:0.55);
+        const wx=cx-ww/2, wy=y0+fh*0.22;
+        x.fillStyle=S.trim? shade(S.trim,1): '#ddd'; x.fillRect(wx-1.5,wy-1.5,ww+3,wh+3);
+        x.fillStyle='#22303a';
+        if(S.win==='arch' && f===floors-1-0 && floors>1){x.beginPath();x.moveTo(wx,wy+wh);x.lineTo(wx,wy+ww/2);x.arc(cx,wy+ww/2,ww/2,Math.PI,0);x.lineTo(wx+ww,wy+wh);x.fill();}
+        else x.fillRect(wx,wy,ww,wh);
+        x.fillStyle='rgba(170,195,215,.28)'; x.fillRect(wx,wy,ww,wh*0.3);
+        x.fillStyle='rgba(255,255,255,.35)'; x.fillRect(cx-0.5,wy,1,wh);
+      }
+      if(S.st==='em'||S.st==='jg'){x.fillStyle='rgba(255,255,255,.18)';x.fillRect(0,y0,W,1.5);}
+    }
+    // cornice
+    x.fillStyle=S.trim||shade(wallHex,0.8); x.fillRect(0,0,W,Math.max(2,ppm*0.6));
+    x.fillStyle='rgba(0,0,0,.18)'; x.fillRect(0,Math.max(2,ppm*0.6),W,2);
+    // vertical AO
+    const ao=x.createLinearGradient(0,0,0,H); ao.addColorStop(0,'rgba(0,0,0,0)'); ao.addColorStop(1,'rgba(0,0,0,.18)'); x.fillStyle=ao; x.fillRect(0,0,W,H);
+  });
+}
+
+/* ---------- roof geometry ---------- */
+function roofGeo(w,d,rh,ridgeHalf){ // ridge along longer axis
+  const hw=w/2,hd=d/2; let v;
+  if(w>=d){const r=Math.min(ridgeHalf,hw); v=[[-hw,0,-hd],[hw,0,-hd],[hw,0,hd],[-hw,0,hd],[-r,rh,0],[r,rh,0]];}
+  else {const r=Math.min(ridgeHalf,hd); v=[[-hw,0,hd],[-hw,0,-hd],[hw,0,-hd],[hw,0,hd],[0,rh,r],[0,rh,-r]];}
+  const f=[[0,4,5],[0,5,1],[2,5,4],[2,4,3],[3,4,0],[1,5,2]];
+  const pos=[]; f.forEach(t=>t.forEach(i=>pos.push(...v[i])));
+  const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3)); g.computeVertexNormals(); return g;
+}
+const MAT={};
+function stdMat(hex,o={}){const k=hex+JSON.stringify(o); if(!MAT[k]) MAT[k]=new THREE.MeshStandardMaterial(Object.assign({color:new THREE.Color(hex).convertSRGBToLinear(),roughness:.85,metalness:0},o)); return MAT[k];}
+function addRoof(g,S,w,d,h,rc){
+  const roof=S.roof||'hip', rh=S.rh||0; let m;
+  const mat=stdMat(rc||'#555',{roughness:.6,metalness:/5c8e7c|5f9a80|55605b/.test(rc)?.35:.15,side:THREE.DoubleSide});
+  if(roof==='flat'||rh<=0){ m=new THREE.Mesh(new THREE.BoxGeometry(w,0.9,d),stdMat(shade(S.c||'#ddd',0.85))); m.position.y=h+0.45; }
+  else if(roof==='hip'){ m=new THREE.Mesh(roofGeo(w+0.8,d+0.8,rh,Math.abs(w-d)/2),mat); m.position.y=h; }
+  else if(roof==='gable'){ m=new THREE.Mesh(roofGeo(w+0.8,d+0.8,rh,1e4),mat); m.position.y=h; }
+  else if(roof==='mansard'){ const lo=new THREE.Mesh(new THREE.BoxGeometry(w-1,rh*0.6,d-1),mat); lo.position.y=h+rh*0.3; lo.castShadow=true; g.add(lo); m=new THREE.Mesh(roofGeo(w-1,d-1,rh*0.4,Math.abs(w-d)/2),mat); m.position.y=h+rh*0.6; }
+  else if(roof==='barrel'){ const L=Math.max(w,d)+0.8,R=Math.min(w,d)/2+0.4; const cg=new THREE.CylinderGeometry(R,R,L,28,1,true,0,Math.PI); cg.rotateZ(Math.PI/2); cg.scale(1,rh/R,1); if(d>w) cg.rotateY(Math.PI/2); m=new THREE.Mesh(cg,mat); m.position.y=h; }
+  m.castShadow=true; m.receiveShadow=true; g.add(m);
+}
+function addTower(g,S,w,d,base){
+  const th=S.tw, sq=S.ts==='square'; const r=Math.max(3.2,Math.min(w,d)*(sq?0.16:0.15));
+  const tx=(S.tx!==undefined?S.tx:0.36)*w, tz=(S.tz!==undefined?S.tz:-0.36)*d;
+  const col=S.tc||S.c;
+  const body=sq?new THREE.BoxGeometry(r*2,th,r*2):new THREE.CylinderGeometry(r,r,th,20);
+  body.translate(0,th/2,0);
+  const tex=facadeCanvas(r*6.28,th,Object.assign({},S,{base:null,win:S.win==='ribbon'?'tall':S.win}),col);
+  const m=new THREE.Mesh(body,new THREE.MeshStandardMaterial({map:tex,roughness:.85})); m.position.set(tx,0,tz); m.castShadow=m.receiveShadow=true; g.add(m);
+  const rc=S.tt==='dome'||S.tt==='onion'?'#5f8f7d':(S.rc||'#3e4442');
+  const rm=stdMat(rc,{roughness:.55,metalness:.3});
+  let top;
+  if(S.tt==='spire') top=new THREE.Mesh(sq?new THREE.ConeGeometry(r*1.5,th*0.45,4):new THREE.ConeGeometry(r*1.18,th*0.42,20),rm), top.position.set(tx,th+th*(sq?0.225:0.21),tz), sq&&(top.rotation.y=Math.PI/4);
+  else if(S.tt==='pyramid') top=new THREE.Mesh(new THREE.ConeGeometry(r*1.5,th*0.2,4),rm), top.position.set(tx,th+th*0.1,tz), top.rotation.y=Math.PI/4;
+  else if(S.tt==='dome') top=new THREE.Mesh(new THREE.SphereGeometry(r*1.05,20,12,0,Math.PI*2,0,Math.PI/2),rm), top.position.set(tx,th,tz);
+  else if(S.tt==='clock'){ top=new THREE.Mesh(new THREE.ConeGeometry(r*1.3,th*0.16,4),rm); top.position.set(tx,th+th*0.08,tz); top.rotation.y=Math.PI/4;
+    const clk=new THREE.Mesh(new THREE.CircleGeometry(r*0.55,24),stdMat('#f1ede0',{roughness:.4})); clk.position.set(tx,th*0.88,tz+r+0.05); g.add(clk);
+    const c2=clk.clone(); c2.position.set(tx+r+0.05,th*0.88,tz); c2.rotation.y=Math.PI/2; g.add(c2); }
+  else top=new THREE.Mesh(new THREE.BoxGeometry(r*2.2,0.8,r*2.2),stdMat(shade(col,0.85))), top.position.set(tx,th+0.4,tz);
+  top.castShadow=true; g.add(top);
+}
+function addPortico(g,S,w,d,h){
+  const P=S.por, side=P.side, n=P.n; const along=(side==='w'||side==='e')?d:w; const span=Math.min(along*0.55, n*5.2);
+  const colH=h*0.82, out=4.5, trim=stdMat(S.trim||'#f6f3ea',{roughness:.6});
+  const grp=new THREE.Group();
+  for(let i=0;i<n;i++){ const c=new THREE.Mesh(new THREE.CylinderGeometry(0.7,0.8,colH,12),trim); c.position.set(-span/2+span*(i/(n-1||1)),colH/2+0.8,0); c.castShadow=true; grp.add(c);}
+  const stair=new THREE.Mesh(new THREE.BoxGeometry(span+4,0.8,out*1.6),stdMat('#bdb8ad')); stair.position.y=0.4; stair.receiveShadow=true; grp.add(stair);
+  const ent=new THREE.Mesh(new THREE.BoxGeometry(span+2,1.4,out+1),trim); ent.position.set(0,colH+1.5,-0.5); ent.castShadow=true; grp.add(ent);
+  const ped=new THREE.Shape(); ped.moveTo(-span/2-1,0); ped.lineTo(span/2+1,0); ped.lineTo(0,span*0.16); ped.lineTo(-span/2-1,0);
+  const pg=new THREE.ExtrudeGeometry(ped,{depth:out+1,bevelEnabled:false}); pg.translate(0,0,-(out+1)/2-0.5);
+  const pm=new THREE.Mesh(pg,trim); pm.position.y=colH+2.2; pm.castShadow=true; grp.add(pm);
+  const off=((side==='w'||side==='e')?w:d)/2+out/2;
+  if(side==='s'){grp.position.z=off;} if(side==='n'){grp.position.z=-off;grp.rotation.y=Math.PI;}
+  if(side==='e'){grp.position.x=off;grp.rotation.y=Math.PI/2;} if(side==='w'){grp.position.x=-off;grp.rotation.y=-Math.PI/2;}
+  g.add(grp);
+}
+function boxBody(g,S,w,d,h,wall,dx=0,dz=0){
+  const tw=facadeCanvas(w,h,S,wall), td=facadeCanvas(d,h,S,wall);
+  const mw=new THREE.MeshStandardMaterial({map:tw,roughness:.88}), md=new THREE.MeshStandardMaterial({map:td,roughness:.88});
+  const top=stdMat(shade(wall,0.7));
+  const geo=new THREE.BoxGeometry(w,h,d); geo.translate(0,h/2,0);
+  const m=new THREE.Mesh(geo,[md,md,top,top,mw,mw]); m.position.set(dx,0,dz); m.castShadow=m.receiveShadow=true; g.add(m); return m;
+}
+
+/* ---------- specials ---------- */
+function special(g,S){
+  const white=stdMat(S.c,{roughness:.7}), green=stdMat(S.rc||'#5f9a80',{roughness:.45,metalness:.35});
+  if(S.special==='cathedral'){
+    const pl=new THREE.Mesh(new THREE.BoxGeometry(70,7,70),stdMat('#bdb8ad')); pl.position.y=3.5; pl.castShadow=pl.receiveShadow=true; g.add(pl);
+    const st=new THREE.Mesh(new THREE.BoxGeometry(40,7,30),stdMat('#c9c4b9')); st.position.set(0,1.8,48); st.scale.y=.5; g.add(st);
+    const SS=Object.assign({},S,{win:'arch',base:null,trim:'#ffffff'});
+    [[52,22],[22,52]].forEach(([a,b])=>{ const gg=new THREE.Group(); gg.position.y=7; boxBody(gg,SS,a,b,20,S.c); const r=new THREE.Mesh(roofGeo(a+1,b+1,6,1e4),green); r.position.y=20; r.castShadow=true; gg.add(r); g.add(gg);});
+    [['s',0,26],['n',0,-26],['e',26,0],['w',-26,0]].forEach(([s])=>{ const gg=new THREE.Group(); gg.position.y=7; addPortico(gg,{por:{side:s,n:6},trim:'#ffffff'},22,22,20); gg.children.forEach(c=>{ if(s==='s'||s==='n') c.position.z*=1+(52-22)/22*0.5+0.6; else c.position.x*=1+(52-22)/22*0.5+0.6;}); g.add(gg);});
+    const drum=new THREE.Mesh(new THREE.CylinderGeometry(10.5,10.5,14,32),white); drum.position.y=27+7+7; drum.castShadow=true; g.add(drum);
+    const dome=new THREE.Mesh(new THREE.SphereGeometry(11.2,32,16,0,Math.PI*2,0,Math.PI/2),green); dome.position.y=48; dome.scale.y=1.15; dome.castShadow=true; g.add(dome);
+    const lan=new THREE.Mesh(new THREE.CylinderGeometry(2.2,2.2,5,12),white); lan.position.y=63; g.add(lan);
+    const ld=new THREE.Mesh(new THREE.SphereGeometry(2.6,16,8,0,Math.PI*2,0,Math.PI/2),green); ld.position.y=65.5; g.add(ld);
+    [[-15,-15],[15,-15],[15,15],[-15,15]].forEach(([x,z])=>{ const c=new THREE.Mesh(new THREE.CylinderGeometry(3.6,3.6,29,16),white); c.position.set(x,7+14.5,z); c.castShadow=true; g.add(c); const dd=new THREE.Mesh(new THREE.SphereGeometry(4,16,8,0,Math.PI*2,0,Math.PI/2),green); dd.position.set(x,7+29,z); dd.scale.y=1.2; g.add(dd); });
+    return 68;
+  }
+  if(S.special==='observatory'){ boxBody(g,Object.assign({},S,{win:'rect'}),42,18,10,S.c); addRoof(g,Object.assign({},S,{roof:'hip',rh:2.5}),42,18,10,'#8c9597');
+    [-16,0,16].forEach((x,i)=>{const dm=new THREE.Mesh(new THREE.SphereGeometry(i===1?4.5:3.5,20,10,0,Math.PI*2,0,Math.PI/2),stdMat('#c9ced0',{metalness:.5,roughness:.35})); dm.position.set(x,i===1?14:12.5,0); const cy=new THREE.Mesh(new THREE.CylinderGeometry(i===1?4.6:3.6,i===1?4.6:3.6,i===1?4:2.5,20),white); cy.position.set(x,i===1?12:11.2,0); g.add(cy,dm);}); return 18; }
+  if(S.special==='woodchurch'){ const SS=Object.assign({},S,{win:'tall',base:null,trim:'#ffffff'});
+    [[32,12],[12,32]].forEach(([a,b])=>{ boxBody(g,SS,a,b,9,S.c); const r=new THREE.Mesh(roofGeo(a+1,b+1,6,1e4),stdMat(S.rc,{roughness:.7})); r.position.y=9; r.castShadow=true; g.add(r);});
+    const t=new THREE.Mesh(new THREE.BoxGeometry(5,8,5),white); t.position.set(0,19,0); g.add(t); const sp=new THREE.Mesh(new THREE.ConeGeometry(3.6,8,4),stdMat(S.rc)); sp.position.set(0,27,0); sp.rotation.y=Math.PI/4; g.add(sp); return 31; }
+  if(S.special==='stadium'){
+    const outer=new THREE.Shape(); outer.absellipse(0,0,S.w/2,S.d/2,0,Math.PI*2); const hole=new THREE.Path(); hole.absellipse(0,0,S.w/2-28,S.d/2-30,0,Math.PI*2); outer.holes.push(hole);
+    const eg=new THREE.ExtrudeGeometry(outer,{depth:S.h,bevelEnabled:false,curveSegments:64}); eg.rotateX(-Math.PI/2);
+    const ring=new THREE.Mesh(eg,white); ring.castShadow=ring.receiveShadow=true; g.add(ring);
+    const roof=new THREE.Shape(); roof.absellipse(0,0,S.w/2-2,S.d/2-2,Math.PI*0.1,Math.PI*0.9);
+    const field=new THREE.Mesh(new THREE.CircleGeometry(1,48),stdMat('#4f7a3c',{roughness:1})); field.scale.set(S.w/2-30,S.d/2-32,1); field.rotation.x=-Math.PI/2; field.position.y=0.6; field.receiveShadow=true; g.add(field);
+    const track=new THREE.Mesh(new THREE.RingGeometry(0.82,1,64),stdMat('#9a4b3b',{roughness:1})); track.scale.set(S.w/2-30,S.d/2-32,1); track.rotation.x=-Math.PI/2; track.position.y=0.7; g.add(track);
+    const canopy=new THREE.Mesh(new THREE.BoxGeometry(18,1.2,S.d*0.55),stdMat('#d9d8d2')); canopy.position.set(-S.w/2+16,S.h+2,0); canopy.castShadow=true; g.add(canopy);
+    const tw=new THREE.Mesh(new THREE.BoxGeometry(9,S.tw,9),white); tw.position.set(0,S.tw/2,S.d/2+2); tw.castShadow=true; g.add(tw);
+    const tt=new THREE.Mesh(new THREE.BoxGeometry(11,3,11),stdMat('#e9e8e2')); tt.position.set(0,S.tw-1.5,S.d/2+2); g.add(tt);
+    return S.tw;
+  }
+  if(S.special==='pool'){
+    const deck=new THREE.Mesh(new THREE.BoxGeometry(S.w,0.8,S.d),stdMat('#d8d6cf')); deck.position.y=0.4; deck.receiveShadow=true; g.add(deck);
+    const pool=new THREE.Mesh(new THREE.PlaneGeometry(50,21),stdMat('#3fa6c8',{roughness:.1,metalness:.1})); pool.rotation.x=-Math.PI/2; pool.position.set(-10,0.9,0); g.add(pool);
+    const p2=pool.clone(); p2.scale.set(.4,.9,1); p2.position.set(28,0.9,5); g.add(p2);
+    const stand=new THREE.Mesh(new THREE.BoxGeometry(70,6,8),white); stand.position.set(0,3,-S.d/2+4); stand.castShadow=true; g.add(stand);
+    const tower=new THREE.Mesh(new THREE.BoxGeometry(3,10,3),white); tower.position.set(28,5,-6); tower.castShadow=true; g.add(tower); return 10; }
+  if(S.special==='watertower'){
+    const sh=new THREE.Mesh(new THREE.CylinderGeometry(5,6,40,12),white); sh.position.y=20; sh.castShadow=true; g.add(sh);
+    const tk=new THREE.Mesh(new THREE.CylinderGeometry(11,8,12,12),white); tk.position.y=46; tk.castShadow=true; g.add(tk); return 52; }
+  return 2;
+}
+
+/* ============================== 3D SCENE ============================== */
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio,isMobile?1.6:2));
+renderer.setSize(innerWidth,innerHeight);
+renderer.outputEncoding=THREE.sRGBEncoding; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=0.55;
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+document.getElementById('scene').appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,4,40000);
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true; controls.dampingFactor=.08; controls.maxPolarAngle=Math.PI*0.47; controls.minDistance=60; controls.maxDistance=7000; controls.screenSpacePanning=false;
+
+const sky=new THREE.Sky(); sky.scale.setScalar(30000); scene.add(sky);
+const su=sky.material.uniforms; su.turbidity.value=4; su.rayleigh.value=1.6; su.mieCoefficient.value=0.004; su.mieDirectionalG.value=0.82;
+const pmrem=new THREE.PMREMGenerator(renderer); let envRT=null;
+const hemi=new THREE.HemisphereLight(0xcfe0ff,0x4a4436,0.35); scene.add(hemi);
+const sun=new THREE.DirectionalLight(0xfff0dc,2.4); sun.castShadow=true; scene.add(sun); scene.add(sun.target);
+sun.shadow.mapSize.set(isMobile?1536:3072,isMobile?1536:3072); sun.shadow.bias=-0.0004; sun.shadow.normalBias=0.6; sun.shadow.camera.near=10; sun.shadow.camera.far=9000;
+const sunDir=new THREE.Vector3();
+function setSun(elevDeg){
+  const phi=THREE.MathUtils.degToRad(90-elevDeg), theta=THREE.MathUtils.degToRad(205);
+  sunDir.setFromSphericalCoords(1,phi,theta); su.sunPosition.value.copy(sunDir);
+  const warm=Math.max(0,1-elevDeg/30); sun.color.setRGB(1,0.92-warm*0.22,0.82-warm*0.4); sun.intensity=1.2+Math.min(1.6,elevDeg/14);
+  const skyScene=new THREE.Scene(); const s2=new THREE.Sky(); s2.scale.setScalar(1000); s2.material.uniforms.sunPosition.value.copy(sunDir);
+  ['turbidity','rayleigh','mieCoefficient','mieDirectionalG'].forEach(k=>s2.material.uniforms[k].value=su[k].value); skyScene.add(s2);
+  if(envRT) envRT.dispose(); envRT=pmrem.fromScene(skyScene); scene.environment=envRT.texture;
+  const fogC=new THREE.Color().setRGB(0.62+warm*0.15,0.68+warm*0.02,0.75-warm*0.08);
+  scene.fog=new THREE.Fog(fogC,(cur?cur.camDist:3000)*1.2,(cur?cur.camDist:3000)*4.2);
+  renderer.toneMappingExposure=0.42+Math.min(0.2,elevDeg/120);
+}
+
+let world=null,cur=null,proj=null,buildings=[],districts=[],selected=null,water=null,ctxMeshes=[];
+const hidden=new Set(); let showCtx=true;
+function makeProj(c){const lat0=c[0],lon0=c[1],kx=Math.cos(lat0*Math.PI/180)*111320,ky=110540;return (lon,lat)=>new THREE.Vector2((lon-lon0)*kx,-(lat-lat0)*ky);}
+const P=(arr)=>arr.map(p=>proj(p[0],p[1]));
+function shapeOf(pts){const s=new THREE.Shape();pts.forEach((v,i)=>i?s.lineTo(v.x,-v.y):s.moveTo(v.x,-v.y));return s;}
+function flatMesh(pts,mat,y){const g=new THREE.ShapeGeometry(shapeOf(pts));g.rotateX(-Math.PI/2);const m=new THREE.Mesh(g,mat);m.position.y=y;m.receiveShadow=true;return m;}
+function ribbon(pts,width,mat,y){const pos=[],uv=[];let L=0;for(let i=0;i<pts.length;i++){const a=pts[Math.max(0,i-1)],b=pts[Math.min(pts.length-1,i+1)];const dx=b.x-a.x,dy=b.y-a.y,l=Math.hypot(dx,dy)||1;const nx=-dy/l*width/2,ny=dx/l*width/2;if(i)L+=pts[i].distanceTo(pts[i-1]);pos.push(pts[i].x+nx,y,pts[i].y+ny,pts[i].x-nx,y,pts[i].y-ny);uv.push(0,L/20,1,L/20);}
+  const idx=[];for(let i=0;i<pts.length-1;i++){const a=i*2;idx.push(a,a+2,a+1,a+1,a+2,a+3);}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);g.computeVertexNormals();const m=new THREE.Mesh(g,mat);m.receiveShadow=true;return m;}
+
+const waterNormal=canvasTex(256,256,(x,w,h)=>{const img=x.createImageData(w,h);for(let j=0;j<h;j++)for(let i=0;i<w;i++){const a=Math.sin(i*0.098+Math.sin(j*0.05)*2)*0.5+Math.sin((i+j)*0.061)*0.35+Math.sin(j*0.147-i*0.02)*0.3;const b=Math.cos(j*0.09+Math.sin(i*0.07)*2)*0.5+Math.cos((i-j)*0.055)*0.35;const k=(j*w+i)*4;img.data[k]=128+a*50;img.data[k+1]=128+b*50;img.data[k+2]=255;img.data[k+3]=255;}x.putImageData(img,0,0);},500);
+waterNormal.encoding=THREE.LinearEncoding;
+
+function buildWorld(D){
+  if(world){scene.remove(world);world.traverse(o=>{o.geometry&&o.geometry.dispose();});}
+  document.getElementById('labels').innerHTML=''; buildings=[];districts=[];selected=null;ctxMeshes=[];
+  cur=D; proj=makeProj(D.center); world=new THREE.Group(); scene.add(world);
+  const land=P(D.land), lakes=D.lakes.map(P), parks=D.parks.map(P), nob=(D.nobuild||[]).map(P), roads=D.roads.map(P), rail=P(D.rail);
+  // water
+  water=new THREE.Mesh(new THREE.PlaneGeometry(40000,40000),new THREE.MeshStandardMaterial({color:new THREE.Color('#1f3b4a').convertSRGBToLinear(),roughness:.22,metalness:.05,normalMap:waterNormal,normalScale:new THREE.Vector2(.18,.18),envMapIntensity:.55}));
+  water.rotation.x=-Math.PI/2; water.position.y=-1.5; water.receiveShadow=true; world.add(water);
+  // land
+  const groundTex=canvasTex(512,512,(x,w,h)=>{x.fillStyle=D.groundColor;x.fillRect(0,0,w,h);noise(x,w,h,.10,w*h/3);
+    if(D.forest){for(let i=0;i<500;i++){x.fillStyle=`rgba(${30+rnd()*40},${50+rnd()*40},${20+rnd()*20},.25)`;x.beginPath();x.arc(rnd()*w,rnd()*h,4+rnd()*14,0,7);x.fill();}}
+    else {x.strokeStyle='rgba(0,0,0,.08)';for(let i=0;i<w;i+=32){x.beginPath();x.moveTo(i,0);x.lineTo(i,h);x.stroke();x.beginPath();x.moveTo(0,i);x.lineTo(w,i);x.stroke();}}},60);
+  const shore=flatMesh(land,stdMat('#a49e8f',{roughness:1}),-0.6); shore.scale.set(1,1,1); world.add(shore);
+  world.add(flatMesh(land,new THREE.MeshStandardMaterial({map:groundTex,roughness:.95}),0));
+  // shoreline quay edge
+  const edge=new THREE.Line(new THREE.BufferGeometry().setFromPoints(land.map(v=>new THREE.Vector3(v.x,0.3,v.y))),new THREE.LineBasicMaterial({color:0xcfc8b6,transparent:true,opacity:.55})); world.add(edge);
+  const grass=canvasTex(256,256,(x,w,h)=>{x.fillStyle='#4f6b3a';x.fillRect(0,0,w,h);for(let i=0;i<4000;i++){x.fillStyle=`rgba(${60+rnd()*50},${90+rnd()*50},${40+rnd()*30},.5)`;x.fillRect(rnd()*w,rnd()*h,2,2);}},30);
+  parks.forEach(p=>world.add(flatMesh(p,new THREE.MeshStandardMaterial({map:grass,roughness:1}),0.25)));
+  lakes.forEach(p=>{const m=flatMesh(p,water.material,0.4);world.add(m);});
+  const asphalt=stdMat('#3a3c3d',{roughness:.9});
+  roads.forEach(r=>world.add(ribbon(r,D.forest?12:16,asphalt,0.35)));
+  world.add(ribbon(rail,D.forest?10:24,stdMat('#6e6152',{roughness:1}),0.32));
+
+  // landmarks
+  const labelsEl=document.getElementById('labels');
+  D.districts.forEach(([n,lat,lon])=>{const el=document.createElement('div');el.className='dlab';el.textContent=n;labelsEl.appendChild(el);const v=proj(lon,lat);districts.push({el,pos:new THREE.Vector3(v.x,2,v.y)});});
+  D.items.forEach((it,i)=>{
+    const S=resolve(D,it), st=D.styles[it.st], v=proj(it.lon,it.lat);
+    const g=new THREE.Group(); g.position.set(v.x,0,v.y); if(it.rot) g.rotation.y=THREE.MathUtils.degToRad(it.rot);
+    let top=S.h+(S.rh||0), radius;
+    if(S.special&&S.special!=='none'){ top=special(g,S); radius=Math.hypot(S.w,S.d)/2; }
+    else if(S.special==='none'){ top=2; radius=20; }
+    else if(it.area){
+      radius=0; it.area.forEach(([dx,dz],k)=>{ const w=14+((k*7)%9), d=12+((k*5)%7), h=S.h*(0.7+((k*13)%10)/25); const wall=(S.pal||['#ddd'])[k%(S.pal||[1]).length];
+        const SS=Object.assign({},S,{c:wall,base:S.st==='al'?S.base:null,trim:shade(wall,1.35)});
+        const sub=new THREE.Group(); sub.position.set(dx,0,dz); boxBody(sub,SS,w,d,h,wall); addRoof(sub,SS,w,d,h,S.rc); g.add(sub);
+        radius=Math.max(radius,Math.hypot(dx,dz)+Math.hypot(w,d)/2); top=Math.max(top,h+(S.rh||0)); });
+    } else {
+      boxBody(g,S,S.w,S.d,S.h,S.c); addRoof(g,S,S.w,S.d,S.h,S.rc);
+      if(S.tw){ addTower(g,S,S.w,S.d); top=Math.max(top,S.tw*1.3); }
+      if(S.por) addPortico(g,S,S.w,S.d,S.h);
+      radius=Math.hypot(S.w,S.d)/2;
+    }
+    const ring=new THREE.Mesh(new THREE.RingGeometry(radius+6,radius+8.5,48),new THREE.MeshBasicMaterial({color:st.c,transparent:true,opacity:.0,side:THREE.DoubleSide,depthWrite:false}));
+    ring.rotation.x=-Math.PI/2; ring.position.set(v.x,0.8,v.y); world.add(ring);
+    g.scale.y=0.001; world.add(g);
+    const el=document.createElement('div'); el.className='lab'; el.innerHTML=`<i style="background:${st.c}"></i><span>${it.n}</span>`; labelsEl.appendChild(el);
+    buildings.push({item:it,S,group:g,ring,top,radius,pos:new THREE.Vector2(v.x,v.y),label:el,delay:200+i*40,born:performance.now()});
+  });
+
+  // context: perimeter blocks (Helsinki) / forest (Tapiola)
+  const nearLandmark=(p,pad)=>buildings.some(B=>p.distanceTo(B.pos)<B.radius+pad);
+  const inside=(p)=>pip(p,land)&&!lakes.some(l=>pip(p,l));
+  if(!D.forest){
+    const lens=[74,48], hs=[17,20,23], depth=13; const buckets={};
+    const minX=Math.min(...land.map(v=>v.x)),maxX=Math.max(...land.map(v=>v.x)),minY=Math.min(...land.map(v=>v.y)),maxY=Math.max(...land.map(v=>v.y));
+    const zones=D.zones.map(z=>({p:proj(z[1],z[0]),a:THREE.MathUtils.degToRad(z[2]),h:z[3]}));
+    for(let x=minX;x<maxX;x+=92)for(let y=minY;y<maxY;y+=92){
+      const c=new THREE.Vector2(x+(rnd()-.5)*8,y+(rnd()-.5)*8);
+      let z=zones[0],bd=1e9; zones.forEach(q=>{const dd=c.distanceTo(q.p); if(dd<bd){bd=dd;z=q;}});
+      const a=z.a, ca=Math.cos(a), sa=Math.sin(a);
+      const bars=[[0,-30.5,0],[0,30.5,0],[-30.5,0,1],[30.5,0,1]];
+      bars.forEach(([ox,oz,side])=>{
+        // local -> world (rotation ccw around y: x'=x cos + z sin, z'=-x sin + z cos)
+        const wx=c.x+ox*ca+oz*sa, wz=c.y-ox*sa+oz*ca; const p=new THREE.Vector2(wx,wz);
+        if(rnd()<0.06) return;
+        if(!inside(p)) return; if(parks.some(q=>pip(p,q))||nob.some(q=>pip(p,q))) return;
+        if(roads.some(r=>lineDist(p,r)<16)) return; if(lineDist(p,rail)<20) return; if(nearLandmark(p,16)) return;
+        const L=side?lens[1]:lens[0]; const H=hs[Math.min(2,Math.max(0,Math.round((z.h-17)/3+(rnd()-.5)*1.4)))];
+        const key=L+'_'+H; (buckets[key]=buckets[key]||[]).push({x:wx,z:wz,rot:a+(side?Math.PI/2:0)});
+      });
+    }
+    const palette=['#d9cfbd','#e2d6b9','#cfc5b2','#c2bcb1','#e0cfac','#d2bfa7','#c8ccc6','#e6dcc8','#bfb3a2'];
+    Object.entries(buckets).forEach(([key,list])=>{
+      const [L,H]=key.split('_').map(Number);
+      const geo=new THREE.BoxGeometry(L,H,depth); geo.translate(0,H/2,0);
+      const ft=facadeCanvas(L,H,{win:'rect',base:'#8b877e',trim:'#f2ece0',st:'ctx'},'#ffffff'), fs=facadeCanvas(depth,H,{win:'rect',trim:'#f2ece0',st:'ctx'},'#ffffff');
+      const mf=new THREE.MeshStandardMaterial({map:ft,roughness:.9}), ms=new THREE.MeshStandardMaterial({map:fs,roughness:.9}), mr=stdMat('#4b4f52',{roughness:.7});
+      const im=new THREE.InstancedMesh(geo,[ms,ms,mr,mr,mf,mf],list.length); im.castShadow=im.receiveShadow=true;
+      const m4=new THREE.Matrix4(), q=new THREE.Quaternion(), up=new THREE.Vector3(0,1,0), col=new THREE.Color();
+      list.forEach((b,i)=>{ q.setFromAxisAngle(up,b.rot); m4.compose(new THREE.Vector3(b.x,0,b.z),q,new THREE.Vector3(1,1,1)); im.setMatrixAt(i,m4); col.set(palette[(i*7+L)%palette.length]).convertSRGBToLinear(); im.setColorAt(i,col); });
+      world.add(im); ctxMeshes.push(im);
+    });
+  }
+  // trees
+  const pts=[];
+  if(D.forest){
+    const minX=Math.min(...land.map(v=>v.x)),maxX=Math.max(...land.map(v=>v.x)),minY=Math.min(...land.map(v=>v.y)),maxY=Math.max(...land.map(v=>v.y));
+    const step=isMobile?30:24;
+    for(let x=minX;x<maxX;x+=step)for(let y=minY;y<maxY;y+=step){ if(rnd()<0.3) continue; const p=new THREE.Vector2(x+(rnd()-.5)*step,y+(rnd()-.5)*step);
+      if(!inside(p)||roads.some(r=>lineDist(p,r)<12)||lineDist(p,rail)<10||nearLandmark(p,10)) continue; pts.push(p); }
+  } else {
+    parks.forEach(poly=>{ const xs=poly.map(v=>v.x),ys=poly.map(v=>v.y); for(let x=Math.min(...xs);x<Math.max(...xs);x+=13)for(let y=Math.min(...ys);y<Math.max(...ys);y+=13){ const p=new THREE.Vector2(x+(rnd()-.5)*9,y+(rnd()-.5)*9); if(rnd()<0.25||!pip(p,poly)||nearLandmark(p,6)||lakes.some(l=>pip(p,l))) continue; pts.push(p);} });
+    // Esplanadi & Bulevardi rows
+    [[[24.9446,60.16745],[24.9522,60.16755]],[[24.9446,60.16765],[24.9522,60.16775]],[[24.9423,60.16615],[24.9302,60.1626]],[[24.9426,60.16585],[24.9305,60.1623]]].forEach(seg=>{const a=proj(...seg[0]),b=proj(...seg[1]);const n=Math.floor(a.distanceTo(b)/9);for(let i=0;i<=n;i++)pts.push(a.clone().lerp(b,i/n));});
+  }
+  if(pts.length){
+    const conif=new THREE.ConeGeometry(1,1,7); conif.translate(0,0.5,0);
+    const leaf=new THREE.IcosahedronGeometry(1,1); leaf.translate(0,0.6,0);
+    const trunk=new THREE.CylinderGeometry(0.25,0.35,1,5); trunk.translate(0,0.5,0);
+    const nC=pts.length, imC=new THREE.InstancedMesh(D.forest?conif:leaf,stdMat('#ffffff',{roughness:.95}),nC);
+    const imT=new THREE.InstancedMesh(trunk,stdMat('#4a3a2c'),nC);
+    const imL=D.forest?new THREE.InstancedMesh(leaf,stdMat('#ffffff',{roughness:.95}),nC):null;
+    const m4=new THREE.Matrix4(), q=new THREE.Quaternion(), col=new THREE.Color(); let nl=0,nc=0;
+    pts.forEach((p,i)=>{ const h=D.forest?(14+rnd()*12):(9+rnd()*7); const pine=D.forest&&rnd()<0.7;
+      m4.compose(new THREE.Vector3(p.x,0,p.y),q,new THREE.Vector3(1,h*0.35,1)); imT.setMatrixAt(i,m4);
+      if(pine){ const r=2.2+rnd()*1.4; m4.compose(new THREE.Vector3(p.x,h*0.3,p.y),q,new THREE.Vector3(r,h*0.75,r)); imC.setMatrixAt(nc,m4); col.setHSL(0.30+rnd()*0.05,0.38,0.17+rnd()*0.06).convertSRGBToLinear(); imC.setColorAt(nc++,col); }
+      else { const r=(D.forest?3:3.6)+rnd()*2; m4.compose(new THREE.Vector3(p.x,h*0.38,p.y),q,new THREE.Vector3(r,r*1.1,r)); const tgt=D.forest?imL:imC; tgt.setMatrixAt(D.forest?nl:nc,m4); col.setHSL(0.23+rnd()*0.07,0.42,0.24+rnd()*0.1).convertSRGBToLinear(); tgt.setColorAt(D.forest?nl++:nc++,col); }
+    });
+    imC.count=nc; [imC,imT,imL].forEach(m=>{ if(!m) return; m.castShadow=true; m.receiveShadow=true; world.add(m); }); if(imL) imL.count=nl;
+  }
+  renderLegend(); renderList(); resetView(true); setSun(+document.getElementById('sunr').value);
+  document.getElementById('subtitle').textContent=D.title; closeInfo();
+}
+
+/* ============================== UI ============================== */
+function renderLegend(){
+  const L=document.getElementById('legend'); L.innerHTML='';
+  Object.entries(cur.styles).forEach(([k,s])=>{ const n=cur.items.filter(i=>i.st===k).length; if(!n) return;
+    const b=document.createElement('button'); b.className='chip'+(hidden.has(cur.key+k)?' off':''); b.innerHTML=`<i style="background:${s.c}"></i>${s.name} · ${n}`;
+    b.onclick=()=>{const id=cur.key+k; hidden.has(id)?hidden.delete(id):hidden.add(id); b.classList.toggle('off'); applyFilter();}; L.appendChild(b); });
+  if(ctxMeshes.length){ const b=document.createElement('button'); b.className='chip ctx'+(showCtx?'':' off'); b.innerHTML='<i></i>Taustakorttelit (havainnollistavat)'; b.onclick=()=>{showCtx=!showCtx;b.classList.toggle('off');ctxMeshes.forEach(m=>m.visible=showCtx);}; L.appendChild(b); ctxMeshes.forEach(m=>m.visible=showCtx); }
+  applyFilter();
+}
+function applyFilter(){buildings.forEach(B=>{B.group.visible=!hidden.has(cur.key+B.item.st);});}
+function renderList(filter=''){
+  const ul=document.getElementById('items'); ul.innerHTML=''; const f=filter.toLowerCase();
+  [...buildings].sort((a,b)=>parseInt(a.item.y)-parseInt(b.item.y)).forEach(B=>{ const it=B.item; if(f&&![it.n,it.ar,it.y,it.a,cur.styles[it.st].name].join(' ').toLowerCase().includes(f)) return;
+    const li=document.createElement('li'); li.innerHTML=`<i style="background:${cur.styles[it.st].c}"></i><div><b>${it.n}</b><small>${it.ar}</small></div><em>${it.y.split(' ')[0]}</em>`;
+    li.onclick=()=>{select(B); if(isMobile) toggleList(false);}; ul.appendChild(li); });
+}
+document.getElementById('q').addEventListener('input',e=>renderList(e.target.value));
+function toggleList(force){const l=document.getElementById('list'); l.classList.toggle('open',force===undefined?!l.classList.contains('open'):force);}
+document.getElementById('listbtn').onclick=()=>toggleList();
+
+/* ---------- facade illustration (SVG) ---------- */
+function facadeSVG(S){
+  const W=380,H=230,G=H-16; const parts=[];
+  const sky=`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9c3d8"/><stop offset="1" stop-color="#e6eef2"/></linearGradient><linearGradient id="gl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7f97ab"/><stop offset="1" stop-color="#1f2b35"/></linearGradient><linearGradient id="sh" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".18"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#sk)"/><rect y="${G}" width="${W}" height="16" fill="#8d897f"/><rect y="${G}" width="${W}" height="2" fill="#6f6b63"/>`;
+  const esc=s=>s;
+  function building(x0,bw,h,wall,o){ // h in px
+    const y0=G-h, fh=Math.max(9,Math.min(26,h/Math.max(1,o.floors)));
+    const floors=Math.max(1,Math.round(h/fh)); let s=`<svg x="${x0}" y="${y0}" width="${bw}" height="${h}" viewBox="${x0} ${y0} ${bw} ${h}" overflow="hidden"><rect x="${x0}" y="${y0}" width="${bw}" height="${h}" fill="${wall}"/>`;
+    if(o.stone){ for(let yy=y0;yy<G;yy+=5){ for(let xx=x0+((yy/5|0)%2)*4;xx<x0+bw;xx+=9) s+=`<rect x="${xx}" y="${yy}" width="8" height="4" fill="${shade(wall,0.88+((xx*7+yy)%13)/40)}"/>`; } }
+    if(o.brick){ for(let yy=y0;yy<G;yy+=3) s+=`<rect x="${x0}" y="${yy}" width="${bw}" height=".6" fill="rgba(255,255,255,.12)"/>`; }
+    if(o.base){ s+=`<rect x="${x0}" y="${G-fh}" width="${bw}" height="${fh}" fill="${o.base}"/>`; }
+    const win=o.win, bayW=win==='band'?9:win==='glass'?14:win==='small'?15:17; const cols=Math.max(1,Math.floor((bw-8)/bayW)); const off=x0+(bw-cols*bayW)/2;
+    for(let f=0;f<floors;f++){ const fy=G-(f+1)*fh;
+      if(win==='ribbon'){ s+=`<rect x="${x0+5}" y="${fy+fh*.3}" width="${bw-10}" height="${fh*.42}" fill="url(#gl)"/>`; for(let xx=x0+5;xx<x0+bw-5;xx+=7) s+=`<rect x="${xx}" y="${fy+fh*.3}" width=".8" height="${fh*.42}" fill="#fff" opacity=".7"/>`; continue; }
+      if(win==='glass'){ s+=`<rect x="${x0+2}" y="${fy+1}" width="${bw-4}" height="${fh-2}" fill="url(#gl)"/>`; for(let xx=x0+2;xx<x0+bw-2;xx+=8) s+=`<rect x="${xx}" y="${fy}" width=".9" height="${fh}" fill="#fff" opacity=".6"/>`; continue; }
+      if(o.base&&f===0){ if(o.portal){ const pw=Math.min(26,bw*.18); s+=`<path d="M${x0+bw/2-pw/2} ${G} v-${fh*.55} a${pw/2} ${pw/2} 0 0 1 ${pw} 0 v${fh*.55}z" fill="#2a2622"/>`; } continue; }
+      for(let c=0;c<cols;c++){ const cx=off+c*bayW+bayW/2; const ww=bayW*(win==='band'?.72:win==='small'?.36:win==='tall'?.34:.42), wh=fh*(win==='tall'?.68:win==='small'?.45:.56), wy=fy+fh*.2;
+        const tr=o.trim?`<rect x="${cx-ww/2-1.2}" y="${wy-1.2}" width="${ww+2.4}" height="${wh+2.4}" fill="${o.trim}"/>`:'';
+        const shape=(win==='arch'&&f===floors-1&&floors>1)?`<path d="M${cx-ww/2} ${wy+wh} V${wy+ww/2} A${ww/2} ${ww/2} 0 0 1 ${cx+ww/2} ${wy+ww/2} V${wy+wh}z" fill="url(#gl)"/>`:`<rect x="${cx-ww/2}" y="${wy}" width="${ww}" height="${wh}" fill="url(#gl)"/>`;
+        s+=tr+shape+`<rect x="${cx-.4}" y="${wy}" width=".8" height="${wh}" fill="#fff" opacity=".5"/>`; }
+      if(o.em) s+=`<rect x="${x0}" y="${fy}" width="${bw}" height="1.2" fill="${o.trim}" opacity=".9"/>`;
+    }
+    s+=`</svg><rect x="${x0-1.5}" y="${y0-3}" width="${bw+3}" height="3.5" fill="${o.trim||shade(wall,.8)}"/>`;
+    s+=`<rect x="${x0+bw*0.6}" y="${y0}" width="${bw*0.4}" height="${h}" fill="url(#sh)"/>`;
+    return s;
+  }
+  function roof(x0,bw,y0,rh,type,rc,wall){
+    if(type==='flat'||rh<=0) return `<rect x="${x0-1}" y="${y0-5}" width="${bw+2}" height="2.5" fill="${shade(wall,.75)}"/>`;
+    if(type==='barrel') return `<path d="M${x0-2} ${y0-3} Q${x0+bw/2} ${y0-3-rh*2} ${x0+bw+2} ${y0-3}z" fill="${rc}"/>`;
+    if(type==='mansard') return `<path d="M${x0-2} ${y0-3} L${x0+rh*.25} ${y0-3-rh*.6} L${x0+rh*.6} ${y0-3-rh} L${x0+bw-rh*.6} ${y0-3-rh} L${x0+bw-rh*.25} ${y0-3-rh*.6} L${x0+bw+2} ${y0-3}z" fill="${rc}"/>`;
+    const ins=type==='gable'?2:Math.min(bw*.3,rh*1.4);
+    return `<path d="M${x0-3} ${y0-3} L${x0+ins} ${y0-3-rh} L${x0+bw-ins} ${y0-3-rh} L${x0+bw+3} ${y0-3}z" fill="${rc}"/><path d="M${x0+ins} ${y0-3-rh} L${x0+bw-ins} ${y0-3-rh}" stroke="rgba(255,255,255,.25)"/>`;
+  }
+  function tower(cx,tw,th,col,tt,sq,rc,o){
+    const y0=G-th; let s=building(cx-tw/2,tw,th,col,Object.assign({},o,{base:null,floors:Math.round(th/14),win:o.win==='ribbon'?'tall':o.win}));
+    const cu=tt==='dome'||tt==='onion'?'#5f8f7d':rc;
+    if(tt==='spire') s+=`<path d="M${cx-tw/2-2} ${y0-2} L${cx} ${y0-th*.42} L${cx+tw/2+2} ${y0-2}z" fill="${cu}"/>`;
+    else if(tt==='pyramid') s+=`<path d="M${cx-tw/2-3} ${y0-2} L${cx} ${y0-th*.2} L${cx+tw/2+3} ${y0-2}z" fill="${cu}"/>`;
+    else if(tt==='dome') s+=`<path d="M${cx-tw/2-1} ${y0-2} A${tw/2+1} ${tw/2+2} 0 0 1 ${cx+tw/2+1} ${y0-2}z" fill="${cu}"/><rect x="${cx-.8}" y="${y0-tw/2-9}" width="1.6" height="8" fill="${cu}"/>`;
+    else if(tt==='clock') s+=`<circle cx="${cx}" cy="${y0+th*.12}" r="${tw*.28}" fill="#f2eee2" stroke="#333" stroke-width=".8"/><path d="M${cx-tw/2-2} ${y0-2} L${cx} ${y0-th*.16} L${cx+tw/2+2} ${y0-2}z" fill="${cu}"/>`;
+    return s;
+  }
+  function portico(cx,span,h,n,trim){ let s=''; const colH=h*.8, y=G-colH; for(let i=0;i<n;i++){const x=cx-span/2+span*(i/(n-1||1)); s+=`<rect x="${x-2}" y="${y}" width="4" height="${colH}" fill="${trim}"/><rect x="${x-2.8}" y="${y-2}" width="5.6" height="2.4" fill="${trim}"/>`;}
+    s+=`<rect x="${cx-span/2-6}" y="${y-8}" width="${span+12}" height="6" fill="${trim}"/><path d="M${cx-span/2-8} ${y-8} L${cx} ${y-8-span*.18} L${cx+span/2+8} ${y-8}z" fill="${trim}" stroke="${shade(trim,.8)}"/><rect x="${cx-span/2-8}" y="${G-3}" width="${span+16}" height="3" fill="#bdb8ad"/>`; return s; }
+
+  const o={floors:0,win:S.win,base:S.base,trim:S.trim,stone:S.st==='nr'||S.win==='small',brick:/9c4e3b|a0503c|9b4b38|a3533f|a35a43|9a4f3b|a8553d/.test(S.c||''),em:S.st==='em',portal:S.st==='nr'||S.st==='rj'};
+  let body='';
+  if(S.special==='cathedral'){
+    const sc=1.9, bw=52*sc, x0=W/2-bw/2, h=20*sc;
+    body+=`<rect x="${x0-30}" y="${G-14}" width="${bw+60}" height="14" fill="#bdb8ad"/>`;
+    const G0=G-14; const sub=(s)=>s.replace(new RegExp(`y="${G}`,'g'),`y="${G0}`);
+    body+=`<g transform="translate(0,-14)">${building(x0,bw,h,S.c,Object.assign({},o,{win:'arch',floors:2,trim:'#ffffff',base:null}))}${roof(x0,bw,G-h,10,'gable','#5f9a80',S.c)}${portico(W/2,bw*.72,h,6,'#ffffff')}</g>`;
+    const dy=G-14-h-6; body+=`<rect x="${W/2-22}" y="${dy-30}" width="44" height="30" fill="${S.c}"/>`;for(let i=0;i<6;i++)body+=`<rect x="${W/2-18+i*7}" y="${dy-24}" width="3" height="16" rx="1.5" fill="#55636b"/>`;
+    body+=`<path d="M${W/2-24} ${dy-30} A24 30 0 0 1 ${W/2+24} ${dy-30}z" fill="#5f9a80"/><rect x="${W/2-3}" y="${dy-72}" width="6" height="12" fill="${S.c}"/><path d="M${W/2-4} ${dy-72} A4 5 0 0 1 ${W/2+4} ${dy-72}z" fill="#5f9a80"/>`;
+    [-1,1].forEach(sx=>{const tx=W/2+sx*(bw/2-10); body+=`<rect x="${tx-6}" y="${dy-16}" width="12" height="16" fill="${S.c}"/><path d="M${tx-7} ${dy-16} A7 9 0 0 1 ${tx+7} ${dy-16}z" fill="#5f9a80"/>`;});
+    return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${sky}${body}</svg>`;
+  }
+  if(S.special==='stadium'){ body+=`<rect x="20" y="${G-40}" width="${W-40}" height="40" fill="${S.c}"/>`; for(let x=30;x<W-30;x+=10) body+=`<rect x="${x}" y="${G-34}" width="5" height="10" fill="url(#gl)"/>`; body+=`<rect x="${W/2-9}" y="${G-200}" width="18" height="200" fill="${S.c}"/><rect x="${W/2-11}" y="${G-204}" width="22" height="6" fill="#ddd"/>`; for(let y=G-190;y<G-50;y+=14) body+=`<rect x="${W/2-4}" y="${y}" width="8" height="6" fill="url(#gl)"/>`; body+=`<rect x="${W/2+9}" y="${G-200}" width="9" height="200" fill="url(#sh)"/>`; return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${sky}${body}</svg>`; }
+  if(S.special==='pool'){ body+=`<rect x="20" y="${G-22}" width="${W-40}" height="22" fill="${S.c}"/>`; for(let x=30;x<W-30;x+=12) body+=`<rect x="${x}" y="${G-18}" width="8" height="2" fill="#bbb"/>`; body+=`<rect x="${W-90}" y="${G-80}" width="6" height="80" fill="${S.c}"/><rect x="${W-110}" y="${G-80}" width="30" height="3" fill="${S.c}"/><rect x="20" y="${G-3}" width="${W-40}" height="3" fill="#3fa6c8"/>`; return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${sky}${body}</svg>`; }
+  if(S.special==='watertower'){ body+=`<rect x="${W/2-12}" y="${G-150}" width="24" height="150" fill="${S.c}"/><path d="M${W/2-40} ${G-150} L${W/2+40} ${G-150} L${W/2+28} ${G-195} L${W/2-28} ${G-195}z" fill="${shade(S.c,1.05)}"/><rect x="${W/2+2}" y="${G-150}" width="10" height="150" fill="url(#sh)"/>`; return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${sky}${body}</svg>`; }
+  if(S.special==='observatory'){ const bw=220,x0=W/2-bw/2,h=60; body+=building(x0,bw,h,S.c,Object.assign({},o,{floors:2,win:'rect'}))+roof(x0,bw,G-h,8,'hip','#8c9597',S.c); [x0+30,W/2,x0+bw-30].forEach((cx,i)=>{const r=i===1?26:20; body+=`<rect x="${cx-r}" y="${G-h-14-(i===1?10:4)}" width="${r*2}" height="${14+(i===1?10:4)}" fill="${S.c}"/><path d="M${cx-r} ${G-h-14-(i===1?10:4)} A${r} ${r} 0 0 1 ${cx+r} ${G-h-14-(i===1?10:4)}z" fill="#bfc5c8"/>`;}); return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${sky}${body}</svg>`; }
+  if(S.special==='woodchurch'){ const bw=200,x0=W/2-bw/2,h=48; body+=building(x0,bw,h,S.c,Object.assign({},o,{floors:1,win:'tall',trim:'#fff',base:null})); for(let x=x0;x<x0+bw;x+=4) body+=`<rect x="${x}" y="${G-h}" width=".6" height="${h}" fill="rgba(0,0,0,.08)"/>`; body+=roof(x0,bw,G-h,34,'gable',S.rc,S.c)+`<rect x="${W/2-14}" y="${G-h-70}" width="28" height="40" fill="${S.c}"/><path d="M${W/2-18} ${G-h-70} L${W/2} ${G-h-120} L${W/2+18} ${G-h-70}z" fill="${S.rc}"/><path d="M${W/2-34} ${G-h} L${W/2} ${G-h-30} L${W/2+34} ${G-h}z" fill="${S.c}" stroke="#fff"/>`; return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${sky}${body}</svg>`; }
+
+  if(S.area){ // street elevation of several houses
+    const pal=S.pal||['#ddd']; const n=Math.min(6,S.area.length); const bw=(W-40)/n; for(let i=0;i<n;i++){ const hh=(S.h*(0.75+((i*13)%10)/25))*5.2; const wall=pal[i%pal.length];
+      const roofT=S.roof||'hip'; body+=building(20+i*bw+1,bw-2,hh,wall,Object.assign({},o,{floors:Math.round(hh/24),trim:shade(wall,1.35),stone:false,base:S.st==='al'&&S.h>10?(S.base||'#8a857c'):null}))+roof(20+i*bw+1,bw-2,G-hh,(S.rh||0)*3.2,roofT,S.rc||'#555',wall);
+      if(S.st==='al'&&i%2===0&&S.h>10){ body+=tower(20+i*bw+bw*0.75,16,hh+18,wall,'spire',false,S.rc||'#555',Object.assign({},o,{trim:shade(wall,1.35)})); } }
+    return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${sky}${body}</svg>`;
+  }
+  // regular building
+  const len=Math.max(S.w,S.d), totH=Math.max(S.h+(S.rh||0), S.tw?S.tw*1.42:0)+3;
+  const sc=Math.min((W-60)/len,(G-14)/totH, 7.5); const bw=len*sc, h=S.h*sc, x0=W/2-bw/2;
+  body+=building(x0,bw,h,S.c,Object.assign({},o,{floors:Math.max(1,Math.round(S.h/3.6))}));
+  body+=roof(x0,bw,G-h,(S.rh||0)*sc,S.roof||'hip',S.rc||'#555',S.c);
+  if(S.por) body+=portico(W/2,Math.min(bw*.55,S.por.n*5.2*sc),h,S.por.n,S.trim||'#f6f3ea');
+  if(S.tw){ const sq=S.ts==='square'; const tw=Math.max(14,Math.min(S.w,S.d)*(sq?.32:.3)*sc); const tx=S.tx!==undefined?S.tx:0.36; const cx=Math.min(W-tw/2-6,Math.max(tw/2+6,W/2+tx*bw)); body+=tower(cx,tw,S.tw*sc,S.tc||S.c,S.tt,sq,S.rc||'#3e4442',o); }
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${sky}${body}</svg>`;
+}
+
+function enc(s){return encodeURIComponent(s);}
+function openInfo(B){
+  const it=B.item, st=cur.styles[it.st];
+  document.getElementById('i-style').innerHTML=`<i style="background:${st.c}"></i>${st.name}`;
+  document.getElementById('i-name').textContent=it.n;
+  document.getElementById('i-facade').innerHTML= it.photo ? `<img src="${it.photo.src}" alt="" style="display:block;width:100%;height:auto">` : facadeSVG(B.S);
+  document.querySelector('#info .cap').innerHTML = it.photo ? `Kuva: ${esc(it.photo.by)} · <a href="${it.photo.licurl||it.photo.page}" target="_blank" rel="noopener" style="color:inherit">${esc(it.photo.lic)}</a> · Wikimedia Commons` : 'Julkisivupiirros todellisten värien, materiaalien ja muotojen mukaan – ei valokuva.';
+  const q=it.n.replace(/[«»]/g,'').split('(')[0].trim()+' '+cur.city;
+  document.getElementById('i-photos').innerHTML=`
+    <a href="https://commons.wikimedia.org/w/index.php?search=${enc(q)}&title=Special:MediaSearch&type=image" target="_blank" rel="noopener"><b>📷</b>Valokuvat</a>
+    <a href="https://www.finna.fi/Search/Results?lookfor=${enc(q)}&type=AllFields&filter%5B%5D=%7Eformat_ext_str_mv%3A%220%2FImage%2F%22" target="_blank" rel="noopener"><b>🗂</b>Arkistokuvat</a>
+    <a href="https://www.google.com/maps/search/?api=1&query=${enc(it.a+', '+cur.city)}" target="_blank" rel="noopener"><b>🧭</b>Katunäkymä</a>`;
+  document.getElementById('i-arch').textContent=it.ar;
+  document.getElementById('i-year').textContent=it.y;
+  document.getElementById('i-addr').textContent=it.a+', '+cur.city;
+  document.getElementById('i-text').textContent=it.t;
+  document.getElementById('i-approx').textContent=it.approx?'◌ Sijainti ja mitat kartalla ovat likimääräisiä.':'';
+  document.getElementById('i-src').innerHTML=`Lähde: <a href="${it.src}" target="_blank" rel="noopener">${new URL(it.src).hostname.replace('www.','')}</a>`;
+  document.getElementById('info').classList.add('open');
+}
+function setOffset(on){ if(on&&isMobile) camera.setViewOffset(innerWidth,innerHeight,0,innerHeight*0.27,innerWidth,innerHeight); else camera.clearViewOffset(); }
+function closeInfo(){ setOffset(false); document.getElementById('info').classList.remove('open'); if(selected){selected.label.classList.remove('sel');selected.ring.material.opacity=0;} selected=null; }
+document.getElementById('closeinfo').onclick=closeInfo;
+
+let fly=null;
+function flyTo(t,dist,polar,az){
+  const a=az==null?Math.atan2(camera.position.x-controls.target.x,camera.position.z-controls.target.z):az;
+  const to=new THREE.Vector3(t.x+dist*Math.sin(polar)*Math.sin(a),dist*Math.cos(polar),t.z+dist*Math.sin(polar)*Math.cos(a));
+  fly={from:{t:controls.target.clone(),p:camera.position.clone()},to:{t:t.clone(),p:to},s:performance.now(),d:1300};
+}
+function resetView(instant){ const d=cur.camDist,a=-0.45,pol=1.0; const t=new THREE.Vector3();
+  const p=new THREE.Vector3(d*Math.sin(pol)*Math.sin(a),d*Math.cos(pol),d*Math.sin(pol)*Math.cos(a));
+  if(instant){controls.target.copy(t);camera.position.copy(p);controls.update();} else flyTo(t,d,pol,a); }
+document.getElementById('resetbtn').onclick=()=>{closeInfo();resetView(false);};
+function select(B){
+  if(selected){selected.label.classList.remove('sel');selected.ring.material.opacity=0;}
+  selected=B; B.label.classList.add('sel'); B.ring.material.opacity=.9; openInfo(B);
+  const t=new THREE.Vector3(B.pos.x,B.top*0.3,B.pos.y); flyTo(t,Math.max(170,B.radius*3.2+B.top*2.2),1.08); setOffset(true);
+}
+const ray=new THREE.Raycaster(),mouse=new THREE.Vector2(); let down=null;
+renderer.domElement.addEventListener('pointerdown',e=>{down={x:e.clientX,y:e.clientY};});
+renderer.domElement.addEventListener('pointerup',e=>{
+  if(!down) return; const moved=Math.hypot(e.clientX-down.x,e.clientY-down.y); down=null; if(moved>7) return;
+  const r=renderer.domElement.getBoundingClientRect(); mouse.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1); ray.setFromCamera(mouse,camera);
+  const groups=buildings.filter(B=>B.group.visible).map(B=>B.group);
+  const hit=ray.intersectObjects(groups,true)[0];
+  if(hit){ let o=hit.object; while(o&&!groups.includes(o)) o=o.parent; const B=buildings.find(B=>B.group===o); if(B){select(B);return;} }
+  let best=null,bd=30; const v=new THREE.Vector3();
+  buildings.forEach(B=>{ if(!B.group.visible) return; v.set(B.pos.x,B.top*0.5,B.pos.y).project(camera); const sx=(v.x+1)/2*innerWidth, sy=(1-v.y)/2*innerHeight; const d=Math.hypot(sx-e.clientX,sy-e.clientY); if(d<bd){bd=d;best=B;} });
+  if(best) select(best);
+});
+document.getElementById('sunr').addEventListener('change',e=>setSun(+e.target.value));
+document.getElementById('sunr').addEventListener('input',e=>{const el=+e.target.value; sunDir.setFromSphericalCoords(1,THREE.MathUtils.degToRad(90-el),THREE.MathUtils.degToRad(205)); su.sunPosition.value.copy(sunDir);});
+document.getElementById('tab-hki').onclick=()=>switchTo(HKI);
+document.getElementById('tab-tap').onclick=()=>switchTo(TAP);
+function switchTo(D){ document.getElementById('tab-hki').classList.toggle('on',D===HKI); document.getElementById('tab-tap').classList.toggle('on',D===TAP);
+  buildWorld(D); try{history.replaceState(null,'',D===HKI?'#kartta-helsinki':'#kartta-tapiola');}catch(e){} }
+
+const ease=t=>1-Math.pow(1-t,3), tmp=new THREE.Vector3();
+function tick(now){
+  requestAnimationFrame(tick);
+  if(!document.body.classList.contains('map-on')) return;
+  if(fly){const k=Math.min(1,(now-fly.s)/fly.d),e=ease(k);controls.target.lerpVectors(fly.from.t,fly.to.t,e);camera.position.lerpVectors(fly.from.p,fly.to.p,e);if(k>=1)fly=null;}
+  controls.update();
+  const dist=camera.position.distanceTo(controls.target);
+  // shadow frustum follows view
+  const half=THREE.MathUtils.clamp(dist*0.75,200,2600); const sc=sun.shadow.camera;
+  if(sc.right!==half){sc.left=-half;sc.right=half;sc.top=half;sc.bottom=-half;sc.updateProjectionMatrix();}
+  sun.target.position.copy(controls.target).setY(0); sun.position.copy(sun.target.position).addScaledVector(sunDir,4000);
+  if(water) water.material.normalMap.offset.set(now*0.000006,now*0.000004);
+  buildings.forEach(B=>{
+    const k=Math.min(1,Math.max(0,(now-B.born-B.delay)/1000)); B.group.scale.y=Math.max(0.001,ease(k));
+    if(!B.group.visible){B.label.style.opacity=0;return;}
+    tmp.set(B.pos.x,B.top*B.group.scale.y+8,B.pos.y).project(camera);
+    const sx=(tmp.x+1)/2*innerWidth, sy=(1-tmp.y)/2*innerHeight, vis=tmp.z<1&&Math.abs(tmp.x)<1.1&&Math.abs(tmp.y)<1.1&&sy>80;
+    B.label.style.left=sx+'px'; B.label.style.top=sy+'px';
+    B.label.classList.toggle('far',dist>1300&&B!==selected);
+    B.label.style.opacity=(vis&&k>0.9)?1:0;
+  });
+  districts.forEach(d=>{tmp.copy(d.pos).project(camera);d.el.style.left=((tmp.x+1)/2*innerWidth)+'px';d.el.style.top=((1-tmp.y)/2*innerHeight)+'px';d.el.style.opacity=tmp.z<1&&dist>500?1:0;});
+  renderer.render(scene,camera);
+}
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();setOffset(!!selected);renderer.setSize(innerWidth,innerHeight);});
+/* ============================== GUIDE APP ============================== */
+const STY = {
+  em:{name:"Empire",col:"#b8860b",yrs:"1810–1850",ex:["hki","Valtioneuvoston linna"],
+      txt:"Engelin uusklassismi teki Helsingistä pääkaupungin. Tunnistat symmetriasta, pylväiköistä ja päätykolmioista sekä vaaleista keltaisen, sinisen ja valkoisen sävyisistä rappauspinnoista."},
+  nr:{name:"Kansallisromantiikka",col:"#6a55b8",yrs:"1898–1916",ex:["hki","Pohjola-talo"],
+      txt:"Venäläistämisen vuosien vastaus: rouhittua graniittia ja vuolukiveä, raskaita massoja, torneja ja keskiaikaisten linnojen ja kirkkojen muotoja. Koristeissa Kalevalan ja pohjoisen luonnon hahmoja."},
+  jg:{name:"Jugend",col:"#cc5f1d",yrs:"1897–1913",ex:["hki","Huvilakatu"],
+      txt:"Art nouveau Helsingin tapaan: vapaa epäsymmetria, erkkerit, kaari-ikkunat, kasvi- ja eläinornamentit sekä pastelliset rappaukset, usein graniittisen pohjakerroksen päällä."},
+  al:{name:"Jugendalueet",col:"#a8880e",yrs:"1901–1913",hide:true},
+  rj:{name:"Rationaalinen jugend",col:"#1d8a72",yrs:"1905–1919",ex:["hki","Pörssitalo"],
+      txt:"Sigurd Frosteruksen ja Gustaf Strengellin kritiikin (1904) jälkeen muoto pelkistyi: sileät kivipinnat, pystylinjat, teräsbetoni ja Wienin vaikutteet. Koristetta on vähemmän ja rakennetta enemmän."},
+  fk:{name:"Funktionalismi",col:"#2577bd",yrs:"1930–1940",ex:["hki","Lasipalatsi"],
+      txt:"Valkoinen rappaus, nauhaikkunat, tasakatot ja toiminnasta lähtevä muoto. Helsingissä tyyli kukoisti olympialaisia varten rakennettaessa."},
+  m5:{name:"Puutarhakaupunki",col:"#2c9468",yrs:"1952–1959",tap:true},
+  m6:{name:"Tapiolan modernismi",col:"#8a7a4e",yrs:"1959–1976",tap:true},
+  aa:{name:"Alvar Aalto",col:"#c8502f",yrs:"1952–1970",tap:true},
+  or:{name:"Orgaaninen & konstruktivismi",col:"#8656c2",yrs:"1964–1983",tap:true},
+  pm:{name:"Postmoderni & nykyaika",col:"#3a72c2",yrs:"1989–2001",tap:true}
+};
+const TAPSTY = {name:"Tapiolan modernismi",col:"#2c9468",yrs:"1952–2001",ex:["tap","Keskustorni"],
+  txt:"Heikki von Hertzenin Asuntosäätiön (1951) puutarhakaupunki: rakennukset metsän ja maaston ehdoilla, arkkitehtikilpailut ja elementtikokeilut. Aalto ja Pietilät toivat mukaan orgaanisen linjan."};
+
+const AREAS = [
+  {id:"senaatintori",city:"hki",name:"Senaatintori ja Kruununhaka",intro:"Engelin uusi pääkaupunki: valtio, kirkko ja yliopisto saman aukion ympärillä. Pohjoisemmissa kortteleissa on kansallisromantiikkaa ja jugendia.",
+   items:["Kaupungintalo (ent. Seurahuone)","Presidentinlinna","Valtioneuvoston linna","Helsingin tuomiokirkko","Helsingin yliopiston päärakennus","Kansalliskirjasto","Pyhän Kolminaisuuden kirkko","Karjalaisen osakunnan talo","Semigradskyn koulu"]},
+  {id:"keskusta",city:"hki",name:"Esplanadi ja keskusta",intro:"Pankkien, vakuutusyhtiöiden ja pörssin kivijugendia 1900-luvun alusta. Kierros päättyy Saarisen rautatieasemalle ja Paatelan postitaloon.",
+   items:["Jugendsali","Wuorion liiketalo","Pörssitalo","Pohjola-talo","Hypoteekkiyhdistyksen talo","Agronomitalo","Kaartin kasarmi","Suomen Kansallisteatteri","Helsingin päärautatieasema","Postitalo"]},
+  {id:"katajanokka",city:"hki",name:"Katajanokka",intro:"Suomen yhtenäisin jugend-asuinalue. Tornit, erkkerit ja kiviveistokset mahtuvat muutaman korttelin alueelle.",
+   items:["Tallbergin talo","Aiolos (Luotsikatu 2)","Olofsborg","Luotsikadun jugendkorttelit"]},
+  {id:"kamppi",city:"hki",name:"Kamppi ja Punavuori",intro:"Mannerheimintien ylioppilastaloista Lasipalatsin funktionalismiin, Engelin puukirkkoon ja Bulevardin jugendkulmiin.",
+   items:["Uusi ylioppilastalo","Kalevan talo","Lasipalatsi","Tennispalatsi","Vanha kirkko","Uudenmaankatu 5","Otavan talo","Puhelinyhdistyksen talo","Sanmarkin talo","Vanha Poli (Sampo)","Hietalahden kauppahalli"]},
+  {id:"eira",city:"hki",name:"Ullanlinna ja Eira",intro:"Merenrannan huvilakaupunki: pastelliset jugendtalot ja puutarhakaupungin kaava. Lähellä ovat myös Engelin tähtitorni ja Sonckin viimeinen kirkko.",
+   items:["Tähtitorni","Tehtaankadun koulu","Mikael Agricolan kirkko","Eiran sairaala","Huvilakatu","Villa Ensi","Eiran huvila-alue"]},
+  {id:"toolo",city:"hki",name:"Töölö ja Olympiapuisto",intro:"Kierros etenee Engelin sairaalasta ja empirehuvilasta Kansallismuseon torniin ja vuoden 1952 olympialaisten valkoiseen funktionalismiin.",
+   items:["Lapinlahden sairaala","Hakasalmen huvila","Kansallismuseo","Pohjalaisten osakuntatalo «Botta»","Messuhalli (Kisahalli)","Olympiastadion","Uimastadion"]},
+  {id:"kallio",city:"hki",name:"Kallio, Alppila ja Vallila",intro:"Työväen Helsinki: työväentalo, kirkko kallion laella, kunnalliset asunnot, puutalokaupunginosa ja kaupungin voimalaitos.",
+   items:["Paasitorni","Kallion kirjasto","Ihantola","Kallion kirkko","Ebeneser","Työväenasuntomuseo","Puu-Vallila","Suvilahden voimalaitos"]},
+  {id:"tapiola",city:"tap",name:"Tapiolan keskus",intro:"Aarne Ervin kilpailuvoittoon (1954) perustuva kävelykeskusta vesialtaan ympärillä: torni, ostoskeskus, uimahalli, kirkko ja kulttuurikeskus.",
+   items:["Keskustorni","Tapiolan ostoskeskus","Heikintori","Keskusallas","Espoon kulttuurikeskus","Tapiolan uimahalli","Tapiolan kirkko","Hotelli Tapiola Garden","Tapiolan koulu ja lukio","Aarnivalkean koulu"]},
+  {id:"itakartano",city:"tap",name:"Itäkartano ja Hagalund",intro:"Puutarhakaupungin ensimmäiset talot männikössä: tornit, rivitalot ja elementtikokeilut vuodesta 1953 alkaen.",
+   items:["Mäntytorni","Kino Tapiola & Lasipalatsi","Mäntyviita ja Sufika","Kontiontien rivitalot","Menninkäisentien talot"]},
+  {id:"lansikorkee",city:"tap",name:"Länsikorkee ja Otsolahti",intro:"Kierros kulkee Revellin taskumateista Ruusuvuoren WeeGeehen, Pietilöiden orgaanisiin taloihin ja Aallon viuhkatorneihin rannalla.",
+   items:["Taskumatit","Oravannahkatori","WeeGee-talo","Suvikumpu","Arabikylä","Länsiranta","Itärannan Aalto-tornit"]},
+  {id:"otaniemi",city:"tap",name:"Otaniemi ja Keilaniemi",intro:"Aallon punatiilinen kampus, Pietilän Dipoli ja Sirenien metsäkappeli. Keilaniemessä nousevat Suomen ensimmäiset pilvenpiirtäjät.",
+   items:["Aalto-yliopiston päärakennus","Teknillisen korkeakoulun kirjasto","Dipoli","Otaniemen kappeli","Otahalli","Otaniemen vesitorni","Neste-torni «Raaden hammas»","Kone-talo"]}
+];
+const CITY = {hki:{D:HKI,name:"Helsinki"},tap:{D:TAP,name:"Espoo · Tapiola"}};
+const BYNAME = {}; [["hki",HKI],["tap",TAP]].forEach(([k,D])=>D.items.forEach(it=>BYNAME[it.n]={it,D,city:k}));
+AREAS.forEach(a=>{ a.list=a.items.map(n=>BYNAME[n]).filter(Boolean); a.list.forEach(e=>e.area=a); });
+[["hki",HKI],["tap",TAP]].forEach(([k,D])=>D.items.forEach(it=>{ if(!BYNAME[it.n].area) console.warn('Ei aluetta:',it.n); }));
+const ALL = Object.values(BYNAME);
+const year = it => parseInt(it.y);
+const styOf = e => e.city==='tap' ? STY[e.it.st] : STY[e.it.st==='al'?'jg':e.it.st];
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let svgUid=0;
+function facadeUnique(S){ const id='f'+(svgUid++); return facadeSVG(S).replace(/id="(sk|gl|sh)"/g,`id="$1${id}"`).replace(/url\(#(sk|gl|sh)\)/g,`url(#$1${id})`); }
+function km(list){ let d=0; for(let i=1;i<list.length;i++){ const a=list[i-1].it,b=list[i].it; const dx=(b.lon-a.lon)*55.6, dy=(b.lat-a.lat)*111.2; d+=Math.hypot(dx,dy);} return d*1.3; }
+function streetUrl(e){ return `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${e.it.lat.toFixed(5)},${e.it.lon.toFixed(5)}`; }
+function walkUrl(list){ const p=list.map(e=>`${e.it.lat.toFixed(5)},${e.it.lon.toFixed(5)}`); const mid=p.slice(1,-1).slice(0,8);
+  return `https://www.google.com/maps/dir/?api=1&travelmode=walking&origin=${p[0]}&destination=${p[p.length-1]}${mid.length?'&waypoints='+encodeURIComponent(mid.join('|')):''}`; }
+function q(e){ return encodeURIComponent(e.it.n.replace(/[«»]/g,'').split('(')[0].trim()+' '+(e.city==='hki'?'Helsinki':'Espoo')); }
+
+function photoHTML(it){ const p=it.photo; return `<figure class="photo"><img loading="lazy" decoding="async" src="${p.src}" width="${p.w}" height="${p.h}" alt="${esc(it.n)}"><figcaption>Kuva: ${esc(p.by)} · <a href="${p.licurl||p.page}" target="_blank" rel="noopener">${esc(p.lic)}</a> · <a href="${p.page}" target="_blank" rel="noopener">Wikimedia Commons</a></figcaption></figure>`; }
+/* ---------- home ---------- */
+function skylineSVG(){
+  const band=[]; let x=0, s=7; const r=()=>{s=(s*9301+49297)%233280;return s/233280;};
+  while(x<1200){ const w=26+r()*44, h=34+r()*40; band.push(`<rect x="${x.toFixed(1)}" y="${(340-h).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${r()<.5?'#c8c2b5':'#bdb7ab'}"/>`);
+    for(let wy=340-h+8; wy<334; wy+=9) for(let wx=x+5; wx<x+w-5; wx+=8) if(r()<.55) band.push(`<rect x="${wx.toFixed(1)}" y="${wy.toFixed(1)}" width="3" height="4" fill="#e9e3d4" opacity=".55"/>`);
+    x+=w+1; }
+  const shimmer=[]; for(let i=0;i<70;i++){ const y=346+r()*80, w=20+r()*110; shimmer.push(`<rect x="${(r()*1200).toFixed(0)}" y="${y.toFixed(0)}" width="${w.toFixed(0)}" height="1.4" fill="#f4efe4" opacity="${(.15+r()*.35).toFixed(2)}"/>`); }
+  const win=(x0,y0,cols,rows,dx,dy,w,h,c='#3b4a54')=>{let s='';for(let i=0;i<cols;i++)for(let j=0;j<rows;j++)s+=`<rect x="${x0+i*dx}" y="${y0+j*dy}" width="${w}" height="${h}" fill="${c}"/>`;return s;};
+  return `<svg viewBox="0 0 1200 430" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" role="img">
+  <defs>
+    <radialGradient id="sunG"><stop offset="0" stop-color="#fff5e1"/><stop offset=".35" stop-color="#f8dfb4" stop-opacity=".9"/><stop offset="1" stop-color="#f0dcc0" stop-opacity="0"/></radialGradient>
+    <linearGradient id="wt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3c0c2"/><stop offset="1" stop-color="#6c8590"/></linearGradient>
+    <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9dfcd" stop-opacity="0"/><stop offset="1" stop-color="#ecdcc3" stop-opacity=".7"/></linearGradient>
+    <clipPath id="wclip"><rect y="341" width="1200" height="90"/></clipPath>
+  </defs>
+  <circle cx="770" cy="236" r="150" fill="url(#sunG)"/><circle cx="770" cy="236" r="30" fill="#fbf1de"/>
+  <g id="city">
+    <g class="rise" style="--d:.0s" fill="#b5bdbf">
+      <rect x="1036" y="224" width="16" height="116"/><rect x="1058" y="216" width="16" height="124"/>
+      <rect x="1082" y="168" width="34" height="172"/><rect x="1124" y="136" width="24" height="204"/><rect x="1156" y="178" width="22" height="162"/>
+      ${win(1086,176,4,16,8,10,3,4,'#d6dbdc')}
+    </g>
+    <g class="rise" style="--d:.1s">${band.join('')}</g>
+    <rect x="0" y="250" width="1200" height="92" fill="url(#haze)"/>
+    <g class="rise" style="--d:.25s"><!-- Kallion kirkko -->
+      <rect x="160" y="270" width="110" height="70" fill="#aaa69d"/><path d="M155 270 L176 254 L254 254 L275 270z" fill="#59625d"/>
+      <rect x="232" y="150" width="30" height="190" fill="#a29e95"/><path d="M228 150 L247 92 L266 150z" fill="#4f5a55"/>${win(238,162,2,9,12,16,5,8)}
+    </g>
+    <g class="rise" style="--d:.35s"><!-- Kansallismuseo -->
+      <rect x="318" y="280" width="124" height="60" fill="#c6c1b4"/><path d="M312 280 L334 260 L426 260 L448 280z" fill="#40464a"/>
+      <rect x="366" y="168" width="30" height="112" fill="#bfbaad"/><path d="M362 168 L381 108 L400 168z" fill="#3c4442"/>${win(326,290,9,3,13,15,5,8)}${win(372,180,2,6,12,16,5,8)}
+    </g>
+    <g class="rise" style="--d:.45s"><!-- Rautatieasema -->
+      <rect x="466" y="288" width="150" height="52" fill="#a59789"/><path d="M462 288 Q541 252 620 288z" fill="#5c8e7c"/>
+      <path d="M520 340 V306 A21 21 0 0 1 562 306 V340z" fill="#3b4a54"/>${win(474,298,4,2,10,18,5,10)}${win(576,298,3,2,10,18,5,10)}
+      <rect x="604" y="176" width="26" height="164" fill="#9f9184"/><path d="M600 176 L617 146 L634 176z" fill="#5c8e7c"/><circle cx="617" cy="194" r="7" fill="#f2eee2" stroke="#3b4a54" stroke-width="1"/>${win(611,212,2,7,9,16,4,8)}
+    </g>
+    <g class="rise" style="--d:.6s"><!-- Tuomiokirkko -->
+      <rect x="668" y="322" width="184" height="18" fill="#c9c4b9"/><rect x="718" y="330" width="84" height="10" fill="#d8d3c8"/>
+      <rect x="692" y="226" width="18" height="96" fill="#f6f4ee"/><path d="M690 226 A11 13 0 0 1 712 226z" fill="#5f9a80"/>
+      <rect x="810" y="226" width="18" height="96" fill="#ecebe5"/><path d="M808 226 A11 13 0 0 1 830 226z" fill="#5f9a80"/>
+      <rect x="704" y="262" width="112" height="60" fill="#f6f4ee"/><path d="M696 262 L760 238 L824 262z" fill="#f8f7f2" stroke="#d9d5cc"/>
+      ${[0,1,2,3,4,5].map(i=>`<rect x="${714+i*17}" y="268" width="6" height="54" fill="#ffffff"/><rect x="${720+i*17}" y="268" width="2" height="54" fill="#dcd8cf"/>`).join('')}
+      <rect x="730" y="204" width="60" height="38" fill="#f6f4ee"/>${win(737,212,6,1,9,0,4,14,'#55636b')}
+      <path d="M728 205 A32 38 0 0 1 792 205z" fill="#5f9a80"/><path d="M742 190 A20 26 0 0 1 760 172" stroke="#8cbba6" stroke-width="2" fill="none" opacity=".7"/>
+      <rect x="755" y="156" width="10" height="13" fill="#f6f4ee"/><path d="M753 157 A7 8 0 0 1 767 157z" fill="#5f9a80"/><rect x="759" y="140" width="2" height="12" fill="#c9a53c"/><rect x="755.5" y="144" width="9" height="2" fill="#c9a53c"/>
+    </g>
+    <g class="rise" style="--d:.75s"><!-- Olympiastadion -->
+      <rect x="860" y="314" width="132" height="26" rx="8" fill="#efeee8"/>${win(868,322,16,1,8,0,4,6,'#9aa6ac')}
+      <rect x="914" y="116" width="12" height="224" fill="#f2f1ec"/><rect x="910" y="110" width="20" height="8" fill="#e2e1db"/>${win(917,126,1,12,0,16,6,6,'#9aa6ac')}
+    </g>
+    <g class="rise" style="--d:.85s"><!-- Mikael Agricolan kirkko -->
+      <rect x="1004" y="156" width="20" height="184" fill="#a0503c"/><path d="M1004 156 L1014 64 L1024 156z" fill="#6b3a2e"/>${win(1010,168,1,10,0,16,8,6,'#5a2a20')}
+    </g>
+    <g class="rise" style="--d:.2s"><!-- Huvilakatu -->
+      <rect x="18" y="276" width="36" height="64" fill="#e9b7a8"/><path d="M15 276 L36 258 L57 276z" fill="#6a5246"/>${win(24,286,3,4,10,13,5,7)}
+      <rect x="56" y="262" width="32" height="78" fill="#f0d9a0"/><path d="M53 262 L72 248 L91 262z" fill="#5c4a3f"/>${win(61,272,3,5,9,13,5,7)}
+      <rect x="80" y="236" width="13" height="104" fill="#ead193"/><path d="M78 236 L86.5 206 L95 236z" fill="#4e4038"/>
+      <rect x="94" y="282" width="34" height="58" fill="#bcd2b7"/><path d="M91 282 L111 266 L131 282z" fill="#5a4d44"/>${win(100,292,3,3,10,13,5,7)}
+      <rect x="130" y="270" width="28" height="70" fill="#b9c9da"/><path d="M127 270 L144 256 L161 270z" fill="#4d4a48"/>${win(135,280,2,4,11,13,5,7)}
+    </g>
+  </g>
+  <rect y="339" width="1200" height="3" fill="#8b877e"/>
+  <rect y="342" width="1200" height="90" fill="url(#wt)"/>
+  <g clip-path="url(#wclip)" opacity=".24"><use href="#city" transform="translate(0,683) scale(1,-1)"/></g>
+  ${shimmer.join('')}
+  </svg>`;
+}
+function renderHome(){
+  const yrs=ALL.map(e=>year(e.it)).filter(n=>!isNaN(n)); const y0=Math.min(...yrs), y1=Math.max(...yrs);
+  document.getElementById('kicker').textContent=`Helsinki · Espoo · ${y0}–${y1}`;
+  document.getElementById('lede').textContent=`Opas Helsingin ja Tapiolan arkkitehtuuriin. Mukana on ${ALL.length} kohdetta ${AREAS.length} alueelta, ja kierrokset kulkevat Engelin empirestä jugendin ja funktionalismin kautta Tapiolan puutarhakaupunkiin.`;
+  document.getElementById('skyline').innerHTML=skylineSVG();
+  document.getElementById('stats').innerHTML=`<div><b>${ALL.length}</b><span>kohdetta</span></div><div><b>${AREAS.length}</b><span>kävelykierrosta</span></div><div><b>${new Set(ALL.map(e=>e.it.ar.split(/[;,&]/)[0].trim())).size}</b><span>arkkitehtia tai toimistoa</span></div><div><b>${y1-y0}</b><span>vuotta, ${y0}–${y1}</span></div>`;
+  // timeline
+  const A=1810,B=2010, pct=y=>((y-A)/(B-A)*100).toFixed(2)+'%';
+  let tl=`<div class="tl-axis"><span></span><div class="ticks">${[1820,1850,1880,1910,1940,1970,2000].map(y=>`<span style="left:${pct(y)}">${y}</span>`).join('')}</div></div>`;
+  Object.entries(STY).forEach(([k,s])=>{ if(s.hide) return;
+    const list=ALL.filter(e=>(e.city==='tap')===!!s.tap && (e.it.st===k||(k==='jg'&&e.it.st==='al'))); if(!list.length) return;
+    const ys=list.map(e=>year(e.it)); const a=Math.min(...ys), b=Math.max(...ys);
+    tl+=`<a class="tl-row" href="#tyyli-${k}"><span class="nm"><i style="background:${s.col}"></i>${s.name} <small>${list.length}</small></span><span class="lane" style="color:${s.col}">
+      <span class="bar" style="left:${pct(a)};width:calc(${pct(b)} - ${pct(a)});background:${s.col};opacity:.22"></span>
+      ${ys.map(y=>`<span class="dot" style="left:${pct(y)}"></span>`).join('')}
+      <span class="tlab" style="left:calc(${pct(b)} + 12px)">${a===b?a:a+'–'+b}</span></span></a>`; });
+  document.getElementById('timeline').innerHTML=tl;
+  // areas
+  let ah=''; ['hki','tap'].forEach(c=>{ const as=AREAS.filter(a=>a.city===c);
+    ah+=`<div class="city-h"><h3>${CITY[c].name}</h3><span>${as.reduce((n,a)=>n+a.list.length,0)} kohdetta</span></div><div class="areas">`;
+    as.forEach(a=>{ const i=AREAS.indexOf(a)+1; const ys=a.list.map(e=>year(e.it));
+      ah+=`<a class="area" href="#alue-${a.id}"><span class="no"><span>${String(i).padStart(2,'0')} · ${a.list.length} kohdetta</span><span>${Math.min(...ys)}–${Math.max(...ys)}</span></span><h4>${a.name}</h4><p>${a.intro}</p>
+        <span class="dots">${a.list.map(e=>`<i style="background:${styOf(e).col}" title="${esc(e.it.n)}"></i>`).join('')}</span><span class="go">Aloita kierros →</span></a>`; });
+    ah+='</div>'; });
+  document.getElementById('areas').innerHTML=ah;
+  // styles
+  const SG=[['em',STY.em],['nr',STY.nr],['jg',STY.jg],['rj',STY.rj],['fk',STY.fk],['tap',TAPSTY]];
+  document.getElementById('styles').innerHTML=SG.map(([k,s])=>{ const e=BYNAME[s.ex[1]]; return `<a class="style" href="#tyyli-${k}"><div class="fig">${e.it.photo?`<img loading="lazy" src="${e.it.photo.src}" alt="${esc(e.it.n)}">`:facadeUnique(resolve(e.D,e.it))}</div>
+    <span class="yrs">${s.yrs}</span><h4><i style="background:${s.col}"></i>${s.name}</h4><p>${s.txt}</p><span class="ex">Esimerkki: ${esc(e.it.n)}, ${esc(e.it.y)}</span></a>`; }).join('');
+}
+
+/* ---------- cards ---------- */
+let curList=[], curKey='';
+function setFromKey(key){
+  if(key.startsWith('alue-')){ const a=AREAS.find(x=>x.id===key.slice(5))||AREAS[0]; const i=AREAS.indexOf(a);
+    return {eyebrow:`${CITY[a.city].name} · kierros ${String(i+1).padStart(2,'0')} / ${AREAS.length}`, name:a.name, intro:a.intro, list:a.list, area:a, next:AREAS[(i+1)%AREAS.length]}; }
+  const k=key.slice(6); let list, s;
+  if(k==='tap'){ s=TAPSTY; list=ALL.filter(e=>e.city==='tap'); }
+  else { s=STY[k]||STY.em; list=ALL.filter(e=>(e.city==='tap')===!!s.tap && (e.it.st===k||(k==='jg'&&e.it.st==='al'))); }
+  list=[...list].sort((a,b)=>year(a.it)-year(b.it));
+  return {eyebrow:`Tyylisuuntaus · ${s.yrs}`, name:s.name, intro:s.txt||'', list, style:k};
+}
+function renderCards(key){
+  curKey=key; const set=setFromKey(key); curList=set.list;
+  // crumbs
+  let cr=''; ['hki','tap'].forEach(c=>{ cr+=`<span class="sep">${c==='hki'?'Helsinki':'Tapiola'}</span>`; AREAS.filter(a=>a.city===c).forEach(a=>cr+=`<a href="#alue-${a.id}" class="${key==='alue-'+a.id?'on':''}">${a.name}</a>`); });
+  if(set.style) cr=`<span class="sep">Tyyli</span><a class="on" href="#tyyli-${set.style}">${set.name}</a>`+cr;
+  document.getElementById('crumbs').innerHTML=cr;
+  document.getElementById('area-eyebrow').textContent=set.eyebrow;
+  document.getElementById('area-name').textContent=set.name;
+  document.getElementById('area-intro').textContent=set.intro;
+  const ys=curList.map(e=>year(e.it));
+  document.getElementById('area-meta').innerHTML=`<span>${curList.length} kohdetta</span><span>${Math.min(...ys)}–${Math.max(...ys)}</span>`+
+    (set.area?`<span>reitti n. ${km(curList).toFixed(1).replace('.',',')} km</span><a class="btn sm" href="${walkUrl(curList)}" target="_blank" rel="noopener">Kävele reitti Google Mapsissa ↗</a>`:'');
+  const n=curList.length;
+  let html=curList.map((e,i)=>{ const it=e.it, s=styOf(e);
+    return `<article class="card" aria-label="${esc(it.n)}">
+      <div class="card-fig${it.photo?' has-photo':''}">${it.photo?photoHTML(it):''}<div class="drawing">${facadeUnique(resolve(e.D,it))}</div><span class="card-no">${String(i+1).padStart(2,'0')} / ${String(n).padStart(2,'0')}</span>${it.photo?'<button class="swap" type="button">Näytä piirros</button>':''}</div>
+      <div class="card-body">
+        <div class="card-top"><span class="sty"><i style="background:${s.col}"></i>${s.name}${set.style&&e.area?' · '+e.area.name:''}</span><span class="yr">${year(it)}</span></div>
+        <h3>${esc(it.n)}</h3>
+        <dl class="meta"><dt>Arkkitehti</dt><dd>${esc(it.ar)}</dd><dt>Valmistunut</dt><dd>${esc(it.y)}</dd><dt>Osoite</dt><dd>${esc(it.a)}, ${e.city==='hki'?'Helsinki':'Espoo'}</dd></dl>
+        <p class="txt">${esc(it.t)}</p>
+        ${it.approx?'<p class="note">◌ Sijainti on likimääräinen.</p>':''}
+        <div class="acts">
+          <a class="btn primary sm" href="${streetUrl(e)}" target="_blank" rel="noopener">Katso kadulta ↗</a>
+          <a class="btn sm" href="https://commons.wikimedia.org/w/index.php?search=${q(e)}&title=Special:MediaSearch&type=image" target="_blank" rel="noopener">Valokuvat ↗</a>
+          <a class="btn sm" href="https://www.finna.fi/Search/Results?lookfor=${q(e)}&type=AllFields&filter%5B%5D=%7Eformat_ext_str_mv%3A%220%2FImage%2F%22" target="_blank" rel="noopener">Arkistokuvat ↗</a>
+          <button class="btn sm" data-map="${esc(it.n)}">3D-kartalla</button>
+        </div>
+      </div></article>`; }).join('');
+  if(set.next) html+=`<article class="card end"><div class="inner"><p class="eyebrow" style="color:#8fc7b5">Kierros valmis</p><h3 class="display">Seuraavaksi: ${set.next.name}</h3><p style="opacity:.75;line-height:1.55">${set.next.intro}</p><div class="cta" style="justify-content:center"><a class="btn primary" href="#alue-${set.next.id}">Jatka kierrosta →</a><a class="btn" href="#koti">Etusivulle</a></div></div></article>`;
+  else html+=`<article class="card end"><div class="inner"><p class="eyebrow" style="color:#8fc7b5">Kaikki ${set.name.toLowerCase()}-kohteet käyty</p><h3 class="display">Jatka alueittain</h3><div class="cta" style="justify-content:center"><a class="btn primary" href="#alue-${(curList[0]&&curList[0].area?curList[0].area.id:'senaatintori')}">Avaa alue →</a><a class="btn" href="#koti">Etusivulle</a></div></div></article>`;
+  const tr=document.getElementById('track'); tr.innerHTML=html; tr.scrollLeft=0; updateProg();
+  tr.querySelectorAll('[data-map]').forEach(b=>b.onclick=()=>openOnMap(b.dataset.map));
+  tr.querySelectorAll('.swap').forEach(b=>b.onclick=()=>{ const f=b.closest('.card-fig'); const on=f.classList.toggle('show-drawing'); b.textContent=on?'Näytä valokuva':'Näytä piirros'; });
+}
+const track=document.getElementById('track');
+function cardIndex(){ const cards=[...track.children]; const mid=track.scrollLeft+track.clientWidth/2; let best=0,bd=1e9; cards.forEach((c,i)=>{const d=Math.abs(c.offsetLeft+c.offsetWidth/2-mid); if(d<bd){bd=d;best=i;}}); return best; }
+function updateProg(){ const n=track.children.length, i=cardIndex(); const total=curList.length;
+  document.getElementById('count').textContent= i<total?`${String(i+1).padStart(2,'0')} / ${String(total).padStart(2,'0')}`:'Kierros valmis';
+  document.getElementById('progbar').style.width=((Math.min(i+1,total)/total)*100)+'%';
+  document.getElementById('prev').disabled=i===0; document.getElementById('next').disabled=i>=n-1; }
+function go(d){ const i=Math.max(0,Math.min(track.children.length-1,cardIndex()+d)); const c=track.children[i]; track.scrollTo({left:c.offsetLeft-(track.clientWidth-c.offsetWidth)/2,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}); }
+let scT; track.addEventListener('scroll',()=>{clearTimeout(scT);scT=setTimeout(updateProg,60);});
+document.getElementById('prev').onclick=()=>go(-1); document.getElementById('next').onclick=()=>go(1);
+addEventListener('keydown',e=>{ if(!document.getElementById('view-cards').classList.contains('on')) return; if(e.key==='ArrowRight'){go(1);e.preventDefault();} if(e.key==='ArrowLeft'){go(-1);e.preventDefault();} });
+
+/* ---------- map bridge ---------- */
+let lastGuide='#koti', pendingSel=null;
+function openOnMap(name){ const e=BYNAME[name]; pendingSel=name; location.hash= e.city==='tap'?'#kartta-tapiola':'#kartta-helsinki'; }
+function showMap(D){
+  document.body.classList.add('map-on'); window.scrollTo(0,0);
+  camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight);
+  const doSel=()=>{ if(pendingSel){ const B=buildings.find(b=>b.item.n===pendingSel); pendingSel=null; if(B) setTimeout(()=>select(B),400);} };
+  if(cur!==D){ const ld=document.getElementById('loading'); ld.style.display='grid'; setTimeout(()=>{ switchTo(D); ld.style.display='none'; doSel(); },40); }
+  else doSel();
+}
+document.getElementById('backbtn').onclick=()=>{ location.hash=lastGuide; };
+
+/* ---------- router ---------- */
+function route(){
+  const h=(location.hash||'#koti').slice(1);
+  ['nav-home','nav-cards','nav-map'].forEach(id=>document.getElementById(id).classList.remove('on'));
+  if(h.startsWith('kartta')){ showMap(h==='kartta-tapiola'?TAP:HKI); return; }
+  document.body.classList.remove('map-on'); closeInfo&&cur&&closeInfo();
+  const home=document.getElementById('view-home'), cards=document.getElementById('view-cards');
+  if(h.startsWith('alue-')||h.startsWith('tyyli-')){ home.classList.remove('on'); cards.classList.add('on'); document.getElementById('nav-cards').classList.add('on'); renderCards(h); window.scrollTo(0,0); }
+  else { cards.classList.remove('on'); home.classList.add('on'); document.getElementById('nav-home').classList.add('on'); }
+  lastGuide='#'+h;
+}
+addEventListener('hashchange',route);
+renderHome(); route();
+requestAnimationFrame(tick);
+
+</script>
+</body>
+</html>
