@@ -140,6 +140,41 @@ Helsingin kaupunginmuseon kokoelmat Finnan kautta. Kuvat ovat tekijänoikeudesta
 - **Villa Ensi**: Tuntematon kuvaaja, 1920, Public domain – https://www.finna.fi/Record/hkm.003B080F-A8C3-41FA-97EF-E7E113D7D710
 - **Wuorion liiketalo**: Eric Sundström, 1913, Public domain – https://www.finna.fi/Record/hkm.A7F71DF6-CAC4-46D8-A183-4B0BF18059E1
 
+## 3D-kaupunki (avoin data)
+Kartan rakennukset, rantaviivat, vesialueet, puistot ja kadut on muodostettu kaupunkien avoimesta datasta (CC BY 4.0):
+- Lähde: Helsingin kaupungin rakennusrekisteri (Rakennukset_alue_rekisteritiedot), Maavesi-aineistot, yleisten alueiden rekisteri (YLRE) ja seutukartta. Ylläpitäjä: Helsingin kaupunkiympäristön toimiala / Kaupunkimittauspalvelut. Haettu 23.11.2026, https://kartta.hel.fi/ws/geoserver/avoindata/wfs.
+- Lähde: Espoon kaupunki, kantakartan rakennukset (kanta:Rakennus), 11/2026. https://kartat.espoo.fi/teklaogcweb/wfs.ashx.
+- Rakennusten korkeus on arvioitu kerrosluvusta, ja katot ovat yksinkertaistettuja. Valmistumisvuosi tulee rekisteristä.
+
+## Erikoiskierrokset: kuvat
+- Olympialaisten avajaiset Olympiastadionilla ja stadionin torni – Kohonen, Yrjö 1952, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.C4FF12CE-4B3A-4B07-9438-8B653A767BE3
+- Paavo Nurmi sytyttää olympiatulen Helsingin Olympiakisojen avajaisissa – Olympia-kuva Oy 1952, Tornionlaakson museo, Public domain (copyright has expired). https://www.finna.fi/Record/tornionlaakso.80469D1D-5CD8-4170-88AA-90924C5C1CEC
+- Käpylän kisakylä olympialaisten aikana – Kohonen, Yrjö 1952, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.08F46AB6-B664-40DF-8CC4-2198164A342C
+- Hotelli Kämp, Pohjoisesplanadi 29 – Ståhlberg, Karl Emil 1890, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.3ECB14ED-3EEA-493F-B94B-8D2D07BA2F06
+- Purettava Heimolan talo yläviistosta, kattorakenteita – Hakli, Kari 1969, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.4EE35789-7811-4892-A564-76E8BFAA419C
+- Uspenskin katedraali ja Norrménin talo. – Markelin, Antero 1959, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.b4243245-cf37-4cee-9f0b-27899f9fd672
+- Ns. Huberin talo, Läntinen Heikinkatu 16 (=Mannerheimintie 14). – Rosenbröijer, A.E. 1892, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.A7839902-6636-45CB-BDC4-5D263C0ED52E
+- Emil Zatopek ja Alain Mimoun kilpailevat 5000 m juoksussa Helsingin olympialaisissa – Jernvall, Juha 1952, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.10D7AE09-E362-4620-A4BF-82E5EC787DA1
+- Olympialaisten avajaiset Olympiastadionilla – Kohonen, Yrjö 1952, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.55784E88-3D62-4CF8-998F-D55B701BA088
+- Olympiastadionin torni – von Bonin, Volker 1952, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.1C5DA14F-3AE2-47A3-8194-0E8EBA575CB1
+- Hevosajureita rattaineen ja herrasväkeä Eteläsatamassa Pakkahuoneentorilla – Maconi, Alexander Eugén 1896, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.21E663C6-3A9B-4B56-A04A-F90B049B611C
+- Eduskunnan täysistunto Heimolan talossa. – tuntematon 1920, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.263d0a05-258f-480f-8ab1-c31904b42983
+- VR:n Töölön tavara-asema makasiinit ja porttirakennus – Friman, Erik 1950, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.683E006F-445E-43D0-9CA7-2403FA932B48
+- Hallituskatu 15 (=Yliopistonkatu), Heimolan talo, Kluuvikadulta kuvattuna – Grünberg, Constantin 1966, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.54B67940-067B-43EB-922A-51CAB679F67F
+- Teollisuuskeskus – Havas, Heikki 1952, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.AEEC015E-6306-4309-8105-83497E2F249A
+- Ilmakuvassa Kisakylä, Koskelantie 7 - 15, ja Olympiakylä, Koskelantie 40 - 46, Käpylä, Helsingin olympialaisten aikaan – Veljekset Karhumäki Oy 1952, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.3DA46758-19D0-4ABA-AD07-8AB5F7C99D89
+- Uimastadion – von Bonin, Volker 1952, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.C056E747-DB48-4EB3-B46F-5E55B6C465A8
+- Norrménin talo Katajanokalla – I.K. Inha 1908, Suomen valokuvataiteen museo, CC0. https://www.finna.fi/Record/fmp.D2005:132/706
+- Helsingin vanha rautatieasema ja rautatientori, arkkitehti C – Riis, Charles 1870, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.750F0C2D-093A-49B9-94EE-079844CB9E88
+- Ilmakuva – von Bonin, Volker 1952, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.1B50C7DB-50EC-40C3-88DE-FBC5854CDD20
+- Vuonna 1952 valmistunut Helsingin Eteläsataman Olympiaterminaali – Heinonen, Helge 1950, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.15C10982-AB41-4472-A574-F884F4A08582
+- Kalevalatalo, Munkkiniemi, Helsinki, ulkoperspektiivipiirustus, 28.7.1921 – Saarinen, Eliel , Arkkitehtuuri- ja designmuseo, CC BY 4.0. https://www.finna.fi/Record/mfa.8db6d355-bd14-4341-98b6-8f8f5aecf69e
+- suunnitelma; perspektiivikuva; Keskusta ja Kuningasavenue; Suur-Helsinki suunnitelma – Saarinen, Eliel; Saarinen, Eliel 1917, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.39A14F3C-02FF-45DB-9B19-81347F0ED20D
+- Eliel Saarinen: valtiopäivätalon kilpailuehdotus 1908, Wikimedia Commons, public domain. https://commons.wikimedia.org/wiki/File:Saarinen_Eduskuntatalosuunnitelma.jpg
+- Eliel Saarinen: Munkkiniemi–Haaga-suunnitelma 1915, Wikimedia Commons, public domain. https://commons.wikimedia.org/wiki/File:Munksnas-haga.jpg
+
+Kierrosten massamallit ja sinikopiot ovat suuntaa-antavia. Olympiakierroksen äänimaisema ja fanfaari syntetisoidaan selaimessa (Web Audio); ne eivät käytä aikakauden tallenteita.
+
 ## Jakokuva
 og.jpg on koottu kohteiden Helsingin päärautatieasema, Dipoli ja Olofsborg yllä mainituista Commons-kuvista; lisenssiehdot seuraavat alkuperäisiä kuvia.
 

@@ -541,6 +541,79 @@ body.s-open{overflow:hidden}
 body.synty-on #synty{display:block}
 #storybtn{all:unset;position:fixed;right:12px;bottom:12px;z-index:5;cursor:pointer;display:inline-flex;align-items:center;gap:8px;background:#2b7865;color:#fff;font:600 13.5px var(--f-body);padding:10px 16px 10px 12px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 #storybtn .ico{width:16px;height:16px}
+/* ---- oikea kaupunki: rakennuksen tiedot ---- */
+#citytip{position:fixed;z-index:9;width:240px;background:rgba(15,18,20,.9);backdrop-filter:blur(6px);color:#f1f2ee;border-radius:12px;padding:10px 12px;font:500 13px/1.4 var(--f-body);box-shadow:0 10px 30px rgba(0,0,0,.35);opacity:0;transform:translateY(6px);transition:.2s;pointer-events:none}
+#citytip.show{opacity:1;transform:none}
+#citytip b{display:block;font-size:14px;margin-bottom:2px}
+#citytip span{display:block;color:#d5dbd8}
+#citytip small{display:block;margin-top:6px;color:#9aa6a3;font-size:11px}
+.mapsrc{position:fixed;left:12px;bottom:6px;z-index:4;font:500 10.5px var(--f-body);color:rgba(255,255,255,.82);text-shadow:0 1px 3px rgba(0,0,0,.7);pointer-events:none;max-width:60vw}
+body:not(.map-on) .mapsrc{display:none}
+body:not(.tour-on) .mapsrc{display:none}
+@media (max-width:760px){ .mapsrc{left:auto;right:10px;bottom:auto;top:calc(var(--mh,160px) + 84px);text-align:right;max-width:70vw} }
+/* ---- erikoiskierrokset ---- */
+body[data-tour=olympia]{--tc:#e0aa3e} body[data-tour=kadonnut]{--tc:#e9d9b4} body[data-tour=piirustus]{--tc:#7fd3ff}
+#tour{display:none} body.tour-on #tour{display:block}
+body.tour-on .lab, body.tour-on #legend, body.tour-on #storybtn, body.tour-on #hint, body.tour-on #list, body.tour-on #info{display:none!important}
+.tr-panel{position:fixed;left:16px;top:calc(var(--mh,64px) + 14px);z-index:7;width:min(390px,calc(100vw - 32px));max-height:calc(100vh - var(--mh,64px) - 110px);overflow:auto;background:#f6f5f1;color:#191c1e;border-radius:18px;padding:16px 18px 14px;box-shadow:0 24px 60px rgba(0,0,0,.4);scrollbar-width:thin}
+.tr-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tr-kick{font:600 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:#5d6466}
+.tr-kick::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--tc);margin-right:7px;vertical-align:0;box-shadow:0 0 0 2px rgba(0,0,0,.12)}
+.tr-x{all:unset;cursor:pointer;width:32px;height:32px;display:grid;place-items:center;border-radius:999px;color:#191c1e}
+.tr-x:hover{background:rgba(0,0,0,.07)} .tr-x:focus-visible{outline:2px solid #2b7865}
+.tr-x .ico{width:16px;height:16px}
+.tr-panel h3{font-family:var(--f-display);font-weight:500;font-size:28px;line-height:1.08;margin:6px 0 4px;color:#191c1e}
+.tr-meta{font:500 12.5px var(--f-mono);color:#5d6466;margin:0 0 10px}
+.tr-fig{margin:0 0 10px}
+.tr-imgs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px}
+.tr-imgs img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;background:#ddd;filter:saturate(.95)}
+.tr-fig figcaption{font-size:11.2px;line-height:1.4;color:#5d6466;margin-top:6px}
+.tr-fig figcaption a{color:#2b7865}
+.tr-noimg{font-size:12.5px;color:#5d6466;background:rgba(0,0,0,.05);border-radius:10px;padding:10px 12px;margin:0}
+.tr-t{font-size:15px;line-height:1.58;margin:0 0 12px;color:#26292b}
+.tr-dots{display:flex;flex-wrap:wrap;gap:5px}
+.tr-dots button{all:unset;cursor:pointer;width:26px;height:26px;border-radius:999px;display:grid;place-items:center;font:600 11px var(--f-mono);color:#3d4244;background:rgba(0,0,0,.06)}
+.tr-dots button.on{background:#191c1e;color:#fff}
+.tr-dots button:focus-visible{outline:2px solid #2b7865}
+.tr-bar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:7;display:flex;align-items:center;gap:6px;background:rgba(15,18,20,.88);backdrop-filter:blur(8px);border-radius:16px;padding:8px 10px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.tr-bar .sy-btn.big{background:var(--tc);color:#15181a}
+.tr-bar .ico{width:18px;height:18px}
+.tr-sep{width:1px;height:24px;background:rgba(255,255,255,.16);margin:0 4px}
+.tr-year{position:fixed;right:18px;top:calc(var(--mh,60px) + 12px);z-index:6;pointer-events:none;display:flex;flex-direction:column;align-items:flex-end;text-shadow:0 2px 18px rgba(0,0,0,.55)}
+.tr-year b{font-family:var(--f-display);font-weight:500;font-size:clamp(48px,7vw,88px);line-height:.9;color:#fff;letter-spacing:-.02em}
+.tr-year span{font:600 11.5px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--tc);margin-top:6px}
+.tmk{all:unset;position:absolute;left:0;top:0;z-index:3;cursor:pointer;display:flex;align-items:center;gap:6px;margin:-14px 0 0 -14px;padding:3px 10px 3px 3px;border-radius:999px;background:rgba(15,18,20,.82);color:#f1f2ee;font:600 12px var(--f-body);white-space:nowrap;transition:opacity .25s;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.tmk b{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--tc);color:#15181a;font:700 11.5px var(--f-mono)}
+.tmk.on{background:#f6f5f1;color:#191c1e;z-index:4}
+.tmk.far span{display:none}
+.tmk.far{padding:3px}
+.tmk:focus-visible{outline:2px solid #fff}
+body[data-tour=piirustus] .tmk:not(.on){background:rgba(10,28,44,.85)}
+@media (max-width:760px){
+  .tr-panel{left:8px;right:8px;width:auto;top:auto;bottom:74px;max-height:43vh;padding:12px 14px;border-radius:16px}
+  .tr-panel h3{font-size:22px}
+  .tr-t{font-size:14.5px}
+  .tr-imgs img{aspect-ratio:16/9}
+  .tr-year{right:10px}
+  .tr-year b{font-size:44px}
+  .tr-bar{bottom:10px;padding:6px 8px}
+  .tmk span{display:none} .tmk{padding:3px}
+  .tmk.on span{display:inline}
+}
+/* kotisivun kierroskortit */
+.tourgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.tour-card{display:flex;flex-direction:column;text-decoration:none;color:#f1f2ee;background:#15191b;border-radius:18px;overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,.18);transition:transform .2s}
+.tour-card:hover{transform:translateY(-3px)}
+.tour-card:focus-visible{outline:3px solid var(--tc);outline-offset:3px}
+.tc-img{display:block;aspect-ratio:16/10;background-size:cover;background-position:center;filter:grayscale(.15) contrast(1.05);position:relative}
+.tc-img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(21,25,27,.95))}
+.tc-body{display:flex;flex-direction:column;gap:6px;padding:4px 18px 18px;margin-top:-34px;position:relative}
+.tc-k{font:600 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--tc)}
+.tour-card b{font-family:var(--f-display);font-weight:500;font-size:27px;line-height:1.05}
+.tc-s{color:#c8cfcc;font-size:14.5px;line-height:1.5}
+.tc-go{margin-top:6px;font-weight:600;color:var(--tc);font-size:14px}
+@media (max-width:760px){ .tourgrid{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:84%} }
+
 #storybtn:hover{background:#226653}
 #storybtn:focus-visible{outline:2px solid #8fc7b5;outline-offset:2px}
 body:not(.map-on) #storybtn,body.synty-on #storybtn{display:none}
@@ -618,6 +691,14 @@ body.synty-dim #view-map canvas{filter:grayscale(.75) brightness(.72)}
       <p class="tl-cta"><a class="btn primary" href="#synty" data-i18n="synty_cta">▶ Katso kaupungin synty kartalla</a><span data-i18n="synty_hint">Noin kahden minuutin animaatio: rakennukset nousevat kartalle valmistumisjärjestyksessä.</span></p>
     </div></section>
 
+    <section class="block" id="kierrokset"><div class="wrap">
+      <div class="sec-head">
+        <div><p class="eyebrow" data-i18n="tr_e">Erikoiskierrokset</p><h2 class="display" data-i18n="tr_h">Kolme matkaa ajassa</h2></div>
+        <p data-i18n="tr_p">Animoituja kierroksia oikean kaupungin 3D-mallissa: olympiakesä 1952 äänimaisemineen, puretut talot aaveina ja suunnitelmat, jotka jäivät paperille.</p>
+      </div>
+      <div class="tourgrid hs" id="tourgrid"></div>
+    </div></section>
+
     <section class="block"><div class="wrap">
       <div class="sec-head">
         <div><p class="eyebrow" data-i18n="ar_e">Alueet</p><h2 class="display" data-i18n="ar_h">Yksitoista kävelykierrosta</h2></div>
@@ -682,7 +763,8 @@ body.synty-dim #view-map canvas{filter:grayscale(.75) brightness(.72)}
   <label class="sun" title="Auringon korkeus" data-i18n-t="sun_t">☀<input id="sunr" type="range" min="2" max="50" value="20"></label>
 </header>
 <div id="legend"></div>
-<div id="hint" data-i18n="hint">Vedä kääntääksesi · nipistä tai rullaa zoomataksesi · napauta rakennusta.<br>Kohteet todellisessa mittakaavassa. Taustakorttelit ja puut ovat havainnollistavia.</div>
+<div id="hint" data-i18n="hint">Vedä kääntääksesi · nipistä tai rullaa zoomataksesi · napauta rakennusta.<br>Rakennukset, rannat ja puistot: Helsingin ja Espoon kaupunkien avoin data (CC BY 4.0). Puut ovat havainnollistavia.</div>
+<div class="mapsrc" id="mapsrc">3D-data © Helsingin kaupunki, Espoon kaupunki · CC BY 4.0</div>
 <aside id="list"><input id="q" data-i18n-ph="q" placeholder="Hae nimellä, arkkitehdilla tai vuodella…"><ul id="items"></ul></aside>
 <aside id="info" aria-live="polite">
   <button id="closeinfo" aria-label="Sulje" data-i18n-al="close">×</button>
@@ -1169,6 +1251,7 @@ function setSun(elevDeg){
   const fogC=new THREE.Color().setRGB(0.62+warm*0.15,0.68+warm*0.02,0.75-warm*0.08);
   scene.fog=new THREE.Fog(fogC,(cur?cur.camDist:3000)*1.2,(cur?cur.camDist:3000)*4.2);
   renderer.toneMappingExposure=0.42+Math.min(0.2,elevDeg/120);
+  if(typeof City!=='undefined') City.night(elevDeg);
 }
 
 let world=null,cur=null,proj=null,buildings=[],districts=[],selected=null,water=null,ctxMeshes=[];
@@ -1184,10 +1267,205 @@ function ribbon(pts,width,mat,y){const pos=[],uv=[];let L=0;for(let i=0;i<pts.le
 const waterNormal=canvasTex(256,256,(x,w,h)=>{const img=x.createImageData(w,h);for(let j=0;j<h;j++)for(let i=0;i<w;i++){const a=Math.sin(i*0.098+Math.sin(j*0.05)*2)*0.5+Math.sin((i+j)*0.061)*0.35+Math.sin(j*0.147-i*0.02)*0.3;const b=Math.cos(j*0.09+Math.sin(i*0.07)*2)*0.5+Math.cos((i-j)*0.055)*0.35;const k=(j*w+i)*4;img.data[k]=128+a*50;img.data[k+1]=128+b*50;img.data[k+2]=255;img.data[k+3]=255;}x.putImageData(img,0,0);},500);
 waterNormal.encoding=THREE.LinearEncoding;
 
+/* ============================== OIKEA KAUPUNKI: avoin 3D-data ============================== */
+/* Rakennukset: Helsingin kaupungin rakennusrekisteri (CC BY 4.0) ja Espoon kantakartta (CC BY 4.0).
+   Rannat, viheralueet ja kadut: Helsingin seutukartta ja yleisten alueiden rekisteri (CC BY 4.0). */
+const CITYBB={hki:[24.855,60.143,25.010,60.232], tap:[24.755,60.155,24.870,60.205]};
+const City={
+  data:{}, pending:{}, mesh:null, faceB:null, recs:null, key:null,
+  uni:{uYear:{value:9999}, uSynty:{value:0}, uNight:{value:0}, uHide:{value:0}},
+  hidePts:[],
+  ensure(key){
+    if(this.data[key]) return Promise.resolve(this.data[key]);
+    if(!this.pending[key]) this.pending[key]=fetch('data/city-'+key+'.json').then(r=>r.ok?r.json():null).then(d=>{ this.data[key]=d; return d; }).catch(()=>null);
+    return this.pending[key];
+  },
+  setYear(y){ this.uni.uYear.value=y; },
+  synty(on){ this.uni.uSynty.value=on?1:0; if(!on) this.uni.uYear.value=9999; },
+  night(elev){ this.uni.uNight.value=THREE.MathUtils.clamp((11-elev)/8,0,1); },
+  hideSites(v){ this.uni.uHide.value=+v||0; },
+  // ---------- materiaalit ----------
+  inject(mat,depth){
+    const U=this.uni;
+    mat.onBeforeCompile=(sh)=>{
+      Object.assign(sh.uniforms,{uYear:U.uYear,uSynty:U.uSynty,uNight:U.uNight,uHide:U.uHide});
+      sh.vertexShader=sh.vertexShader.replace('#include <common>',`#include <common>
+attribute float aYear; attribute float aRand; attribute float aFlag;
+uniform float uYear; uniform float uSynty; uniform float uHide;
+varying float vLit; varying float vNew;`).replace('#include <begin_vertex>',`#include <begin_vertex>
+float grow = uSynty>0.5 ? smoothstep(0.0,1.0,(uYear-aYear)/0.9) : 1.0;
+if(uHide>0.5 && abs(aFlag-uHide)<0.5) grow=0.0;
+transformed.y *= grow; if(grow<0.003) transformed.y=-40.0;
+vNew = uSynty>0.5 ? clamp(1.0-(uYear-aYear)/2.2,0.0,1.0)*step(aYear,uYear) : 0.0;
+vLit = step(0.42, aRand);`);
+      if(!depth) sh.fragmentShader=sh.fragmentShader.replace('#include <common>',`#include <common>
+uniform float uNight; varying float vLit; varying float vNew;`).replace('#include <emissivemap_fragment>',`#include <emissivemap_fragment>
+totalEmissiveRadiance *= uNight*vLit;
+totalEmissiveRadiance += vec3(1.0,0.66,0.3)*vNew*0.6;`);
+    };
+    mat.customProgramCacheKey=()=>depth?'citydepth':'city';
+    return mat;
+  },
+  materials(){
+    if(this.mats) return this.mats;
+    // julkisivutekstuuri: yksi ikkuna-akseli (3,4 m) × yksi kerros (3,2 m)
+    const fac=document.createElement('canvas'); fac.width=fac.height=64; let x=fac.getContext('2d');
+    x.fillStyle='#ffffff'; x.fillRect(0,0,64,64); x.fillStyle='#e9e7e2'; x.fillRect(0,58,64,6);
+    x.fillStyle='#3b4650'; x.fillRect(20,12,24,34); x.fillStyle='#55636e'; x.fillRect(22,14,20,14); x.fillStyle='#d8d5cf'; x.fillRect(20,46,24,3);
+    const em=document.createElement('canvas'); em.width=em.height=64; x=em.getContext('2d'); x.fillStyle='#000'; x.fillRect(0,0,64,64);
+    x.fillStyle='#ffd9a0'; x.fillRect(21,13,22,32);
+    const tf=new THREE.CanvasTexture(fac), te=new THREE.CanvasTexture(em);
+    [tf,te].forEach(t=>{ t.wrapS=t.wrapT=THREE.RepeatWrapping; t.anisotropy=4; }); tf.encoding=THREE.sRGBEncoding; te.encoding=THREE.sRGBEncoding;
+    const walls=this.inject(new THREE.MeshStandardMaterial({map:tf,vertexColors:true,roughness:.88,metalness:0,emissive:new THREE.Color(1,1,1),emissiveMap:te,emissiveIntensity:2.6}));
+    const roofs=this.inject(new THREE.MeshStandardMaterial({vertexColors:true,roughness:.8,metalness:.05,emissive:new THREE.Color(0,0,0)}));
+    const depth=this.inject(new THREE.MeshDepthMaterial({depthPacking:THREE.RGBADepthPacking}),true);
+    const flat=(c,o)=>new THREE.MeshStandardMaterial({color:new THREE.Color(c).convertSRGBToLinear(),roughness:1,polygonOffset:true,polygonOffsetFactor:-o,polygonOffsetUnits:-o*2});
+    this.mats={walls,roofs,depth,ground:flat('#8d8a82',0),green:flat('#5e6c48',1),street:flat('#56595b',2),park:flat('#6c8650',3)};
+    return this.mats;
+  },
+  // ---------- apufunktiot ----------
+  ring(a,k){ const p=[]; for(let i=0;i<a.length;i+=2) p.push(new THREE.Vector2(a[i]*k,a[i+1]*k)); return p; },
+  polyGeo(list,k){ // list: [[outer],[holes]?] -> tasainen geometria (y=0)
+    const pos=[];
+    list.forEach(it=>{ const o=this.ring(it[0],k); if(o.length<3) return; const holes=(it[1]||[]).map(h=>this.ring(h,k)).filter(h=>h.length>=3);
+      let tris; try{ tris=THREE.ShapeUtils.triangulateShape(o,holes); }catch(e){ return; }
+      const all=o.concat(...holes);
+      tris.forEach(t=>{ const a=all[t[0]],b=all[t[1]],c=all[t[2]]; if(!a||!b||!c) return;
+        const cr=(b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x); // y-akseli = etelä -> ylöspäin osoittava normaali vaatii cr<0
+        if(cr>0) pos.push(a.x,0,a.y, c.x,0,c.y, b.x,0,b.y); else pos.push(a.x,0,a.y, b.x,0,b.y, c.x,0,c.y); }); });
+    const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3)); g.computeVertexNormals(); return g;
+  },
+  lineRibbon(list,width,mat,y,group){ list.forEach(l=>{ const w=typeof width==='function'?width(l[0]):width; if(!w) return; const pts=[]; for(let i=1;i<l.length;i+=2) pts.push(new THREE.Vector2(l[i],l[i+1])); if(pts.length>1) group.add(ribbon(pts,w,mat,y)); }); },
+  height(r){ const fl=r[1], ty=r[2];
+    if(fl>0) return fl*3.2+(fl>=3?1.6:0.8);
+    return ({2:3.6,3:3.2,4:2.8,5:3,7:3.2,8:3,10:4,11:4.5,12:7,14:9,9:7,16:4,20:3,26:3.4,28:3.4,29:4,24:9,22:6,15:4.5,17:4.5})[ty]||5; },
+  colors(r,rnd){
+    const y=r[0]||1965, f=r[3], pick=a=>a[Math.floor(rnd*a.length)%a.length];
+    let w;
+    if(f===2) w=y<1940?pick(['#9a5a43','#8c4f3b','#a8674d','#94584a']):pick(['#a0604a','#b07358','#8d5a48','#9d6a55']);
+    else if(f===1) w=pick(['#c9c6bd','#d6d2c8','#bdb8ad','#cfcabf']);
+    else if(f===3) w=pick(['#9aa3a8','#8d979c','#a8acaa']);
+    else if(f===4) w=pick(['#8e8a82','#a09a90','#7f7b74']);
+    else if(f===5) w=pick(['#c9a36a','#b8574a','#d8c38a','#8a9a76','#e2d7bd','#c7b58e']);
+    else if(f===6) w=pick(['#8fa6b4','#7f97a6']);
+    else if(y<1925) w=pick(['#e3d3ae','#d9c39a','#cdb89a','#e8dcc3','#c9b18c','#ddc9a7','#b9a58a','#d6c2b4','#c5b6a0']);
+    else if(y<1955) w=pick(['#e6dcc6','#d8cdb6','#efe8d8','#cfc2a8','#e0d6c2']);
+    else w=pick(['#e4e1d9','#d5d1c7','#cbc6bb','#dedad0','#c8c4ba']);
+    const roof = y<1940 ? pick(['#4a4c4f','#56504a','#6e3e33','#3f4245']) : pick(['#6d6b67','#7b7975','#5f5e5b']);
+    return [w,roof];
+  },
+  // ---------- rakennus ----------
+  build(D,world,CD,buildingsLM){
+    const M=this.materials(), k=0.5, group=new THREE.Group(); group.name='city';
+    const bb=CITYBB[D.key]; const p0=proj(bb[0],bb[3]), p1=proj(bb[2],bb[1]);
+    // maapohja datan rajaamalle alueelle
+    const gw=p1.x-p0.x, gh=p1.y-p0.y; const gg=new THREE.PlaneGeometry(gw,gh); gg.rotateX(-Math.PI/2); gg.translate((p0.x+p1.x)/2,0,(p0.y+p1.y)/2);
+    const ground=new THREE.Mesh(gg,M.ground); ground.receiveShadow=true; group.add(ground);
+    const flat=(list,mat,kk)=>{ if(!list||!list.length) return; const m=new THREE.Mesh(this.polyGeo(list,kk),mat); m.receiveShadow=true; group.add(m); return m; };
+    flat(CD.green,M.green,1); flat(CD.street,M.street,1); flat(CD.park,M.park,1);
+    const seaMat=water.material.clone(); seaMat.polygonOffset=true; seaMat.polygonOffsetFactor=-4; seaMat.polygonOffsetUnits=-8;
+    const sea=flat(CD.sea,seaMat,1); if(sea) sea.position.y=0.05;
+    const lake=flat(CD.lake,seaMat,1); if(lake) lake.position.y=0.06;
+    const asphalt=stdMat('#4a4d4f',{roughness:.9});
+    if(!CD.street||!CD.street.length) this.lineRibbon(CD.roads,c=>({1:20,2:15,3:11,4:9})[c]||0,asphalt,0.3,group);
+    this.lineRibbon(CD.rail,()=>12,stdMat('#6e6152',{roughness:1}),0.32,group);
+    // rakennusten geometria
+    const P=[],N=[],UV=[],C=[],Y=[],R=[],F=[],I=[],faceB=[]; const RI=[],RP=[],RN=[],RC=[],RY=[],RR=[],RF=[]; const roofFaceB=[];
+    const col=new THREE.Color(), col2=new THREE.Color();
+    const lms=buildingsLM.filter(B=>!B.item.area).map(B=>({p:B.pos,r:Math.max(12,B.radius*0.72)}));
+    const hides=this.hidePts.filter(h=>h.city===D.key).map(h=>{ const v=proj(h.lon,h.lat); return {p:v,r:h.r||10,f:h.flag||1}; });
+    const occ=new Set(); const cell=10, ok=(x,y)=>Math.floor(x/cell)+','+Math.floor(y/cell);
+    const recs=[]; let rs=1;
+    const rand=()=>{ rs=(rs*16807)%2147483647; return rs/2147483647; };
+    CD.b.forEach((r,bi)=>{
+      const outer=this.ring(r[4],k); if(outer.length<3) return;
+      let area=0,cx=0,cy=0; for(let i=0;i<outer.length;i++){ const a=outer[i],b=outer[(i+1)%outer.length]; const c=a.x*b.y-b.x*a.y; area+=c; cx+=(a.x+b.x)*c; cy+=(a.y+b.y)*c; }
+      area/=2; if(Math.abs(area)<1e-6) return; cx/=(6*area); cy/=(6*area); const A=Math.abs(area);
+      if(A<14&&r[1]<=1) return;
+      const cen=new THREE.Vector2(cx,cy);
+      if(lms.some(L=>cen.distanceTo(L.p)<L.r||pip(L.p,outer))) return;
+      const hh=hides.find(h=>cen.distanceTo(h.p)<h.r||pip(h.p,outer)); const flag=hh?hh.f:0;
+      const holes=(r[5]||[]).map(h=>this.ring(h,k)).filter(h=>h.length>=3);
+      const h=this.height(r); const yr=r[0]||1965; const rr=rand(); const [wc,rc]=this.colors(r,rr);
+      col.set(wc).convertSRGBToLinear(); col2.set(rc).convertSRGBToLinear();
+      const id=recs.length; recs.push([r[0],r[1],r[2],r[3],Math.round(A)]);
+      // seinät
+      const sarea=ring=>{ let s=0; for(let i=0;i<ring.length;i++){ const a=ring[i],b=ring[(i+1)%ring.length]; s+=a.x*b.y-b.x*a.y; } return s; };
+      const walls=(ring,isHole)=>{ let s=0; const n=ring.length; const sw=isHole?sarea(ring)>0:sarea(ring)<0;
+        for(let i=0;i<n;i++){ let a=ring[i], b=ring[(i+1)%n]; if(sw) { const t=a; a=b; b=t; }
+          const L=a.distanceTo(b); if(L<0.05) continue; const nx=(b.y-a.y)/L, nz=-(b.x-a.x)/L; const base=P.length/3;
+          P.push(a.x,0,a.y, b.x,0,b.y, b.x,h,b.y, a.x,h,a.y); for(let q=0;q<4;q++){ N.push(nx,0,nz); C.push(col.r,col.g,col.b); Y.push(yr); R.push(rr); F.push(flag); }
+          const u0=s/3.4,u1=(s+L)/3.4, v1=h/3.2; UV.push(u0,0, u1,0, u1,v1, u0,v1); s+=L;
+          I.push(base,base+2,base+1, base,base+3,base+2); faceB.push(id,id); } };
+      walls(outer,false); holes.forEach(hh=>walls(hh,true));
+      // katto
+      let tris; try{ tris=THREE.ShapeUtils.triangulateShape(outer,holes); }catch(e){ tris=[]; }
+      const all=outer.concat(...holes); const rb=RP.length/3;
+      all.forEach(v=>{ RP.push(v.x,h,v.y); RN.push(0,1,0); RC.push(col2.r,col2.g,col2.b); RY.push(yr); RR.push(rr); RF.push(flag); });
+      tris.forEach(t=>{ const a=all[t[0]],b=all[t[1]],c=all[t[2]]; const cr=(b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);
+        if(cr>0) RI.push(rb+t[0],rb+t[2],rb+t[1]); else RI.push(rb+t[0],rb+t[1],rb+t[2]); roofFaceB.push(id); });
+      // puiden estoruudukko
+      let mnx=1e9,mny=1e9,mxx=-1e9,mxy=-1e9; outer.forEach(v=>{mnx=Math.min(mnx,v.x);mny=Math.min(mny,v.y);mxx=Math.max(mxx,v.x);mxy=Math.max(mxy,v.y);});
+      for(let x=mnx;x<=mxx+cell;x+=cell) for(let y=mny;y<=mxy+cell;y+=cell) occ.add(ok(x,y));
+    });
+    // yhdistetty geometria: ryhmä 0 = seinät, ryhmä 1 = katot
+    const nW=P.length/3; const g=new THREE.BufferGeometry();
+    const cat=(a,b)=>a.concat(b);
+    g.setAttribute('position',new THREE.Float32BufferAttribute(cat(P,RP),3));
+    g.setAttribute('normal',new THREE.Float32BufferAttribute(cat(N,RN),3));
+    const uvR=new Array(RP.length/3*2).fill(0); g.setAttribute('uv',new THREE.Float32BufferAttribute(cat(UV,uvR),2));
+    g.setAttribute('color',new THREE.Float32BufferAttribute(cat(C,RC),3));
+    g.setAttribute('aYear',new THREE.Float32BufferAttribute(cat(Y,RY),1));
+    g.setAttribute('aRand',new THREE.Float32BufferAttribute(cat(R,RR),1));
+    g.setAttribute('aFlag',new THREE.Float32BufferAttribute(cat(F,RF),1));
+    const idx=I.concat(RI.map(v=>v+nW)); g.setIndex(new THREE.Uint32BufferAttribute(idx,1));
+    g.addGroup(0,I.length,0); g.addGroup(I.length,RI.length,1); g.computeBoundingSphere();
+    const mesh=new THREE.Mesh(g,[M.walls,M.roofs]); mesh.castShadow=true; mesh.receiveShadow=true; mesh.customDepthMaterial=M.depth; mesh.name='citybuildings';
+    group.add(mesh); world.add(group);
+    this.mesh=mesh; this.faceB=new Uint32Array(faceB.concat(roofFaceB)); this.recs=recs; this.key=D.key; this.group=group; this.occ=occ; this.cell=cell; this.okey=ok;
+    return group;
+  },
+  treePoints(CD,limit){
+    const pts=[]; const step=isMobile?17:13; const k=1;
+    const lists=[].concat((CD.park||[]).map(p=>[p,0]),(CD.green||[]).map(p=>[p,1]));
+    for(const [it,kind] of lists){
+      const o=this.ring(it[0],k); if(o.length<3) continue; const holes=(it[1]||[]).map(h=>this.ring(h,k));
+      let mnx=1e9,mny=1e9,mxx=-1e9,mxy=-1e9; o.forEach(v=>{mnx=Math.min(mnx,v.x);mny=Math.min(mny,v.y);mxx=Math.max(mxx,v.x);mxy=Math.max(mxy,v.y);});
+      const st=kind?step*1.25:step;
+      for(let x=mnx;x<mxx;x+=st) for(let y=mny;y<mxy;y+=st){
+        if(Math.random()<(kind?0.42:0.3)) continue;
+        const p=new THREE.Vector2(x+(Math.random()-.5)*st*.9,y+(Math.random()-.5)*st*.9);
+        if(this.occ.has(this.okey(p.x,p.y))) continue;
+        if(!pip(p,o)||holes.some(h=>pip(p,h))) continue;
+        pts.push(p); if(pts.length>=limit) return pts;
+      }
+    }
+    return pts;
+  },
+  // napautus: rakennuksen tiedot rekisteristä
+  info(hit){
+    if(!hit||hit.faceIndex==null||!this.recs) return null;
+    const r=this.recs[this.faceB[hit.faceIndex]]; if(!r) return null;
+    return r;
+  }
+};
+const BTYPE={1:['Asuinrakennus','Residential building'],2:['Varastorakennus','Storage building'],3:['Talousrakennus','Outbuilding'],4:['Vaja','Shed'],5:['Autotalli','Garage'],6:['Liikerakennus','Commercial building'],7:['Muuntamo','Transformer station'],8:['Sauna','Sauna'],9:['Tehdas','Factory'],10:['Vapaa-ajan rakennus','Leisure building'],11:['Muu rakennus','Other building'],12:['Asemarakennus','Station building'],13:['Asuin- ja liikerakennus','Residential and commercial'],14:['Halli','Hall'],16:['Huoltorakennus','Service building'],17:['Kauppa tai kioski','Shop or kiosk'],18:['Kirkko tai kokoontumisrakennus','Church or assembly building'],19:['Opetusrakennus','School building'],24:['Pysäköintitalo','Car park'],25:['Palvelutalo','Service housing'],30:['Päiväkoti','Day-care centre'],32:['Sairaala tai hoitoalan rakennus','Hospital or care building'],34:['Toimistorakennus','Office building']};
+const BFAC={1:['betoni','concrete'],2:['tiili','brick'],3:['metallilevy','sheet metal'],4:['kivi','stone'],5:['puu','wood'],6:['lasi','glass'],7:['rappaus tai muu','render or other']};
+function cityTip(r,x,y){
+  let el=document.getElementById('citytip'); if(!el){ el=document.createElement('div'); el.id='citytip'; el.setAttribute('role','status'); document.getElementById('view-map').appendChild(el); }
+  const t=BTYPE[r[2]]||BTYPE[11], f=BFAC[r[3]];
+  const yr=r[0]?T(`Valmistunut ${r[0]}`,`Completed ${r[0]}`):T('Valmistumisvuosi ei tiedossa','Year not recorded');
+  const fl=r[1]?T(`${r[1]} kerrosta`,`${r[1]} storeys`):'';
+  el.innerHTML=`<b>${EN()?t[1]:t[0]}</b><span>${[yr,fl,f?(EN()?f[1]:T('julkisivu: ','')+f[0]):''].filter(Boolean).join(' · ')}</span><small>${City.key==='tap'?T('Lähde: Espoon kaupunki, rakennusrekisteri','Source: City of Espoo, building register'):T('Lähde: Helsingin kaupunki, rakennusrekisteri','Source: City of Helsinki, building register')}</small>`;
+  el.style.left=Math.min(innerWidth-250,Math.max(10,x-120))+'px'; el.style.top=Math.max(70,y-96)+'px'; el.classList.add('show');
+  clearTimeout(cityTip.t); cityTip.t=setTimeout(()=>el.classList.remove('show'),4200);
+}
+
 function buildWorld(D){
   if(world){scene.remove(world);world.traverse(o=>{o.geometry&&o.geometry.dispose();});}
   document.getElementById('labels').innerHTML=''; buildings=[];districts=[];selected=null;ctxMeshes=[];
   cur=D; proj=makeProj(D.center); world=new THREE.Group(); scene.add(world);
+  const CD=City.data[D.key]||null; City.mesh=null; City.recs=null;
   const land=P(D.land), lakes=D.lakes.map(P), parks=D.parks.map(P), nob=(D.nobuild||[]).map(P), roads=D.roads.map(P), rail=P(D.rail);
   // water
   water=new THREE.Mesh(new THREE.PlaneGeometry(40000,40000),new THREE.MeshStandardMaterial({color:new THREE.Color('#1f3b4a').convertSRGBToLinear(),roughness:.22,metalness:.05,normalMap:waterNormal,normalScale:new THREE.Vector2(.18,.18),envMapIntensity:.55}));
@@ -1196,6 +1474,7 @@ function buildWorld(D){
   const groundTex=canvasTex(512,512,(x,w,h)=>{x.fillStyle=D.groundColor;x.fillRect(0,0,w,h);noise(x,w,h,.10,w*h/3);
     if(D.forest){for(let i=0;i<500;i++){x.fillStyle=`rgba(${30+rnd()*40},${50+rnd()*40},${20+rnd()*20},.25)`;x.beginPath();x.arc(rnd()*w,rnd()*h,4+rnd()*14,0,7);x.fill();}}
     else {x.strokeStyle='rgba(0,0,0,.08)';for(let i=0;i<w;i+=32){x.beginPath();x.moveTo(i,0);x.lineTo(i,h);x.stroke();x.beginPath();x.moveTo(0,i);x.lineTo(w,i);x.stroke();}}},60);
+  if(!CD){
   const shore=flatMesh(land,stdMat('#a49e8f',{roughness:1}),-0.6); shore.scale.set(1,1,1); world.add(shore);
   world.add(flatMesh(land,new THREE.MeshStandardMaterial({map:groundTex,roughness:.95}),0));
   // shoreline quay edge
@@ -1206,6 +1485,7 @@ function buildWorld(D){
   const asphalt=stdMat('#3a3c3d',{roughness:.9});
   roads.forEach(r=>world.add(ribbon(r,D.forest?12:16,asphalt,0.35)));
   world.add(ribbon(rail,D.forest?10:24,stdMat('#6e6152',{roughness:1}),0.32));
+  }
 
   // landmarks
   const labelsEl=document.getElementById('labels');
@@ -1216,6 +1496,7 @@ function buildWorld(D){
     let top=S.h+(S.rh||0), radius;
     if(S.special&&S.special!=='none'){ top=special(g,S); radius=Math.hypot(S.w,S.d)/2; }
     else if(S.special==='none'){ top=2; radius=20; }
+    else if(it.area&&CD){ radius=0; it.area.forEach(([dx,dz])=>{ radius=Math.max(radius,Math.hypot(dx,dz)+12); }); top=S.h+(S.rh||0); }
     else if(it.area){
       radius=0; it.area.forEach(([dx,dz],k)=>{ const w=14+((k*7)%9), d=12+((k*5)%7), h=S.h*(0.7+((k*13)%10)/25); const wall=(S.pal||['#ddd'])[k%(S.pal||[1]).length];
         const SS=Object.assign({},S,{c:wall,base:S.st==='al'?S.base:null,trim:shade(wall,1.35)});
@@ -1237,7 +1518,8 @@ function buildWorld(D){
   // context: perimeter blocks (Helsinki) / forest (Tapiola)
   const nearLandmark=(p,pad)=>buildings.some(B=>p.distanceTo(B.pos)<B.radius+pad);
   const inside=(p)=>pip(p,land)&&!lakes.some(l=>pip(p,l));
-  if(!D.forest){
+  if(CD) City.build(D,world,CD,buildings);
+  if(!D.forest&&!CD){
     const lens=[74,48], hs=[17,20,23], depth=13; const buckets={};
     const minX=Math.min(...land.map(v=>v.x)),maxX=Math.max(...land.map(v=>v.x)),minY=Math.min(...land.map(v=>v.y)),maxY=Math.max(...land.map(v=>v.y));
     const zones=D.zones.map(z=>({p:proj(z[1],z[0]),a:THREE.MathUtils.degToRad(z[2]),h:z[3]}));
@@ -1270,7 +1552,8 @@ function buildWorld(D){
   }
   // trees
   const pts=[];
-  if(D.forest){
+  if(CD){ pts.push(...City.treePoints(CD,isMobile?4500:9000).filter(p=>!nearLandmark(p,8))); }
+  else if(D.forest){
     const minX=Math.min(...land.map(v=>v.x)),maxX=Math.max(...land.map(v=>v.x)),minY=Math.min(...land.map(v=>v.y)),maxY=Math.max(...land.map(v=>v.y));
     const step=isMobile?30:24;
     for(let x=minX;x<maxX;x+=step)for(let y=minY;y<maxY;y+=step){ if(rnd()<0.3) continue; const p=new THREE.Vector2(x+(rnd()-.5)*step,y+(rnd()-.5)*step);
@@ -1443,19 +1726,22 @@ renderer.domElement.addEventListener('pointerdown',e=>{down={x:e.clientX,y:e.cli
 renderer.domElement.addEventListener('pointerup',e=>{
   if(!down) return; const moved=Math.hypot(e.clientX-down.x,e.clientY-down.y); down=null; if(moved>7) return;
   const r=renderer.domElement.getBoundingClientRect(); mouse.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1); ray.setFromCamera(mouse,camera);
+  if(typeof Tours!=='undefined'&&Tours.on){ if(City.mesh){ const h=ray.intersectObject(City.mesh,false)[0]; const rr=City.info(h); if(rr) cityTip(rr,e.clientX,e.clientY); } return; }
   const groups=buildings.filter(B=>B.group.visible).map(B=>B.group);
   const hit=ray.intersectObjects(groups,true)[0];
   if(hit){ let o=hit.object; while(o&&!groups.includes(o)) o=o.parent; const B=buildings.find(B=>B.group===o); if(B){select(B);return;} }
   let best=null,bd=30; const v=new THREE.Vector3();
   buildings.forEach(B=>{ if(!B.group.visible) return; v.set(B.pos.x,B.top*0.5,B.pos.y).project(camera); const sx=(v.x+1)/2*innerWidth, sy=(1-v.y)/2*innerHeight; const d=Math.hypot(sx-e.clientX,sy-e.clientY); if(d<bd){bd=d;best=B;} });
-  if(best) select(best);
+  if(best){ select(best); return; }
+  if(City.mesh&&City.mesh.visible){ const h=ray.intersectObject(City.mesh,false)[0]; const r=City.info(h); if(r) cityTip(r,e.clientX,e.clientY); }
 });
 document.getElementById('sunr').addEventListener('change',e=>setSun(+e.target.value));
-document.getElementById('sunr').addEventListener('input',e=>{const el=+e.target.value; sunDir.setFromSphericalCoords(1,THREE.MathUtils.degToRad(90-el),THREE.MathUtils.degToRad(205)); su.sunPosition.value.copy(sunDir);});
-document.getElementById('tab-hki').onclick=()=>switchTo(HKI);
-document.getElementById('tab-tap').onclick=()=>switchTo(TAP);
-function switchTo(D){ document.getElementById('tab-hki').classList.toggle('on',D===HKI); document.getElementById('tab-tap').classList.toggle('on',D===TAP);
-  buildWorld(D); try{history.replaceState(null,'',D===HKI?'#kartta-helsinki':'#kartta-tapiola');}catch(e){} }
+document.getElementById('sunr').addEventListener('input',e=>{const el=+e.target.value; sunDir.setFromSphericalCoords(1,THREE.MathUtils.degToRad(90-el),THREE.MathUtils.degToRad(205)); su.sunPosition.value.copy(sunDir); City.night(el);});
+const tabSwitch=D=>{ if(cur===D) return; const ld=document.getElementById('loading'); ld.style.display='grid'; setTimeout(()=>switchTo(D).then(()=>{ ld.style.display='none'; }),30); };
+document.getElementById('tab-hki').onclick=()=>tabSwitch(HKI);
+document.getElementById('tab-tap').onclick=()=>tabSwitch(TAP);
+function switchTo(D,keepHash){ document.getElementById('tab-hki').classList.toggle('on',D===HKI); document.getElementById('tab-tap').classList.toggle('on',D===TAP);
+  return City.ensure(D.key).then(()=>{ buildWorld(D); if(typeof Tours!=='undefined') Tours.onWorld(); if(!keepHash){ try{history.replaceState(null,'',D===HKI?'#kartta-helsinki':'#kartta-tapiola');}catch(e){} } }); }
 
 const ease=t=>1-Math.pow(1-t,3), tmp=new THREE.Vector3(); const shLx=new THREE.Vector3(), shLy=new THREE.Vector3(), shLz=new THREE.Vector3();
 function tick(now){
@@ -1485,6 +1771,7 @@ function tick(now){
     B.label.style.opacity=(vis&&k>0.9)?1:0;
   });
   if(typeof meTick==='function') meTick();
+  if(typeof Tours!=='undefined'&&Tours.on) Tours.tick(now);
   districts.forEach(d=>{tmp.copy(d.pos).project(camera);d.el.style.left=((tmp.x+1)/2*innerWidth)+'px';d.el.style.top=((1-tmp.y)/2*innerHeight)+'px';d.el.style.opacity=tmp.z<1&&dist>500?1:0;});
   renderer.render(scene,camera);
 }
@@ -1525,6 +1812,7 @@ const UI={
   start:["Aloita kierros →","Start a tour →"], openmap:["Avaa 3D-kartta","Open the 3D map"],
   sky:["Piirretty Helsingin siluetti: Huvilakadun talot, Kallion kirkko, Kansallismuseo, rautatieasema, Tuomiokirkko, Olympiastadionin torni ja Tapiolan tornit","Drawn Helsinki skyline: Huvilakatu houses, Kallio Church, National Museum, railway station, Cathedral, Olympic Stadium tower and Tapiola towers"],
   wf_h:["Kuuntele ja kävele","Listen and walk"],
+  tr_e:["Erikoiskierrokset","Special tours"], tr_h:["Kolme matkaa ajassa","Three journeys in time"], tr_p:["Animoituja kierroksia oikean kaupungin 3D-mallissa: olympiakesä 1952 äänimaisemineen, puretut talot aaveina ja suunnitelmat, jotka jäivät paperille.","Animated tours on a 3D model of the real city: the Olympic summer of 1952 with its soundscape, demolished houses as ghosts and plans that stayed on paper."],
   wf_p:["Opas kertoo kohteista ääneen suomeksi tai englanniksi, ja lapsille on oma leikkisä versionsa. Kun sallit sijainnin, näet lähimmät kohteet ja saat ilmoituksen perille tullessasi.","The guide tells you about each sight out loud in Finnish or English, with a playful version for kids. Allow your location to see the nearest sights and get a notification when you arrive."],
   wf_off:["Tallenna offline-käyttöön","Save for offline use"],
   wf_near:["Lähellä minua","Near me"], wf_listen:["Kuuntele kierros","Listen to a tour"],
@@ -1539,7 +1827,7 @@ const UI={
   cards:["Kohdekortit","Sight cards"], prev:["Edellinen kohde","Previous sight"], next:["Seuraava kohde","Next sight"],
   loading:["Rakennetaan kaupunkia…","Building the city…"], back:["← Opas","← Guide"], maph:["Arkkitehtuurikartta","Architecture map"],
   list:["☰ Kohteet","☰ Sights"], me:["◎ Minä","◎ Me"], me_t:["Näytä oma sijaintini","Show my location"], reset_t:["Palauta näkymä","Reset view"], sun_t:["Auringon korkeus","Sun height"],
-  hint:["Vedä kääntääksesi · nipistä tai rullaa zoomataksesi · napauta rakennusta.<br>Kohteet todellisessa mittakaavassa. Taustakorttelit ja puut ovat havainnollistavia.","Drag to rotate · pinch or scroll to zoom · tap a building.<br>Sights are at true scale. Background blocks and trees are illustrative."],
+  hint:["Vedä kääntääksesi · nipistä tai rullaa zoomataksesi · napauta rakennusta.<br>Rakennukset, rannat ja puistot: Helsingin ja Espoon kaupunkien avoin data (CC BY 4.0). Puut ovat havainnollistavia.","Drag to rotate · pinch or scroll to zoom · tap a building.<br>Buildings, shores and parks: open data from the cities of Helsinki and Espoo (CC BY 4.0). Trees are illustrative."],
   q:["Hae nimellä, arkkitehdilla tai vuodella…","Search by name, architect or year…"], close:["Sulje","Close"],
   capdraw:["Julkisivupiirros todellisten värien, materiaalien ja muotojen mukaan – ei valokuva.","Facade drawing based on the real colours, materials and forms – not a photograph."],
   synty_cta:["▶ Katso kaupungin synty kartalla","▶ Watch the city grow on the map"], synty_hint:["Noin kahden minuutin animaatio: rakennukset nousevat kartalle valmistumisjärjestyksessä.","A two-minute animation: buildings rise on the map in the order they were completed."],
@@ -1572,6 +1860,7 @@ function setLang(l){
   if(document.getElementById('view-cards').classList.contains('on')){ const i=cardIndex(); renderCards(curKey); requestAnimationFrame(()=>scrollToCard(Math.min(i,track.children.length-1),true)); }
   if(typeof cur!=='undefined'&&cur){ renderLegend(); renderList(document.getElementById('q').value||''); document.getElementById('subtitle').textContent=EN()?EN_TITLE[cur.key]:cur.title; buildings.forEach(B=>{ const sp=B.label.querySelector('span'); if(sp) sp.textContent=IN(B.item); }); if(selected) openInfo(selected); }
   Narr.warned=false; if(Narr.entry) Narr.play(Narr.entry); updateWalkbar(); Player.update(); updateDistances(); Synty.labels();
+  if(Tours.on){ Tours.labels(); Tours.marksBuild(); Tours.marks.forEach((m,j)=>m.el.classList.toggle('on',j===Tours.i)); }
 }
 
 const STY = {
@@ -1716,6 +2005,7 @@ function renderHome(){
   document.getElementById('kicker').textContent=`Helsinki · Espoo · ${y0}–${y1}`;
   document.getElementById('lede').textContent=T(`${ALL.length} kohdetta ja ${AREAS.length} kävelykierrosta. Kierrokset kulkevat Engelin empirestä jugendin ja funktionalismin kautta Tapiolan puutarhakaupunkiin.`,`${ALL.length} sights and ${AREAS.length} walking tours, running from Engel's Empire through Art Nouveau and Functionalism to the garden city of Tapiola.`);
   document.getElementById('skyline').innerHTML=skylineSVG();
+  { const tg=document.getElementById('tourgrid'); if(tg&&typeof tourCards==='function') tg.innerHTML=tourCards(); }
   document.getElementById('stats').innerHTML=`<div><b>${ALL.length}</b><span>${T('kohdetta','sights')}</span></div><div><b>${AREAS.length}</b><span>${T('kävelykierrosta','walking tours')}</span></div><div><b>${new Set(ALL.map(e=>e.it.ar.split(/[;,&]/)[0].trim())).size}</b><span>${T('arkkitehtia tai toimistoa','architects or firms')}</span></div><div><b>${y1-y0}</b><span>${T('vuotta','years')}, ${y0}–${y1}</span></div>`;
   // timeline
   const A=1815,B=2005, pct=y=>((y-A)/(B-A)*100).toFixed(2)+'%';
@@ -2190,7 +2480,7 @@ function renderArch(id){
 
 /* ---------------- Offline ---------------- */
 const Off={ sw:null, state:store.get('offline','none'), done:0, total:0, failed:0,
-  urls(){ const u=new Set(); ALL.forEach(e=>{ if(e.it.photo) u.add(new URL(e.it.photo.src,location.href).href); if(e.it.old) u.add(new URL(e.it.old.src,location.href).href); }); return [...u]; },
+  urls(){ const u=new Set(); const A=x=>u.add(new URL(x,location.href).href); ALL.forEach(e=>{ if(e.it.photo) A(e.it.photo.src); if(e.it.old) A(e.it.old.src); }); ['data/city-hki.json','data/city-tap.json'].forEach(A); if(typeof TOURS!=='undefined') Object.values(TOURS).forEach(t=>t.stops.forEach(st=>(st.img||[]).forEach(im=>A(im.src)))); return [...u]; },
   supported(){ return 'serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost'); },
   async init(){
     const nb=document.createElement('div'); nb.id='netbadge'; nb.setAttribute('role','status'); document.body.appendChild(nb);
@@ -2369,32 +2659,33 @@ const Synty={
     this.on=true; document.body.classList.add('synty-on'); this.ui.querySelector('#sy-end').hidden=true;
     const go=()=>{ this.phase=phase; this.evShown.clear(); this.shown.clear();
       const r=this.ui.querySelector('#sy-range'); const ys=this.years();
-      const lo=phase==='hki'?1812:1950, hi=phase==='hki'?Math.max(...ys.hki):2001; r.min=lo; r.max=hi; this.hi=hi;
+      const lo=phase==='hki'?1812:1950, hi=City.mesh?2025:(phase==='hki'?Math.max(...ys.hki):2001); r.min=lo; r.max=hi; this.hi=hi;
       this.ui.querySelector('#sy-city').textContent=phase==='hki'?'Helsinki':'Espoo · Tapiola';
-      buildings.forEach(B=>{ B.born=Infinity; B.delay=0; B.label.style.opacity=0; }); ctxMeshes.forEach(m=>m.visible=false);
+      buildings.forEach(B=>{ B.born=Infinity; B.delay=0; B.label.style.opacity=0; }); ctxMeshes.forEach(m=>m.visible=false); City.synty(true);
       this.y=lo; this.acc=0; this.caption('');
       const d=cur.camDist*0.55; const t=new THREE.Vector3(); this.reduce()?resetView(true):flyTo(t,d,0.95,-0.45);
       this.setYear(lo); this.play(); };
     const want=phase==='hki'?HKI:TAP;
-    if(cur!==want){ const ld=document.getElementById('loading'); ld.style.display='grid'; setTimeout(()=>{ switchTo(want); ld.style.display='none'; go(); },40); } else go();
+    if(cur!==want){ const ld=document.getElementById('loading'); ld.style.display='grid'; setTimeout(()=>{ switchTo(want,true).then(()=>{ ld.style.display='none'; go(); }); },40); } else go();
   },
   play(){ this.playing=true; this.last=performance.now(); this.labels(); },
   pause(){ this.playing=false; this.labels(); },
-  stop(toGuide){ this.on=false; this.playing=false; document.body.classList.remove('synty-on','synty-dim'); if(this.ui){ this.ui.querySelector('#sy-end').hidden=true; this.caption(''); }
+  stop(toGuide){ this.on=false; this.playing=false; City.synty(false); document.body.classList.remove('synty-on','synty-dim'); if(this.ui){ this.ui.querySelector('#sy-end').hidden=true; this.caption(''); }
     if(Narr.supported&&this.voice) speechSynthesis.cancel();
     buildings.forEach(B=>{ if(B.born===Infinity){ B.born=performance.now(); B.delay=0; } }); ctxMeshes.forEach(m=>m.visible=showCtx); buildings.forEach(B=>B.group.visible=true); if(typeof applyFilter==='function') applyFilter(); if(!toGuide) resetView(false); },
   finish(){ this.seek(this.hi); this.pause(); this.end(); },
   end(){ this.playing=false; this.labels(); document.body.classList.remove('synty-dim'); if(!this.reduce()) resetView(false); else resetView(true);
     const n=buildings.length, e=this.ui.querySelector('#sy-end'); e.hidden=false;
-    this.ui.querySelector('#sy-end-e').textContent=this.phase==='hki'?'Helsinki 1820–'+this.hi:'Tapiola 1952–2001';
+    this.ui.querySelector('#sy-end-e').textContent=this.phase==='hki'?'Helsinki 1812–'+this.hi:'Tapiola 1950–'+this.hi;
     this.ui.querySelector('#sy-end-h').textContent=T('Kaupunki on rakentunut','The city has taken shape');
-    this.ui.querySelector('#sy-end-p').textContent=T(`${n} kohdetta kahdelta vuosisadalta. Napauta rakennusta, niin näet sen tarinan.`,`${n} sights from two centuries. Tap a building to read its story.`);
+    const nb=City.recs?City.recs.length:0;
+    this.ui.querySelector('#sy-end-p').textContent=nb?T(`${n} opaskohdetta ja ${nb.toLocaleString('fi-FI')} muuta rakennusta valmistumisjärjestyksessä. Napauta rakennusta, niin näet sen tiedot.`,`${n} guide sights and ${nb.toLocaleString('en-GB')} other buildings in order of completion. Tap a building to see its details.`):T(`${n} kohdetta kahdelta vuosisadalta. Napauta rakennusta, niin näet sen tarinan.`,`${n} sights from two centuries. Tap a building to read its story.`);
     this.ui.querySelector('#sy-again').textContent=T('Katso uudelleen','Watch again');
     this.ui.querySelector('#sy-other').textContent=this.phase==='hki'?T('Jatka Tapiolaan →','Continue to Tapiola →'):T('Katso Helsinki','Watch Helsinki');
     this.ui.querySelector('#sy-browse').textContent=T('Selaa kohteita','Browse sights'); },
   caption(t){ const c=this.ui&&this.ui.querySelector('#sy-cap'); if(!c) return; c.textContent=t; c.classList.toggle('show',!!t); },
   say(t){ if(!this.voice||!Narr.supported) return; Narr.loadVoices(); const u=new SpeechSynthesisUtterance(t); const v=Narr.voices[LANG]; if(v){u.voice=v;u.lang=v.lang;} else u.lang=EN()?'en-GB':'fi-FI'; u.rate=Narr.rate; speechSynthesis.speak(u); },
-  setYear(y){ this.y=y; const yy=Math.floor(y); this.ui.querySelector('#sy-y').textContent=yy; this.ui.querySelector('#sy-range').value=yy;
+  setYear(y){ this.y=y; City.setYear(y); const yy=Math.floor(y); this.ui.querySelector('#sy-y').textContent=yy; this.ui.querySelector('#sy-range').value=yy;
     document.body.classList.toggle('synty-dim', yy>=1939&&yy<=1944); },
   seek(y){ this.setYear(y); const now=performance.now();
     buildings.forEach(B=>{ const by=year(B.item); if(by<=y){ if(B.born===Infinity) B.born=now-5000; } else { B.born=Infinity; } });
@@ -2432,15 +2723,395 @@ const Synty={
   }
 };
 
+/* ============================== ERIKOISKIERROKSET ============================== */
+const FINNA=id=>'https://www.finna.fi/Record/'+encodeURIComponent(id);
+const TIMG=(src,id,by,y,org,lic,fi,en,page)=>({src:'img/tour/'+src,by,y,org,lic,fi,en,page:page||FINNA(id)});
+const TOURS={
+ olympia:{ id:'olympia', city:'hki', col:'#d9a441', ico:'🔥', hide:0, sound:'olympia',
+  fi:{t:'Olympiakesä 1952',k:'Erikoiskierros',s:'Soihtu, sade ja Zátopek. Kahdeksan kohdetta kisakaupungissa.',end:'Kisat päättyivät 3. elokuuta 1952. Rakennukset jäivät kaupunkilaisten käyttöön, ja monet niistä ovat yhä käytössä.'},
+  en:{t:'The Olympic summer of 1952',k:'Special tour',s:'The torch, the rain and Zátopek. Eight stops in the Olympic city.',end:'The Games closed on 3 August 1952. The buildings stayed in use by the city, and many still are.'},
+  stops:[
+   {lat:60.16066,lon:24.95879,y:'1952',ar:'Hytönen & Luukkonen',cam:[620,0.98,-0.9],fx:'ship',
+    fi:{n:'Olympiaterminaali',t:'Kisavieraat saapuivat meritse Eteläsatamaan. Satamaan valmistui kisoja varten uusi matkustajaterminaali, jonka suunnitteli Aarne Hytösen ja Risto-Veikko Luukkosen toimisto. Valkoinen, matala rakennus lippuineen oli monelle ensimmäinen näkymä Suomeen. Sama terminaali palvelee yhä Tukholman-laivoja.'},
+    en:{n:'Olympia Terminal',t:'Many visitors arrived by sea at the South Harbour. A new passenger terminal, designed by the office of Aarne Hytönen and Risto-Veikko Luukkonen, was completed for the Games. For many, the low white building with its flags was their first view of Finland. The same terminal still serves the Stockholm ferries.'},
+    img:[TIMG('hkm-15c10982.jpg','hkm.15C10982-AB41-4472-A574-F884F4A08582','Helge Heinonen','1950-l.','Helsingin kaupunginmuseo','PDM','Olympiaterminaali','The Olympia Terminal')]},
+   {lat:60.16539,lon:24.95191,y:'1952',ar:'Viljo Revell & Keijo Petäjä',cam:[430,1.0,-0.55],fx:'neon',
+    fi:{n:'Hotelli Palace',t:'Teollisuuden työnantajien vuonna 1949 järjestämän kilpailun voittivat Viljo Revell ja Keijo Petäjä. Talon hotelli oli tarkoitettu ensi sijassa olympialaisten arvovieraille, ja rakennus valmistui ajoissa pulasta ja lakoista huolimatta. Laivamainen talo nauhaikkunoineen oli modernin Suomen käyntikortti. Katolla loistaa yhä keltainen PALACE-neonvalo.'},
+    en:{n:'Hotel Palace',t:'Viljo Revell and Keijo Petäjä won the industrial employers\' competition of 1949. The hotel was intended first of all for the VIP guests of the Olympics, and the building was finished on time despite shortages and strikes. The ship-like house with its ribbon windows was a calling card of modern Finland. The yellow PALACE neon sign still shines on the roof.'},
+    img:[TIMG('hkm-aeec015e.jpg','hkm.AEEC015E-6306-4309-8105-83497E2F249A','Heikki Havas','1952','Helsingin kaupunginmuseo','PDM','Teollisuuskeskus ja hotelli Palace vuonna 1952','The Industrial Centre and Hotel Palace in 1952')]},
+   {lat:60.1868,lon:24.9272,y:'19.7.1952',yb:'1952',ar:'Yrjö Lindegren & Toivo Jäntti',cam:[700,0.92,-0.35],fx:'opening',sun:12,
+    fi:{n:'Avajaiset sateessa',t:'Lauantaina 19. heinäkuuta stadionilla oli sateesta huolimatta 70 435 katsojaa, mikä on yhä stadionin ennätys. Viimeisenä soihdunkantajana juoksi stadionille Paavo Nurmi, ja yleisö kohahti. Nurmi sytytti maljan kentällä, ja neljä helsinkiläistä jalkapalloilijaa vei tulen tornin huipulle, jossa Hannes Kolehmainen sytytti toisen maljan. Torni on 72,71 metriä korkea, saman verran kuin Matti Järvisen keihäänheiton maailmanennätys vuodelta 1932. Tuli oli sytytetty Olympiassa auringonsäteillä, ja se lensi ensimmäistä kertaa lentokoneella. Lapissa sytytettiin lisäksi oma keskiyön auringon tuli, joka yhdistettiin olympiatuleen.'},
+    en:{n:'Opening in the rain',t:'On Saturday 19 July, 70,435 spectators filled the stadium despite the rain, which is still the stadium record. The last torchbearer to enter was Paavo Nurmi, and the crowd gasped. Nurmi lit the cauldron on the field, and four Helsinki footballers carried the flame to the top of the tower, where Hannes Kolehmainen lit the second cauldron. The tower is 72.71 metres tall, the length of Matti Järvinen\'s 1932 javelin world record. The flame had been lit by the sun at Olympia and travelled by plane for the first time. In Lapland a separate midnight-sun flame was lit and merged with the Olympic flame.'},
+    img:[TIMG('nurmi.jpg','tornionlaakso.80469D1D-5CD8-4170-88AA-90924C5C1CEC','Olympia-kuva Oy','1952','Tornionlaakson museo','Public domain','Paavo Nurmi sytyttää olympiatulen','Paavo Nurmi lights the Olympic flame'),TIMG('hkm-c4ff12ce.jpg','hkm.C4FF12CE-4B3A-4B07-9438-8B653A767BE3','Yrjö Kohonen','1952','Helsingin kaupunginmuseo','PDM','Avajaiset Olympiastadionilla','The opening ceremony')]},
+   {lat:60.1868,lon:24.9272,y:'20.–27.7.1952',yb:'1952',ar:'',cam:[300,1.05,0.4],fx:'runners',
+    fi:{n:'Zátopekin viikko',t:'Tšekkoslovakian Emil Zátopek voitti 10 000 metriä 20. heinäkuuta ja 5 000 metriä 24. heinäkuuta. Samana päivänä hänen vaimonsa Dana Zátopková voitti keihäänheiton, ja pari oli syntynytkin samana päivänä. Kolme päivää myöhemmin Zátopek juoksi elämänsä ensimmäisen maratonin ja voitti senkin. Kukaan muu ei ole voittanut kaikkia kolmea samoissa kisoissa. Kisoissa olivat ensimmäistä kertaa mukana Neuvostoliitto ja Israel.'},
+    en:{n:'Zátopek\'s week',t:'Czechoslovakia\'s Emil Zátopek won the 10,000 metres on 20 July and the 5,000 metres on 24 July. That same day his wife Dana Zátopková won the javelin; the couple had even been born on the same day. Three days later Zátopek ran the first marathon of his life and won that too. No one else has won all three at the same Games. These Games were also the first for the Soviet Union and Israel.'},
+    img:[TIMG('hkm-10d7ae09.jpg','hkm.10D7AE09-E362-4620-A4BF-82E5EC787DA1','Juha Jernvall','1952','Helsingin kaupunginmuseo','PDM','Emil Zátopek ja Alain Mimoun 5 000 metrillä','Emil Zátopek and Alain Mimoun in the 5,000 metres')]},
+   {lat:60.18966,lon:24.93153,y:'1952',ar:'Jorma Järvi',cam:[360,1.0,-0.8],fx:'pool',
+    fi:{n:'Uimastadion',t:'Helsingissä ei ollut uintikisoihin kelpaavaa allasta, joten Jorma Järvi suunnitteli uuden funkisstadionin. Sotavuosina allas jäi pitkään odottamaan: veden lämmityslaitteet tilattiin ulkomailta, mutta niitä kuljettanut laiva upotettiin sodan alettua. Vuonna 1952 täällä kilpailtiin uinnissa, uimahypyissä ja vesipallossa.'},
+    en:{n:'Swimming Stadium',t:'Helsinki had no pool fit for Olympic swimming, so Jorma Järvi designed a new functionalist stadium. The war left the pool waiting: the water heaters were ordered from abroad, but the ship carrying them was sunk after the war began. In 1952 the swimming, diving and water polo events were held here.'},
+    img:[TIMG('hkm-c056e747.jpg','hkm.C056E747-DB48-4EB3-B46F-5E55B6C465A8','Volker von Bonin','1952','Helsingin kaupunginmuseo','PDM','Uimastadion 1952','The Swimming Stadium in 1952')]},
+   {lat:60.20243,lon:24.94214,y:'1940',ar:'Hilding Ekelund',cam:[520,0.95,-0.5],fx:'velo',
+    fi:{n:'Velodromi',t:'Hilding Ekelund suunnitteli Käpylän urheilupuistoon Suomen ensimmäisen kallistetun pyöräilyradan peruttuja vuoden 1940 kisoja varten. Ensimmäisessä suunnitelmassa ratakin oli puuta, mutta valmis velodromi tehtiin betonista. Vuonna 1952 täällä ajettiin ratapyöräily ja pelattiin maahockeyta. Suojeltu velodromi on yhä käytössä.'},
+    en:{n:'Velodrome',t:'Hilding Ekelund designed Finland\'s first banked cycling track in the Käpylä sports park for the cancelled Games of 1940. The first plan had a wooden track, but the finished velodrome was built of concrete. In 1952 it hosted track cycling and field hockey. The protected velodrome is still in use.'},
+    img:[TIMG('hkm-1b50c7db.jpg','hkm.1B50C7DB-50EC-40C3-88DE-FBC5854CDD20','Volker von Bonin','1952','Helsingin kaupunginmuseo','PDM','Velodromi ilmasta 1952','The Velodrome from the air, 1952')]},
+   {lat:60.20846,lon:24.94798,y:'1940 / 1952',yb:'1952',ar:'H. Ekelund & M. Välikangas · Pauli Salomaa',cam:[640,0.92,-0.3],fx:'flags',
+    fi:{n:'Olympiakylä ja Kisakylä',t:'Käpylässä on kaksi urheilijakylää. Hilding Ekelundin ja Martti Välikankaan Olympiakylä rakennettiin vuoden 1940 kisoille, ja siitä tuli ensimmäinen selvästi funktionalismin periaatteilla toteutettu asuinalue Suomessa. Vuoden 1952 kisoja varten Pauli Salomaa suunnitteli viereen Kisakylän noin viidelletuhannelle urheilijalle. Se valmistui avajaispäivänä. Kisojen jälkeen talot muuttuivat kaupunkilaisten kodeiksi.'},
+    en:{n:'Olympic Village and Games Village',t:'Käpylä has two athletes\' villages. Hilding Ekelund and Martti Välikangas built the Olympic Village for the 1940 Games, and it became Finland\'s first residential area clearly built on functionalist principles. For 1952 Pauli Salomaa designed the Games Village next to it for about five thousand athletes. It was completed on the day of the opening. After the Games the houses became homes for Helsinki residents.'},
+    img:[TIMG('hkm-08f46ab6.jpg','hkm.08F46AB6-B664-40DF-8CC4-2198164A342C','Yrjö Kohonen','1952','Helsingin kaupunginmuseo','PDM','Kisakylän portti kisojen aikana','The Games Village gate during the Games'),TIMG('hkm-3da46758.jpg','hkm.3DA46758-19D0-4ABA-AD07-8AB5F7C99D89','Veljekset Karhumäki Oy','1952','Helsingin kaupunginmuseo','PDM','Kisakylä ja Olympiakylä ilmasta','The Games Village and Olympic Village from the air')]},
+   {lat:60.1858,lon:24.9272,y:'1952',ar:'',cam:[2300,0.98,-0.55],fx:'finale',sun:3,
+    fi:{n:'Kisakaupunki illalla',t:'Olympiavuonna stadionilla kävi yhteensä 850 000 katsojaa, enemmän kuin minkään muun vuoden aikana. Helsinki oli valmistautunut kisoihin jo 1930-luvulta asti, ja sota oli siirtänyt suunnitelmia yli vuosikymmenellä. Kisojen rakennukset jäivät kaupunkiin: stadion, uimala, velodromi, kylät, terminaali ja hotelli kertovat yhä, miten pieni sodan jälkeinen maa esittäytyi maailmalle modernina.'},
+    en:{n:'The Olympic city at night',t:'In the Olympic year the stadium welcomed a total of 850,000 spectators, more than in any other year. Helsinki had been preparing for the Games since the 1930s, and the war had postponed its plans by more than a decade. The buildings of the Games stayed in the city: the stadium, the pool, the velodrome, the villages, the terminal and the hotel still show how a small post-war country presented itself to the world as modern.'},
+    img:[TIMG('hkm-1c5da14f.jpg','hkm.1C5DA14F-3AE2-47A3-8194-0E8EBA575CB1','Volker von Bonin','1952','Helsingin kaupunginmuseo','PDM','Olympiastadionin torni','The Olympic Stadium tower')]}
+  ]},
+ kadonnut:{ id:'kadonnut', city:'hki', col:'#e8d7b0', ico:'👻', hide:1, sound:'kadonnut',
+  fi:{t:'Kadonnut Helsinki',k:'Erikoiskierros',s:'Puretut talot palaavat aaveina paikoilleen. Kahdeksan rakennusta, jotka hävisivät.',end:'Heimolan talon purku vuonna 1969 sai helsinkiläiset vaatimaan rakennusten suojelua. Moni talo tällä kierroksella olisi tänään suojeltu.'},
+  en:{t:'Lost Helsinki',k:'Special tour',s:'Demolished buildings return as ghosts on their sites. Eight buildings that disappeared.',end:'The demolition of Heimola House in 1969 made the people of Helsinki demand protection for buildings. Many houses on this tour would be protected today.'},
+  stops:[
+   {lat:60.1719,lon:24.94201,y:'1861–1918',yb:'1918',ar:'Carl Albert Edelfelt',cam:[420,1.0,-0.4],ghost:{boxes:[[0,10,66,18,13],[-40,10,16,26,11],[40,10,16,26,11]]},hide:[[60.1719,24.94201,60]],
+    fi:{n:'Ensimmäinen rautatieasema',t:'Carl Albert Edelfeltin suunnittelema asema valmistui Helsinki–Hämeenlinna-radalle 1861, ja junat alkoivat kulkea seuraavana vuonna. Kaupunki kasvoi nopeasti, ja asema kävi pian pieneksi. Uuden aseman kilpailun voitti Eliel Saarinen 1904. Vanha asema purettiin 1918, ja Saarisen asema otettiin käyttöön keväällä 1919.'},
+    en:{n:'The first railway station',t:'Carl Albert Edelfelt\'s station was completed for the Helsinki–Hämeenlinna line in 1861, and trains began running the next year. The city grew fast and the station soon became too small. Eliel Saarinen won the competition for a new station in 1904. The old station was demolished in 1918 and Saarinen\'s station opened in spring 1919.'},
+    img:[TIMG('hkm-750f0c2d.jpg','hkm.750F0C2D-093A-49B9-94EE-079844CB9E88','Charles Riis','1870','Helsingin kaupunginmuseo','PDM','Vanha rautatieasema noin 1870','The old station around 1870')]},
+   {lat:60.16841,lon:24.93964,y:'–1960',yb:'1960',ar:'Theodor Höijer',cam:[300,1.02,-0.9],ghost:{foot:1,h:20},hide:[[60.16841,24.93964,14]],
+    fi:{n:'Huberin talo',t:'Theodor Höijerin suunnittelema Huberin talo oli yksi kaupungin uusrenessanssiajan merkkirakennuksista Mannerheimintien ja Aleksanterinkadun kulmassa. Se purettiin 1960 uuden liiketalon tieltä, aikana jolloin 1800-luvun taloja ei arvostettu. Kurt Simbergin suunnittelemalle seuraajallekin haettiin purkulupaa 2022, ja tontille on jo noussut kolmas rakennus.'},
+    en:{n:'Huber House',t:'Theodor Höijer\'s Huber House was one of the city\'s landmark neo-Renaissance buildings on the corner of Mannerheimintie and Aleksanterinkatu. It was demolished in 1960 for a new commercial building, at a time when 19th-century houses were little valued. A demolition permit was sought in 2022 for its successor by Kurt Simberg too, and a third building now stands on the site.'},
+    img:[TIMG('hkm-a7839902.jpg','hkm.A7839902-6636-45CB-BDC4-5D263C0ED52E','A. E. Rosenbröijer','1892','Helsingin kaupunginmuseo','PDM','Huberin talo 1892','Huber House in 1892')]},
+   {lat:60.1679,lon:24.95869,y:'1890-l.–1960',yb:'1960',ar:'Theodor Höijer',cam:[360,1.0,0.6],ghost:{foot:1,h:22},hide:[[60.1679,24.95869,16]],
+    fi:{n:'Norrménin talo',t:'Punatiilinen uusrenessanssipalatsi seisoi Katajanokalla Uspenskin katedraalia vastapäätä 63 vuotta. Senkin suunnitteli Theodor Höijer. Talo purettiin 1960, ja tilalle nousi Alvar Aallon valkoinen Enso-Gutzeitin pääkonttori, jota kutsutaan sokeripalaksi. Purku herätti kiivaan keskustelun, ja elokuvassa Pelikaanimies talo rakennettiin digitaalisesti takaisin paikalleen.'},
+    en:{n:'Norrmén House',t:'This red-brick neo-Renaissance palace stood in Katajanokka opposite the Uspenski Cathedral for 63 years. It too was designed by Theodor Höijer. It was demolished in 1960 and replaced by Alvar Aalto\'s white Enso-Gutzeit headquarters, nicknamed the sugar cube. The demolition caused fierce debate, and the film The Pelican Man digitally rebuilt the house on its site.'},
+    img:[TIMG('hkm-b4243245.jpg','hkm.b4243245-cf37-4cee-9f0b-27899f9fd672','Antero Markelin','1959','Helsingin kaupunginmuseo','PDM','Uspenskin katedraali ja Norrménin talo 1959','Uspenski Cathedral and Norrmén House in 1959'),TIMG('inha-norrmen.jpg','fmp.D2005:132/706','I. K. Inha','1908','Suomen valokuvataiteen museo','CC0','Norrménin talo 1908','Norrmén House in 1908')]},
+   {lat:60.16539,lon:24.95191,y:'1952',yb:'1952',ar:'',cam:[340,1.0,-0.7],ghost:{foot:1,h:10},hide:[[60.16539,24.95191,14]],
+    fi:{n:'Eteläsataman pakkahuone',t:'Eteläsataman laiturilla, nykyisen Eteläranta 10:n kohdalla, seisoi tullin pakkahuone, jonka edustalle levittäytyi Pakkahuoneentori ajureineen. Satama oli kaupungin vilkkain paikka. Pakkahuone purettiin, ja sen paikalle valmistui olympialaisia varten hotelli Palace vuonna 1952.'},
+    en:{n:'The South Harbour customs house',t:'On the South Harbour quay, where Eteläranta 10 is today, stood the customs warehouse, with the Customs House Square and its cab drivers in front. The harbour was the busiest place in town. The customs house was demolished, and Hotel Palace was completed on its site for the Olympics in 1952.'},
+    img:[TIMG('hkm-21e663c6.jpg','hkm.21E663C6-3A9B-4B56-A04A-F90B049B611C','Alexander Eugén Maconi','1896','Helsingin kaupunginmuseo','PDM','Ajureita Pakkahuoneentorilla 1896','Cab drivers on the Customs House Square, 1896')]},
+   {lat:60.16798,lon:24.94714,y:'1887–1965',yb:'1965',ar:'Theodor Höijer',cam:[300,1.0,-0.4],ghost:{foot:1,h:22},hide:[[60.16798,24.94714,14]],
+    fi:{n:'Hotelli Kämp',t:'Theodor Höijerin suunnittelema Kämp avattiin 1887 Pohjoisesplanadin ja Kluuvikadun kulmaan. Se oli Suomen ensimmäinen hotelli, jossa oli hissi, ja sen Symposium-piirissä istuivat Sibelius, Gallen-Kallela ja Juhani Aho. Pankki halusi tontille uuden toimitalon, ja kiistan jälkeen Kämp suljettiin maaliskuussa 1965 ja purettiin. Vuonna 1999 hotelli avattiin uudelleen kopioidun julkisivun taakse.'},
+    en:{n:'Hotel Kämp',t:'Theodor Höijer\'s Kämp opened in 1887 on the corner of Pohjoisesplanadi and Kluuvikatu. It was the first hotel in Finland with a lift, and its Symposium circle gathered Sibelius, Gallen-Kallela and Juhani Aho. A bank wanted the plot for a new head office, and after a long dispute the Kämp closed in March 1965 and was demolished. In 1999 the hotel reopened behind a copied facade.'},
+    img:[TIMG('hkm-3ecb14ed.jpg','hkm.3ECB14ED-3EEA-493F-B94B-8D2D07BA2F06','Karl Emil Ståhlberg','1890','Helsingin kaupunginmuseo','PDM','Hotelli Kämp 1890','Hotel Kämp in 1890')]},
+   {lat:60.16997,lon:24.94705,y:'1910–1969',yb:'1969',ar:'Onni Tarjanne',cam:[320,1.0,-0.2],ghost:{foot:1,h:22},hide:[[60.16997,24.94705,14]],
+    fi:{n:'Heimolan talo',t:'Onni Tarjanteen suunnittelemassa jugendtalossa kokoontui eduskunta vuodesta 1911 lähes kaksikymmentä vuotta. Täällä eduskunta hyväksyi itsenäisyysjulistuksen 6. joulukuuta 1917. Talo purettiin 1969, ja purku tehtiin yöllä. Siitä tuli käännekohta: helsinkiläiset alkoivat vaatia rakennusperinnön suojelua.'},
+    en:{n:'Heimola House',t:'Parliament met in Onni Tarjanne\'s Art Nouveau house for almost twenty years from 1911. Here Parliament approved the declaration of independence on 6 December 1917. The house was demolished in 1969, and the demolition was done at night. It became a turning point: the people of Helsinki began to demand protection for the city\'s built heritage.'},
+    img:[TIMG('hkm-54b67940.jpg','hkm.54B67940-067B-43EB-922A-51CAB679F67F','Constantin Grünberg','1966','Helsingin kaupunginmuseo','PDM','Heimolan talo Kluuvikadulta 1966','Heimola House from Kluuvikatu, 1966'),TIMG('hkm-263d0a05.jpg','hkm.263d0a05-258f-480f-8ab1-c31904b42983','tuntematon','1920','Helsingin kaupunginmuseo','PDM','Eduskunnan täysistunto Heimolan talossa','A plenary session in Heimola House')]},
+   {lat:60.17948,lon:24.92718,y:'1960–70-l.',yb:'1970',ar:'',cam:[480,0.98,-0.5],ghost:{boxes:[[-20,-55,70,14,12,0.35],[22,10,70,14,12,0.35],[-30,60,60,14,12,0.35]]},hide:[[60.17909,24.92747,30],[60.17987,24.92688,30]],
+    fi:{n:'Tykistöpihan kasarmi',t:'Mannerheimintien varrella Töölössä oli venäläisen tykistön kasarmialue. Sen rakennukset purettiin 1960- ja 1970-lukujen vaihteessa, ja tilalle nousivat suurhotellit Hesperia ja Inter-Continental, jotka valmistuivat 1972. Massamalli on suuntaa-antava.'},
+    en:{n:'The Artillery Yard barracks',t:'On Mannerheimintie in Töölö stood the barracks of the Russian artillery. The buildings were demolished around the turn of the 1960s and 1970s, and the large hotels Hesperia and Inter-Continental, completed in 1972, rose in their place. The massing model is approximate.'},img:[]},
+   {lat:60.17371,lon:24.93498,y:'1899–2006',yb:'2006',ar:'Bruno Granholm',cam:[460,1.0,-0.7],ghost:{boxes:[[-22,0,22,170,9,0.18],[24,10,22,150,9,0.18]]},hide:[[60.17371,24.93498,45]],
+    fi:{n:'VR:n makasiinit',t:'Bruno Granholmin punatiiliset tavaramakasiinit valmistuivat 1899 rautatieaseman tavaraterminaaliksi. Kun tavaraliikenne siirtyi Pasilaan 1988, makasiineista tuli taiteilijoiden, kirpputorien ja klubien vapaa kulttuurikeskus. Ne kärsivät pahoin tulipalossa 5. toukokuuta 2006 ja purettiin. Paikalla on nyt Musiikkitalo.'},
+    en:{n:'The VR warehouses',t:'Bruno Granholm\'s red-brick warehouses were completed in 1899 as the railway station\'s freight terminal. When freight moved to Pasila in 1988, they became a free cultural hub of artists, flea markets and clubs. They were badly damaged in a fire on 5 May 2006 and demolished. The Helsinki Music Centre stands on the site today.'},
+    img:[TIMG('hkm-683e006f.jpg','hkm.683E006F-445E-43D0-9CA7-2403FA932B48','Erik Friman','1950','Helsingin kaupunginmuseo','PDM','VR:n makasiinit ja porttirakennus 1950','The VR warehouses and gatehouse, 1950')]}
+  ]},
+ piirustus:{ id:'piirustus', city:'hki', col:'#7fd3ff', ico:'📐', hide:2, sound:'piirustus',
+  fi:{t:'Helsinki, jota ei rakennettu',k:'Erikoiskierros',s:'Suunnitelmat, jotka jäivät paperille. Piirustukset nousevat kartalle sinikopioina.',end:'Saarisen bulevardi, Aallon terassit ja Guggenheimin paviljongit jäivät rakentamatta. Silti jokainen niistä muutti tapaa, jolla Helsingistä keskustellaan.'},
+  en:{t:'The Helsinki that never was',k:'Special tour',s:'Plans that stayed on paper. The drawings rise onto the map as blueprints.',end:'Saarinen\'s boulevard, Aalto\'s terraces and the Guggenheim pavilions were never built. Still, each of them changed the way Helsinki is discussed.'},
+  stops:[
+   {lat:60.1618,lon:24.9522,y:'1908',ar:'Eliel Saarinen',cam:[560,0.98,-0.5],plan:{boxes:[[0,0,150,90,20],[0,0,92,58,36],[0,0,30,30,62],[0,0,18,18,80]]},
+    fi:{n:'Valtiopäivätalo Tähtitorninmäellä',t:'Uusi yksikamarinen eduskunta tarvitsi talon, ja vuoden 1908 kilpailun voitti Eliel Saarinen. Hänen monumentaalinen valtiopäivätalonsa olisi kohonnut Tähtitorninmäelle Eteläsataman ylle. Keisari ei hyväksynyt hanketta. Eduskunta kokoontui väliaikaisissa tiloissa, kunnes J. S. Sirénin Eduskuntatalo valmistui 1931 aivan toiseen paikkaan.'},
+    en:{n:'A parliament on Observatory Hill',t:'The new single-chamber parliament needed a house, and Eliel Saarinen won the competition of 1908. His monumental parliament would have risen on Observatory Hill above the South Harbour. The Tsar did not approve the project. Parliament met in temporary premises until J. S. Sirén\'s Parliament House was completed in 1931 on a completely different site.'},
+    img:[TIMG('parl1908.jpg','','Eliel Saarinen','1908','Wikimedia Commons','Public domain','Saarisen voittanut ehdotus 1908','Saarinen\'s winning entry, 1908','https://commons.wikimedia.org/wiki/File:Saarinen_Eduskuntatalosuunnitelma.jpg')]},
+   {lat:60.1800,lon:24.9388,y:'1918',ar:'Eliel Saarinen, Bertel Jung & Einar Sjöström',cam:[1500,0.9,-0.25],plan:{avenue:[[60.1728,24.9405],[60.1878,24.9372]],w:46,blocks:7},
+    fi:{n:'Kuningasavenue',t:'Pro Helsingfors -suunnitelmassa vuodelta 1918 Eliel Saarinen, Bertel Jung ja Einar Sjöström täyttivät Töölönlahden. Sen paikalle olisi tullut leveä Kuningasavenue korttelirivistöineen, joka olisi johtanut rautatieasemalta pohjoiseen. Suunnitelma ei toteutunut, mutta ajatus suuresta keskustan bulevardista on palannut Helsingin suunnitteluun yhä uudelleen.'},
+    en:{n:'The King\'s Avenue',t:'In the Pro Helsingfors plan of 1918, Eliel Saarinen, Bertel Jung and Einar Sjöström filled in Töölö Bay. In its place a broad King\'s Avenue lined with city blocks would have led north from the railway station. The plan was never realised, but the idea of a great central boulevard has returned to Helsinki\'s planning again and again.'},
+    img:[TIMG('hkm-39a14f3c.jpg','hkm.39A14F3C-02FF-45DB-9B19-81347F0ED20D','Eliel Saarinen','1918','Helsingin kaupunginmuseo','PDM','Keskusta ja Kuningasavenue, Suur-Helsinki-suunnitelma','The centre and the King\'s Avenue, Greater Helsinki plan')]},
+   {lat:60.1912,lon:24.8768,y:'1921',ar:'Eliel Saarinen',cam:[620,0.95,-0.7],plan:{boxes:[[0,0,124,74,16],[0,0,50,42,34],[0,-30,18,18,58],[-52,22,22,30,24],[52,22,22,30,24]]},hide:[[60.1912,24.8768,75]],
+    fi:{n:'Kalevalatalo',t:'Vuonna 1921 Eliel Saarinen piirsi Kalevalaseuralle valtavan, linnamaisen talon Munkkiniemen kärkeen meren äärelle. Taloon olisi tullut suomalaisen kulttuurin tutkimuslaitos, näyttelytiloja ja taiteilijoiden työhuoneita. Hanke kaatui, kun Akseli Gallen-Kallelan mielestä piirustukset eivät olleet tarpeeksi kansallisia. Saarinen oli piirtänyt Munkkiniemen ja Haagan suunnitelman jo 1915; siitäkin rakennettiin vain muutama talo.'},
+    en:{n:'The Kalevala House',t:'In 1921 Eliel Saarinen drew a huge, castle-like house for the Kalevala Society at the tip of Munkkiniemi by the sea. It would have held a research institute for Finnish culture, exhibition rooms and artists\' studios. The project collapsed when Akseli Gallen-Kallela found the drawings not national enough. Saarinen had drawn his Munkkiniemi–Haaga plan back in 1915; only a few houses of it were ever built.'},
+    img:[TIMG('kalevala.jpg','mfa.8db6d355-bd14-4341-98b6-8f8f5aecf69e','Eliel Saarinen','1921','Arkkitehtuuri- ja designmuseo','CC BY 4.0','Kalevalatalo, perspektiivipiirustus 28.7.1921','The Kalevala House, perspective drawing, 28 July 1921'),TIMG('munkka.jpg','','Eliel Saarinen','1915','Wikimedia Commons','Public domain','Munkkiniemi–Haaga-suunnitelma 1915','The Munkkiniemi–Haaga plan, 1915','https://commons.wikimedia.org/wiki/File:Munksnas-haga.jpg')]},
+   {lat:60.1727,lon:24.9372,y:'1961–1972',yb:'1961',ar:'Alvar Aalto',cam:[820,0.92,-0.15],plan:{fan:[60.1724,24.9374,150],boxes2:[[60.17465,24.93445,62,40,24,0.35],[60.17395,24.93505,58,38,22,0.35],[60.17325,24.93565,54,36,20,0.35]]},
+    fi:{n:'Aallon keskustasuunnitelma',t:'Helsinki pyysi Alvar Aallolta keskustasuunnitelmaa vuonna 1959. Sen sydän olisi ollut viuhkamainen Terassitori Töölönlahden etelärannalla ja rivi kulttuurirakennuksia lahden länsirannalla: konserttitalo, ooppera, taidemuseo ja kirjasto, joiden julkisivut olisivat kuvastuneet veteen. Aalto muokkasi suunnitelmaa 1964 ja 1971. Rakennuksista toteutui vain Finlandia-talo. Sinikopio näyttää ajatuksen suuntaa-antavasti.'},
+    en:{n:'Aalto\'s plan for the centre',t:'Helsinki asked Alvar Aalto for a plan for the city centre in 1959. Its heart would have been a fan-shaped Terrace Square on the south shore of Töölö Bay and a row of cultural buildings along the west shore: a concert hall, an opera house, an art museum and a library, their facades mirrored in the water. Aalto revised the plan in 1964 and 1971. Only Finlandia Hall was built. The blueprint shows the idea approximately.'},img:[]},
+   {lat:60.1632,lon:24.9545,y:'2015–2016',yb:'2016',ar:'Moreau Kusunoki',cam:[440,0.98,-0.8],plan:{boxes:[[-34,-30,30,24,12],[0,-34,24,28,9],[32,-26,26,22,11],[-38,6,26,26,9],[-4,4,30,26,14],[30,8,24,24,9],[-30,38,24,22,11],[4,40,28,24,10],[34,40,22,20,8],[-4,4,9,9,32]]},hide:[[60.1632,24.9545,55]],
+    fi:{n:'Guggenheim Helsinki',t:'Guggenheim-säätiö ehdotti museota Helsinkiin 2011. Eteläsataman tontista järjestettyyn kilpailuun tuli ennätykselliset 1 715 ehdotusta, ja kesäkuussa 2015 voittajaksi valittiin pariisilaisen Moreau Kusunokin Art in the City: hiillettyä puuta olevia paviljonkeja ja niiden yllä majakkamainen torni. Kaupunginvaltuusto hylkäsi rahoituksen 30. marraskuuta 2016 äänin 53–32.'},
+    en:{n:'Guggenheim Helsinki',t:'The Guggenheim Foundation proposed a museum for Helsinki in 2011. The competition for the South Harbour site drew a record 1,715 entries, and in June 2015 Art in the City by the Paris office Moreau Kusunoki won: pavilions of charred timber beneath a lighthouse-like tower. The City Council rejected the funding on 30 November 2016 by 53 votes to 32.'},img:[]}
+  ]}
+};
+// ---------------- äänimaisema (Web Audio, syntetisoitu selaimessa) ----------------
+const Sound={
+  ctx:null, master:null, nodes:[], timers:[], preset:null, on:true,
+  init(){ if(this.ctx) return true; const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return false; this.ctx=new AC(); this.master=this.ctx.createGain(); this.master.gain.value=0; this.master.connect(this.ctx.destination);
+    const n=this.ctx.sampleRate*2, b=this.ctx.createBuffer(1,n,this.ctx.sampleRate), d=b.getChannelData(0); let l=0; for(let i=0;i<n;i++){ const w=Math.random()*2-1; l=(l+0.02*w)/1.02; d[i]=w*0.6+l*3; } this.noiseBuf=b; return true; },
+  noise(){ const s=this.ctx.createBufferSource(); s.buffer=this.noiseBuf; s.loop=true; s.start(); return s; },
+  filt(type,f,q){ const x=this.ctx.createBiquadFilter(); x.type=type; x.frequency.value=f; if(q) x.Q.value=q; return x; },
+  gain(v){ const g=this.ctx.createGain(); g.gain.value=v; return g; },
+  chain(...a){ for(let i=1;i<a.length;i++) a[i-1].connect(a[i]); return a[a.length-1]; },
+  every(ms,fn,jit){ const go=()=>{ fn(); this.timers.push(setTimeout(go,ms+(jit?Math.random()*jit:0))); }; this.timers.push(setTimeout(go,ms*0.4+(jit?Math.random()*jit:0))); },
+  start(preset){ if(!this.on) return; if(!this.init()) return; if(this.ctx.state==='suspended') this.ctx.resume(); if(this.preset===preset) return; this.stopNodes(); this.preset=preset;
+    const C=this.ctx, t=C.currentTime; this.master.gain.cancelScheduledValues(t); this.master.gain.setValueAtTime(this.master.gain.value,t); this.master.gain.linearRampToValueAtTime(0.9,t+2.5);
+    if(preset==='olympia'){
+      // yleisön kohina: kaistasuodatettu kohina ja hitaat aallot
+      const crowd=this.gain(0.22); this.chain(this.noise(),this.filt('bandpass',700,0.5),this.filt('lowpass',2600),crowd,this.master);
+      const lfo=C.createOscillator(); lfo.frequency.value=0.07; const lg=this.gain(0.08); lfo.connect(lg); lg.connect(crowd.gain); lfo.start();
+      this.crowd=crowd; this.nodes.push(crowd,lfo,lg);
+      // radion rätinä
+      const crack=this.gain(0.0); this.chain(this.noise(),this.filt('highpass',3500),crack,this.master); this.nodes.push(crack);
+      this.every(700,()=>{ const tt=C.currentTime; crack.gain.setValueAtTime(0.05*Math.random(),tt); crack.gain.exponentialRampToValueAtTime(0.0001,tt+0.04); },900);
+      // sade
+      this.rain=this.gain(0); this.chain(this.noise(),this.filt('highpass',1800),this.filt('lowpass',9000),this.rain,this.master); this.nodes.push(this.rain);
+      this.every(9000,()=>this.cheer(0.5+Math.random()*0.4),7000);
+    } else if(preset==='kadonnut'){
+      const wind=this.gain(0.16); this.chain(this.noise(),this.filt('lowpass',380,0.7),wind,this.master);
+      const lfo=C.createOscillator(); lfo.frequency.value=0.05; const lg=this.gain(0.1); lfo.connect(lg); lg.connect(wind.gain); lfo.start(); this.nodes.push(wind,lfo,lg);
+      this.drone([110,164.8,220],0.035,'sine');
+      this.every(14000,()=>this.bell(392,0.09),6000);
+    } else if(preset==='piirustus'){
+      this.drone([261.6,329.6,392,493.9],0.022,'triangle');
+      this.every(5200,()=>this.scratch(),4000);
+    } },
+  drone(fs,v,type){ const C=this.ctx; const g=this.gain(0); const lp=this.filt('lowpass',900); g.connect(lp); lp.connect(this.master);
+    fs.forEach((f,i)=>{ [-4,4].forEach(dt=>{ const o=C.createOscillator(); o.type=type; o.frequency.value=f; o.detune.value=dt+i; o.connect(g); o.start(); this.nodes.push(o); }); });
+    g.gain.linearRampToValueAtTime(v,C.currentTime+4); this.nodes.push(g,lp); },
+  bell(f,v){ const C=this.ctx,t=C.currentTime; [1,2.76,5.4].forEach((m,i)=>{ const o=C.createOscillator(); o.frequency.value=f*m; const g=this.gain(0); o.connect(g); g.connect(this.master); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v/(i+1),t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+4/(i+1)); o.start(t); o.stop(t+4.2); }); },
+  scratch(){ const C=this.ctx,t=C.currentTime; const g=this.gain(0); this.chain(this.noise(),this.filt('bandpass',3200,2),g,this.master);
+    for(let i=0;i<5;i++){ const s=t+i*0.13+Math.random()*0.05; g.gain.setValueAtTime(0,s); g.gain.linearRampToValueAtTime(0.05,s+0.02); g.gain.linearRampToValueAtTime(0,s+0.1); } setTimeout(()=>g.disconnect(),2000); },
+  cheer(v){ if(!this.crowd) return; const t=this.ctx.currentTime, g=this.crowd.gain; g.cancelScheduledValues(t); g.setValueAtTime(g.value,t); g.linearRampToValueAtTime(0.22+v*0.5,t+0.6); g.linearRampToValueAtTime(0.22,t+4.5); },
+  rainOn(on){ if(this.rain) this.rain.gain.linearRampToValueAtTime(on?0.06:0,this.ctx.currentTime+2); },
+  pistol(){ if(!this.ctx||!this.on) return; const C=this.ctx,t=C.currentTime; const g=this.gain(0); this.chain(this.noise(),this.filt('lowpass',2400),g,this.master); g.gain.setValueAtTime(0.9,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.35); setTimeout(()=>g.disconnect(),800); setTimeout(()=>this.cheer(0.9),500); },
+  horn(){ if(!this.ctx||!this.on) return; const C=this.ctx,t=C.currentTime; const g=this.gain(0); const lp=this.filt('lowpass',600); g.connect(lp); lp.connect(this.master);
+    [98,147].forEach(f=>{ const o=C.createOscillator(); o.type='sawtooth'; o.frequency.value=f; o.connect(g); o.start(t); o.stop(t+2.6); }); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.22,t+0.15); g.gain.setValueAtTime(0.22,t+2.1); g.gain.linearRampToValueAtTime(0,t+2.5); },
+  // alkuperäinen fanfaari (ei olympiahymniä): vaskisoittimia jäljittelevä syntetisaattori
+  fanfare(){ if(!this.ctx||!this.on) return; const C=this.ctx; const N={F4:349.2,Bb4:466.2,D5:587.3,F5:698.5,Bb5:932.3,C5:523.3,A4:440,G5:784};
+    const seq=[['F4',.18],['Bb4',.18],['D5',.18],['F5',.55],['D5',.18],['F5',.18],['Bb5',1.1],['G5',.3],['F5',.3],['D5',.3],['Bb4',1.2]];
+    let t=C.currentTime+0.1;
+    seq.forEach(([n,d])=>{ [1,0.8].forEach((m,j)=>{ const f=N[n]*(j?0.7491:1); const o=C.createOscillator(); o.type='sawtooth'; o.frequency.value=f; const o2=C.createOscillator(); o2.type='sawtooth'; o2.frequency.value=f*1.004;
+        const lp=this.filt('lowpass',500); const g=this.gain(0); o.connect(lp); o2.connect(lp); lp.connect(g); g.connect(this.master);
+        lp.frequency.setValueAtTime(500,t); lp.frequency.linearRampToValueAtTime(2600,t+0.06); lp.frequency.linearRampToValueAtTime(1500,t+d);
+        g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.06*m,t+0.04); g.gain.setValueAtTime(0.06*m,t+d*0.85); g.gain.linearRampToValueAtTime(0,t+d+0.08);
+        o.start(t); o2.start(t); o.stop(t+d+0.1); o2.stop(t+d+0.1); }); t+=d+0.02; }); },
+  stopNodes(){ this.timers.forEach(clearTimeout); this.timers=[]; this.nodes.forEach(n=>{ try{ n.stop&&n.stop(); }catch(e){} try{ n.disconnect(); }catch(e){} }); this.nodes=[]; this.crowd=null; this.rain=null; this.preset=null; },
+  stop(){ if(!this.ctx) return; const t=this.ctx.currentTime; this.master.gain.cancelScheduledValues(t); this.master.gain.setValueAtTime(this.master.gain.value,t); this.master.gain.linearRampToValueAtTime(0,t+0.8); setTimeout(()=>this.stopNodes(),900); }
+};
+// ---------------- kierrosmoottori ----------------
+const Tours={
+  on:false, id:null, i:0, auto:false, voice:false, ui:null, fx:null, marks:[], anim:[], arrive:0, nextT:0,
+  get T(){ return TOURS[this.id]; },
+  L(o){ return EN()?o.en:o.fi; },
+  hidePts(){ const out=[]; Object.values(TOURS).forEach(T=>T.stops.forEach(s=>(s.hide||[]).forEach(h=>out.push({city:T.city,lat:h[0],lon:h[1],r:h[2],flag:T.hide})))); return out; },
+  build(){
+    if(this.ui) return;
+    const u=document.createElement('div'); u.id='tour'; u.innerHTML=`
+      <div class="tr-year" aria-hidden="true"><b id="tr-y"></b><span id="tr-k"></span></div>
+      <aside class="tr-panel" aria-live="polite">
+        <div class="tr-top"><span class="tr-kick" id="tr-kick"></span><button type="button" class="tr-x" id="tr-x"></button></div>
+        <h3 id="tr-n"></h3><p class="tr-meta" id="tr-meta"></p>
+        <figure class="tr-fig" id="tr-fig"></figure>
+        <p class="tr-t" id="tr-t"></p>
+        <div class="tr-dots" id="tr-dots" role="tablist"></div>
+      </aside>
+      <div class="tr-bar" role="group">
+        <button type="button" class="sy-btn" id="tr-prev"></button>
+        <button type="button" class="sy-btn big" id="tr-play"></button>
+        <button type="button" class="sy-btn" id="tr-next"></button>
+        <span class="tr-sep"></span>
+        <button type="button" class="sy-btn" id="tr-voice" aria-pressed="false"></button>
+        <button type="button" class="sy-btn" id="tr-sound" aria-pressed="true"></button>
+      </div>
+      <div class="sy-end" id="tr-end" hidden><div class="sy-end-in"><p class="eyebrow" id="tr-end-e"></p><h3 id="tr-end-h"></h3><p id="tr-end-p"></p><div class="sy-end-b" id="tr-end-b"></div></div></div>`;
+    document.getElementById('view-map').appendChild(u); this.ui=u;
+    const $=id=>u.querySelector('#'+id);
+    $('tr-prev').onclick=()=>{ this.auto=false; this.go(this.i-1); };
+    $('tr-next').onclick=()=>{ this.auto=false; this.go(this.i+1); };
+    $('tr-play').onclick=()=>{ this.auto=!this.auto; this.labels(); if(this.auto){ this.go(this.i,true); } else { clearTimeout(this.nextT); if(Narr.supported) speechSynthesis.cancel(); } };
+    $('tr-voice').onclick=()=>{ this.voice=!this.voice; if(!this.voice&&Narr.supported) speechSynthesis.cancel(); else this.say(); this.labels(); };
+    $('tr-sound').onclick=()=>{ Sound.on=!Sound.on; if(Sound.on) Sound.start(this.T.sound); else Sound.stop(); this.labels(); };
+    $('tr-x').onclick=()=>{ location.hash='#kierrokset'; };
+    addEventListener('keydown',e=>{ if(!this.on||e.target.closest('input,textarea')) return; if(e.key==='ArrowRight'){ this.auto=false; this.go(this.i+1); } if(e.key==='ArrowLeft'){ this.auto=false; this.go(this.i-1); } if(e.key==='Escape') location.hash='#kierrokset'; });
+  },
+  labels(){
+    if(!this.ui) return; const $=id=>this.ui.querySelector('#'+id);
+    const PLAY='<svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.4-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>';
+    const PAUSE='<svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
+    const AR=d=>`<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d?'M9 5l7 7-7 7':'M15 5l-7 7 7 7'}"/></svg>`;
+    const NOTE='<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg>';
+    $('tr-play').innerHTML=this.auto?PAUSE:PLAY; $('tr-play').setAttribute('aria-label',this.auto?T('Pysäytä esitys','Pause the show'):T('Toista esityksenä','Play as a show'));
+    $('tr-prev').innerHTML=AR(0); $('tr-prev').setAttribute('aria-label',T('Edellinen','Previous'));
+    $('tr-next').innerHTML=AR(1); $('tr-next').setAttribute('aria-label',T('Seuraava','Next'));
+    $('tr-voice').innerHTML=ICO.speaker; $('tr-voice').setAttribute('aria-pressed',this.voice); $('tr-voice').setAttribute('aria-label',T('Kertoja','Narrator'));
+    $('tr-sound').innerHTML=NOTE; $('tr-sound').setAttribute('aria-pressed',Sound.on); $('tr-sound').setAttribute('aria-label',T('Äänimaisema','Soundscape')); $('tr-sound').title=T('Äänimaisema (tehty selaimessa)','Soundscape (generated in the browser)');
+    $('tr-x').innerHTML=ICO.stop; $('tr-x').setAttribute('aria-label',T('Sulje kierros','Close tour'));
+    if(this.on) this.panel();
+  },
+  start(id){
+    if(!TOURS[id]) { location.hash='#kierrokset'; return; }
+    if(Synty.on) Synty.stop(true); if(Narr.entry) Narr.stop();
+    const same=this.on&&this.id===id; this.id=id; this.on=true; if(!same) this.i=0; this.auto=false;
+    document.body.classList.add('tour-on'); document.body.dataset.tour=id; this.build(); this.ui.querySelector('#tr-end').hidden=true;
+    const D=this.T.city==='tap'?TAP:HKI;
+    showMap(D,true).then(()=>{ this.enter(); });
+  },
+  enter(){
+    closeInfo(); Synty.mh&&Synty.mh(); this.labels(); City.hideSites(this.T.hide); this.buildFx(); this.marksBuild();
+    Sound.start(this.T.sound); this.go(this.i,true);
+  },
+  onWorld(){ if(this.on){ City.hideSites(this.T.hide); this.buildFx(); this.marksBuild(); } },
+  stop(silent){
+    if(!this.on) return; this.on=false; this.auto=false; clearTimeout(this.nextT); document.body.classList.remove('tour-on'); delete document.body.dataset.tour;
+    if(Narr.supported) speechSynthesis.cancel(); Sound.stop(); City.hideSites(0); this.clearFx(); this.marks.forEach(m=>m.el.remove()); this.marks=[];
+    if(this.ui) this.ui.querySelector('#tr-end').hidden=true;
+    buildings.forEach(B=>{ B.group.visible=true; }); if(typeof applyFilter==='function') applyFilter();
+    setSun(+document.getElementById('sunr').value);
+  },
+  stop0(){ return this.T.stops[this.i]; },
+  pos(s){ const v=proj(s.lon,s.lat); return new THREE.Vector3(v.x,0,v.y); },
+  panel(){
+    const TT=this.T, s=this.stop0(), L=this.L(s), $=id=>this.ui.querySelector('#'+id);
+    $('tr-kick').textContent=`${this.L(TT).t} · ${this.i+1}/${TT.stops.length}`;
+    $('tr-n').textContent=L.n; $('tr-meta').textContent=[s.y,s.ar].filter(Boolean).join(' · '); $('tr-t').textContent=L.t;
+    $('tr-y').textContent=s.yb||s.y; $('tr-k').textContent=this.L(TT).t;
+    const imgs=s.img||[];
+    $('tr-fig').innerHTML=imgs.length?`<div class="tr-imgs">${imgs.map(im=>`<a href="${im.page}" target="_blank" rel="noopener"><img src="${im.src}" alt="${esc(EN()?im.en:im.fi)}" loading="lazy"></a>`).join('')}</div><figcaption>${imgs.map(im=>`${esc(EN()?im.en:im.fi)}. ${T('Kuva','Photo')}: ${esc(im.by)}${im.y?' '+esc(im.y):''} / ${esc(im.org)}, <a href="${im.page}" target="_blank" rel="noopener">${esc(im.lic)}</a>`).join('<br>')}</figcaption>`:`<p class="tr-noimg">${T(TT.id==='piirustus'?'Kuvaa ei voida näyttää tekijänoikeuksien vuoksi. Sinikopio kartalla on suuntaa-antava.':'Vapaasti käytettävää kuvaa ei löytynyt. Kartan massamalli on suuntaa-antava.', TT.id==='piirustus'?'No image can be shown for copyright reasons. The blueprint on the map is approximate.':'No freely usable photo was found. The massing model on the map is approximate.')}</p>`;
+    $('tr-dots').innerHTML=TT.stops.map((st,j)=>`<button type="button" role="tab" aria-selected="${j===this.i}" aria-label="${j+1}. ${esc(this.L(st).n)}" class="${j===this.i?'on':''}">${j+1}</button>`).join('');
+    $('tr-dots').querySelectorAll('button').forEach((b,j)=>b.onclick=()=>{ this.auto=false; this.labels(); this.go(j); });
+    this.ui.querySelector('.tr-panel').scrollTop=0;
+  },
+  go(i,first){
+    const TT=this.T; if(i<0) i=0; if(i>=TT.stops.length){ this.end(); return; }
+    this.i=i; clearTimeout(this.nextT); if(Narr.supported) speechSynthesis.cancel(); this.ui.querySelector('#tr-end').hidden=true;
+    const s=this.stop0(); this.panel(); this.labels();
+    const p=this.pos(s); const c=s.cam||[500,1,-0.5]; const dd=isMobile?c[0]*1.25:c[0];
+    if(Synty.reduce()){ const a=c[2],pol=c[1]; controls.target.copy(p); camera.position.set(p.x+dd*Math.sin(pol)*Math.sin(a),dd*Math.cos(pol),p.z+dd*Math.sin(pol)*Math.cos(a)); }
+    else { flyTo(p,dd,c[1],c[2]); if(fly) fly.d=first?1800:2600; }
+    if(isMobile) setOffset(true);
+    setSun(s.sun!=null?s.sun:(TT.id==='kadonnut'?16:+document.getElementById('sunr').value));
+    this.arrive=performance.now(); this.fxStop(s);
+    this.marks.forEach((m,j)=>m.el.classList.toggle('on',j===i));
+    if(this.voice) setTimeout(()=>{ if(this.on&&this.i===i) this.say(); },900);
+    if(this.auto&&!this.voice){ const L=this.L(s); const ms=Math.max(9000,L.t.split(/\s+/).length*360); this.nextT=setTimeout(()=>{ if(this.on&&this.auto) this.go(this.i+1); },ms); }
+  },
+  say(){ if(!Narr.supported) return; const s=this.stop0(), L=this.L(s); Narr.loadVoices(); speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(L.n+'. '+L.t); const v=Narr.voices[LANG]; if(v){u.voice=v;u.lang=v.lang;} else u.lang=EN()?'en-GB':'fi-FI'; u.rate=Narr.rate;
+    const i=this.i; u.onend=()=>{ if(this.on&&this.auto&&this.i===i) this.nextT=setTimeout(()=>this.go(this.i+1),1800); }; speechSynthesis.speak(u); },
+  end(){ this.auto=false; this.labels(); clearTimeout(this.nextT); const TT=this.T, e=this.ui.querySelector('#tr-end'); e.hidden=false;
+    this.ui.querySelector('#tr-end-e').textContent=this.L(TT).k; this.ui.querySelector('#tr-end-h').textContent=this.L(TT).t; this.ui.querySelector('#tr-end-p').textContent=this.L(TT).end;
+    const others=Object.values(TOURS).filter(o=>o.id!==TT.id);
+    this.ui.querySelector('#tr-end-b').innerHTML=`<button type="button" class="btn primary" id="tr-again">${T('Katso uudelleen','Watch again')}</button>`+others.map(o=>`<a class="btn" href="#kierros-${o.id}">${esc(this.L(o).t)} →</a>`).join('')+`<a class="btn" href="#kierrokset">${T('Kaikki kierrokset','All tours')}</a>`;
+    this.ui.querySelector('#tr-again').onclick=()=>{ e.hidden=true; this.go(0); };
+    resetView(false); },
+  // ---------- merkit ----------
+  marksBuild(){ this.marks.forEach(m=>m.el.remove()); this.marks=[]; const host=document.getElementById('labels');
+    this.T.stops.forEach((s,j)=>{ const el=document.createElement('button'); el.type='button'; el.className='tmk'; el.innerHTML=`<b>${j+1}</b><span>${esc(this.L(s).n)}</span>`; el.onclick=()=>{ this.auto=false; this.labels(); this.go(j); };
+      host.appendChild(el); this.marks.push({el,p:this.pos(s),h:s.mh||40}); }); },
+  // ---------- tehosteet ----------
+  clearFx(){ if(this.fx){ this.fx.parent&&this.fx.parent.remove(this.fx); this.fx.traverse(o=>{ o.geometry&&o.geometry.dispose(); }); } this.fx=null; this.anim=[]; this.objs={}; },
+  flameTex(){ if(this._ft) return this._ft; const c=document.createElement('canvas'); c.width=c.height=128; const x=c.getContext('2d'); const g=x.createRadialGradient(64,74,4,64,64,60); g.addColorStop(0,'rgba(255,250,220,1)'); g.addColorStop(0.25,'rgba(255,200,90,.95)'); g.addColorStop(0.55,'rgba(255,110,30,.55)'); g.addColorStop(1,'rgba(255,60,0,0)'); x.fillStyle=g; x.fillRect(0,0,128,128); this._ft=new THREE.CanvasTexture(c); return this._ft; },
+  flame(scale){ const m=new THREE.SpriteMaterial({map:this.flameTex(),blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,fog:false}); const s=new THREE.Sprite(m); s.scale.set(scale,scale*1.5,1); s.userData.base=scale; return s; },
+  textSprite(txt,col,h){ const c=document.createElement('canvas'); c.width=512; c.height=128; const x=c.getContext('2d'); x.font='700 88px Inter, Arial, sans-serif'; x.textAlign='center'; x.textBaseline='middle'; x.shadowColor=col; x.shadowBlur=26; x.fillStyle=col; x.fillText(txt,256,66); x.fillText(txt,256,66);
+    const m=new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false}); const s=new THREE.Sprite(m); s.scale.set(h*4,h,1); return s; },
+  footAt(lat,lon){ const CD=City.data[this.T.city]; if(!CD) return null; const v=proj(lon,lat); let best=null,bd=1e9;
+    for(const r of CD.b){ const a=r[4]; let cx=0,cy=0,n=a.length/2; for(let i=0;i<a.length;i+=2){cx+=a[i];cy+=a[i+1];} cx/=n*2; cy/=n*2; const d=Math.hypot(cx-v.x,cy-v.y); if(d>90) continue;
+      const ring=City.ring(a,0.5); if(pip(v,ring)) return ring; if(d<bd){bd=d;best=ring;} } return bd<25?best:null; },
+  ghostMat(style,strong){ const plan=style==='plan';
+    return { fill:new THREE.MeshBasicMaterial({color:plan?0x5cc8ff:0xf4e6c4,transparent:true,opacity:strong?(plan?0.34:0.62):(plan?0.08:0.2),depthWrite:false,side:THREE.DoubleSide,fog:true,blending:plan?THREE.AdditiveBlending:THREE.NormalBlending}),
+             line:new THREE.LineBasicMaterial({color:plan?0xd8f4ff:0xfff6df,transparent:true,opacity:strong?1:0.45,depthWrite:false}) }; },
+  addSolid(g,geo,mats){ const m=new THREE.Mesh(geo,mats.fill); m.renderOrder=3; g.add(m); const e=new THREE.LineSegments(new THREE.EdgesGeometry(geo,20),mats.line); e.renderOrder=4; g.add(e); },
+  boxGeo(w,d,h,x,z,rot){ const geo=new THREE.BoxGeometry(w,h,d); geo.translate(0,h/2,0); if(rot) geo.rotateY(rot); geo.translate(x,0,z); return geo; },
+  ghostFor(s,style,strong){
+    const g=new THREE.Group(); const p=this.pos(s); g.position.copy(p); const mats=this.ghostMat(style,strong); const def=s.ghost||s.plan||{};
+    if(def.foot){ const ring=this.footAt(s.lat,s.lon); if(ring){ const sh=new THREE.Shape(ring.map(v=>new THREE.Vector2(v.x-p.x,-(v.y-p.z)))); const geo=new THREE.ExtrudeGeometry(sh,{depth:def.h,bevelEnabled:false}); geo.rotateX(-Math.PI/2); this.addSolid(g,geo,mats); }
+      else this.addSolid(g,this.boxGeo(30,24,def.h,0,0,0),mats); }
+    (def.boxes||[]).forEach(b=>this.addSolid(g,this.boxGeo(b[2],b[3],b[4],b[0],b[1],b[5]||0),mats));
+    (def.boxes2||[]).forEach(b=>{ const q=proj(b[1],b[0]); this.addSolid(g,this.boxGeo(b[2],b[3],b[4],q.x-p.x,q.y-p.z,b[5]||0),mats); });
+    if(def.fan){ const q=proj(def.fan[1],def.fan[0]); const sh=new THREE.Shape(); sh.moveTo(0,0); sh.absarc(0,0,def.fan[2],Math.PI*0.32,Math.PI*0.68,false); sh.lineTo(0,0);
+      const geo=new THREE.ExtrudeGeometry(sh,{depth:7,bevelEnabled:false}); geo.rotateX(-Math.PI/2); geo.translate(q.x-p.x,0,q.y-p.z); this.addSolid(g,geo,mats);
+      for(let k=1;k<4;k++){ const sh2=new THREE.Shape(); sh2.moveTo(0,0); sh2.absarc(0,0,def.fan[2]*(1-k*0.2),Math.PI*0.32,Math.PI*0.68,false); sh2.lineTo(0,0); const g2=new THREE.ExtrudeGeometry(sh2,{depth:7+k*3,bevelEnabled:false}); g2.rotateX(-Math.PI/2); g2.translate(q.x-p.x,0,q.y-p.z); this.addSolid(g,g2,mats); } }
+    if(def.avenue){ const a=proj(def.avenue[0][1],def.avenue[0][0]), b=proj(def.avenue[1][1],def.avenue[1][0]); const dx=b.x-a.x, dz=b.y-a.y, L=Math.hypot(dx,dz), ang=Math.atan2(dx,dz);
+      const road=new THREE.Mesh(new THREE.PlaneGeometry(def.w,L),new THREE.MeshBasicMaterial({color:style==='plan'?0x7fd3ff:0xf4e6c4,transparent:true,opacity:strong?0.35:0.15,depthWrite:false})); road.rotation.x=-Math.PI/2; road.rotation.z=-ang; road.position.set((a.x+b.x)/2-p.x,1.2,(a.y+b.y)/2-p.z); g.add(road);
+      const n=def.blocks; for(let k=0;k<n;k++){ const t=(k+0.5)/n; const cx=a.x+dx*t-p.x, cz=a.y+dz*t-p.z; const nx=dz/L, nz=-dx/L; [-1,1].forEach(sd=>{ this.addSolid(g,this.boxGeo(54,L/n-34,26,cx+nx*sd*(def.w/2+34),cz+nz*sd*(def.w/2+34),ang),mats); }); } }
+    return g; },
+  buildFx(){
+    this.clearFx(); if(!world) return; const TT=this.T; const fx=new THREE.Group(); fx.name='tourfx'; world.add(fx); this.fx=fx; this.objs={};
+    this.ghosts=null;
+    if(TT.id==='kadonnut'||TT.id==='piirustus'){ const st=TT.id==='kadonnut'?'ghost':'plan'; this.ghosts=TT.stops.map((s,j)=>{ const dim=this.ghostFor(s,st,false), hi=this.ghostFor(s,st,true); hi.visible=false; fx.add(dim); fx.add(hi); return {dim,hi}; }); }
+    if(TT.id==='olympia'){ this.olyFx(fx); }
+  },
+  olyFx(fx){
+    const B=buildings.find(b=>b.item.n==='Olympiastadion'); const o=this.objs;
+    if(B){ const S=B.S; const tw=new THREE.Vector3(0,S.tw+3,S.d/2+2); B.group.updateMatrixWorld(); const twW=B.group.localToWorld(tw.clone()); twW.y=S.tw+4;
+      o.tower=this.flame(14); o.tower.position.copy(twW).add(new THREE.Vector3(0,6,0)); o.tower.visible=false; fx.add(o.tower);
+      o.light=new THREE.PointLight(0xffa040,0,420,2); o.light.position.copy(o.tower.position); fx.add(o.light);
+      const rx=(S.w/2-30)*0.91, rz=(S.d/2-32)*0.91; o.track=t=>{ const v=new THREE.Vector3(Math.sin(t)*rx,2.2,Math.cos(t)*rz); return B.group.localToWorld(v); };
+      o.bowl=this.flame(5); o.bowl.position.copy(B.group.localToWorld(new THREE.Vector3(rx*0.98,3,0))); o.bowl.visible=false; fx.add(o.bowl);
+      o.torch=this.flame(4); o.torch.visible=false; fx.add(o.torch); o.twBase=B.group.localToWorld(new THREE.Vector3(0,2,S.d/2+2)); o.twTop=twW.clone().add(new THREE.Vector3(0,4,0));
+      // juoksijat
+      o.runners=[]; const rg=new THREE.CylinderGeometry(1.5,1.5,4,10); for(let k=0;k<10;k++){ const m=new THREE.Mesh(rg,new THREE.MeshBasicMaterial({color:k===0?0xd8312b:[0xffffff,0x2b5fd8,0xf2c037,0x2ba05a][k%4]})); m.visible=false; fx.add(m); o.runners.push({m,ph:-k*0.07-(k?0.06:0),sp:1}); }
+      o.lead=this.textSprite('ZÁTOPEK','#ffffff',5); o.lead.visible=false; fx.add(o.lead);
+    }
+    // sade
+    const N=isMobile?1400:2800, pos=new Float32Array(N*6); for(let k=0;k<N;k++){ const x=(Math.random()-.5)*900, y=Math.random()*320, z=(Math.random()-.5)*900; pos.set([x,y,z,x+0.4,y+7,z],k*6); }
+    const rgeo=new THREE.BufferGeometry(); rgeo.setAttribute('position',new THREE.BufferAttribute(pos,3)); o.rain=new THREE.LineSegments(rgeo,new THREE.LineBasicMaterial({color:0xc9d6e2,transparent:true,opacity:0.35,depthWrite:false})); o.rain.visible=false; o.rain.frustumCulled=false; fx.add(o.rain);
+    // laiva
+    const ship=new THREE.Group(); const hull=new THREE.Mesh(new THREE.BoxGeometry(14,6,92),stdMat('#20262b')); hull.position.y=1.5; ship.add(hull); const hw=new THREE.Mesh(new THREE.BoxGeometry(13.6,1.2,90),stdMat('#f1efe8')); hw.position.y=4.6; ship.add(hw);
+    const sup=new THREE.Mesh(new THREE.BoxGeometry(11,7,40),stdMat('#f4f3ee')); sup.position.set(0,8.6,6); ship.add(sup); const fun=new THREE.Mesh(new THREE.CylinderGeometry(2.4,2.8,8,16),stdMat('#e2b13c')); fun.position.set(0,15.5,10); ship.add(fun);
+    ship.traverse(m=>{ if(m.isMesh){ m.castShadow=true; } }); ship.visible=false; fx.add(ship); o.ship=ship;
+    { const a=proj(24.9760,60.1545), b=proj(24.9621,60.1607); o.shipA=new THREE.Vector3(a.x,0,a.y); o.shipB=new THREE.Vector3(b.x,0,b.y); ship.rotation.y=Math.atan2(b.x-a.x,b.y-a.y); }
+    // Palace-neon
+    { const s=TOURS.olympia.stops[1]; const p=this.pos(s); o.neon=this.textSprite('PALACE','#ffd24a',16); o.neon.position.set(p.x,50,p.z); o.neon.visible=false; fx.add(o.neon); }
+    // velodromi: ellipsirata pääkatsomon viereen (akselit 166,8 × 98,5 m), ja pyöräilijät
+    { const ring=this.footAt(60.20243,24.94214); let c=this.pos(TOURS.olympia.stops[5]), ang=0;
+      if(ring){ let mx=0,mz=0; ring.forEach(v=>{mx+=v.x;mz+=v.y;}); mx/=ring.length; mz/=ring.length; let sxx=0,szz=0,sxz=0; ring.forEach(v=>{const dx=v.x-mx,dz=v.y-mz; sxx+=dx*dx; szz+=dz*dz; sxz+=dx*dz;}); ang=0.5*Math.atan2(2*sxz,sxx-szz);
+        let nx=-Math.sin(ang), nz=Math.cos(ang); if(nx<0){ nx=-nx; nz=-nz; } c=new THREE.Vector3(mx+nx*62,0,mz+nz*62); }
+      const ax=83.4, az=49.25; const sh=new THREE.Shape(); sh.absellipse(0,0,ax,az,0,Math.PI*2,false,0); const hole=new THREE.Path(); hole.absellipse(0,0,ax-15,az-13,0,Math.PI*2,true,0); sh.holes.push(hole);
+      const vg=new THREE.ExtrudeGeometry(sh,{depth:4.5,bevelEnabled:false,curveSegments:48}); vg.rotateX(-Math.PI/2); const vel=new THREE.Mesh(vg,stdMat('#e8e6df')); vel.position.copy(c); vel.rotation.y=-ang; vel.castShadow=vel.receiveShadow=true; fx.add(vel);
+      const tr=new THREE.Mesh(new THREE.RingGeometry(0.86,1,64),stdMat('#b9b3a6',{roughness:1})); tr.scale.set(ax-15,az-13,1); tr.rotation.x=-Math.PI/2; tr.position.set(c.x,0.4,c.z); tr.rotation.z=-ang; fx.add(tr);
+      const fd=new THREE.Mesh(new THREE.CircleGeometry(1,48),stdMat('#5d8a45',{roughness:1})); fd.scale.set(ax-17,az-15,1); fd.rotation.x=-Math.PI/2; fd.rotation.z=-ang; fd.position.set(c.x,0.3,c.z); fx.add(fd);
+      o.veloMesh=[vel,tr,fd];
+      o.velo={c,ax:(ax-15)*0.93,az:(az-13)*0.93,ang,riders:[]}; const g=new THREE.BoxGeometry(2.2,2.6,4.2); for(let k=0;k<7;k++){ const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:[0xf2c037,0xd8312b,0x2b5fd8,0xffffff,0x2ba05a,0xe07b2a,0x9a4bd8][k]})); m.visible=false; fx.add(m); o.velo.riders.push({m,ph:k*0.32}); } }
+    // liput Kisakylän portilla
+    { const s=TOURS.olympia.stops[6]; const p=this.pos(s); o.flags=[]; const cols=[0xd8312b,0x2b5fd8,0xf2c037,0xffffff,0x2ba05a,0x1d2b4f,0xe07b2a,0x9a4bd8];
+      for(let k=0;k<22;k++){ const x=p.x-120+k*11.4, z=p.z-58; const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.22,12,6),stdMat('#e9e8e2')); pole.position.set(x,6,z); fx.add(pole);
+        const fl=new THREE.Mesh(new THREE.PlaneGeometry(4.2,2.8,6,1),new THREE.MeshStandardMaterial({color:cols[k%cols.length],side:THREE.DoubleSide,roughness:.8})); fl.position.set(x+2.1,10.4,z); fx.add(fl); o.flags.push({fl,ph:k*0.7}); pole.visible=fl.visible=false; o.flags[k].pole=pole; } }
+  },
+  fxStop(s){
+    const o=this.objs||{}, now=performance.now(); this.t0=now;
+    if(this.ghosts){ const pl=this.id==='piirustus'; this.ghosts.forEach((g,j)=>{ g.hi.visible=j===this.i; g.dim.visible=!pl&&j!==this.i; if(j===this.i){ g.hi.scale.y=0.001; g.born=now; } }); }
+    if(this.T.id!=='olympia') return;
+    const fx=s.fx; Sound.rainOn(fx==='opening');
+    if(o.rain) o.rain.visible=fx==='opening';
+    if(o.torch){ o.torch.visible=false; o.bowl.visible=fx!=='opening'&&['runners','finale'].includes(fx); o.tower.visible=['runners','finale','pool','velo','flags'].includes(fx); o.light.intensity=o.tower.visible?(fx==='finale'?3.2:1.2):0; }
+    if(o.runners){ o.runners.forEach(r=>r.m.visible=fx==='runners'); o.lead.visible=fx==='runners'; }
+    if(o.ship) o.ship.visible=fx==='ship';
+    if(o.neon) o.neon.visible=fx==='neon'||fx==='finale';
+    if(o.velo) o.velo.riders.forEach(r=>r.m.visible=fx==='velo');
+    if(o.flags) o.flags.forEach(f=>{ f.fl.visible=f.pole.visible=fx==='flags'||fx==='finale'; });
+    if(fx==='opening'){ Sound.fanfare(); setTimeout(()=>Sound.cheer(1),5200); }
+    if(fx==='runners') setTimeout(()=>Sound.pistol(),1400);
+    if(fx==='ship') setTimeout(()=>Sound.horn(),1600);
+    if(fx==='finale') setTimeout(()=>Sound.fanfare(),600);
+  },
+  tick(now){
+    if(!this.on) return; const dist=camera.position.distanceTo(controls.target);
+    this.marks.forEach((m,j)=>{ tmp.set(m.p.x,m.h,m.p.z).project(camera); const sx=(tmp.x+1)/2*innerWidth, sy=(1-tmp.y)/2*innerHeight; const vis=tmp.z<1&&Math.abs(tmp.x)<1.05&&Math.abs(tmp.y)<1.05;
+      m.el.style.transform=`translate(${sx}px,${sy}px)`; m.el.style.opacity=vis?1:0; m.el.classList.toggle('far',dist>1600&&j!==this.i); });
+    const t=(now-this.t0)/1000, o=this.objs||{};
+    if(this.ghosts){ const g=this.ghosts[this.i]; if(g&&g.hi.scale.y<1){ g.hi.scale.y=Math.min(1,ease(Math.min(1,(now-g.born)/2200))); } this.ghosts.forEach(gg=>{ if(gg.hi.visible){ const k=0.85+Math.sin(now/700)*0.15; gg.hi.children.forEach(c=>{ if(c.material&&c.isMesh) c.material.opacity=(this.id==='piirustus'?0.34:0.6)*k; }); } }); }
+    if(this.id!=='olympia') return; const s=this.stop0();
+    const fl=sp=>{ if(sp&&sp.visible){ const b=sp.userData.base, f=1+Math.sin(now/90+sp.id)*0.08+Math.random()*0.06; sp.scale.set(b*f,b*1.55*(2-f),1); } };
+    if(s.fx==='opening'&&o.torch){ // kierros radalla, malja, torniin
+      const lap=11, climb=7; o.torch.visible=t>2.2&&t<2.2+lap+climb+0.5;
+      if(t>2.2&&t<2.2+lap){ const k=(t-2.2)/lap; o.torch.position.copy(o.track(k*Math.PI*2)); o.torch.position.y=4; }
+      else if(t>=2.2+lap&&t<2.2+lap+climb){ o.bowl.visible=true; const k=ease((t-2.2-lap)/climb); o.torch.position.lerpVectors(o.twBase,o.twTop,k); }
+      if(t>=2.2+lap+climb&&!o.tower.visible){ o.tower.visible=true; o.light.intensity=1.6; Sound.cheer(1); }
+      if(t<2.2){ o.bowl.visible=false; o.tower.visible=false; o.light.intensity=0; } }
+    [o.torch,o.bowl,o.tower].forEach(fl);
+    if(o.rain&&o.rain.visible){ const ct=controls.target; o.rain.position.set(ct.x,(-(now/4)%320+320)%320-160,ct.z); }
+    if(o.runners&&o.runners[0].m.visible){ o.runners.forEach((r,k)=>{ const a=t*0.38+r.ph+(k===0?Math.min(0.25,t*0.004):0); r.m.position.copy(o.track(-a)); r.m.position.y=2; }); o.lead.position.copy(o.runners[0].m.position); o.lead.position.y=11; }
+    if(o.ship&&o.ship.visible){ const k=Math.min(1,ease(t/22)); o.ship.position.lerpVectors(o.shipA,o.shipB,k); o.ship.position.y=Math.sin(now/900)*0.25; }
+    if(o.neon&&o.neon.visible){ o.neon.material.opacity=0.75+Math.sin(now/240)*0.08+(Math.random()<0.02?-0.4:0); }
+    if(o.velo&&o.velo.riders[0].m.visible){ const v=o.velo; v.riders.forEach(r=>{ const a=t*0.9+r.ph; const u=Math.cos(a)*v.ax, w=Math.sin(a)*v.az; r.m.position.set(v.c.x+u*Math.cos(v.ang)-w*Math.sin(v.ang),1.2,v.c.z+u*Math.sin(v.ang)+w*Math.cos(v.ang)); r.m.rotation.y=-a-v.ang; }); }
+    if(o.flags&&o.flags[0].fl.visible){ o.flags.forEach(f=>{ const p=f.fl.geometry.attributes.position; for(let i=0;i<p.count;i++){ const x=p.getX(i)+2.1; p.setZ(i,Math.sin(now/260+f.ph+x*1.3)*x*0.12); } p.needsUpdate=true; }); }
+  }
+};
+City.hidePts=Tours.hidePts();
+function tourCards(){ return Object.values(TOURS).map(tr=>{ const L=EN()?tr.en:tr.fi; const s0=tr.stops.find(s=>s.img&&s.img.length); const im=s0?s0.img[0].src:'';
+  return `<a class="tour-card" href="#kierros-${tr.id}" style="--tc:${tr.col}"><span class="tc-img" style="background-image:url('${im}')"></span><span class="tc-body"><span class="tc-k">${esc(L.k)} · ${tr.stops.length} ${T('kohdetta','stops')}</span><b>${esc(L.t)}</b><span class="tc-s">${esc(L.s)}</span><span class="tc-go">${T('Aloita kierros','Start the tour')} →</span></span></a>`; }).join(''); }
+
 /* ---------- map bridge ---------- */
 let lastGuide='#koti', pendingSel=null;
 function openOnMap(name){ const e=BYNAME[name]; pendingSel=name; location.hash= e.city==='tap'?'#kartta-tapiola':'#kartta-helsinki'; }
-function showMap(D){
+function showMap(D,keepHash){
   document.body.classList.add('map-on'); window.scrollTo(0,0); setTimeout(()=>Synty.mh&&Synty.mh(),60);
   camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight);
   const doSel=()=>{ if(pendingSel){ const B=buildings.find(b=>b.item.n===pendingSel); pendingSel=null; if(B) setTimeout(()=>select(B),400);} };
-  if(cur!==D){ const ld=document.getElementById('loading'); ld.style.display='grid'; setTimeout(()=>{ switchTo(D); ld.style.display='none'; doSel(); },40); }
-  else doSel();
+  if(cur!==D){ const ld=document.getElementById('loading'); ld.style.display='grid'; return new Promise(res=>setTimeout(()=>{ switchTo(D,keepHash).then(()=>{ ld.style.display='none'; doSel(); res(); }); },40)); }
+  else { doSel(); return Promise.resolve(); }
 }
 document.getElementById('backbtn').onclick=()=>{ location.hash=lastGuide; };
 
@@ -2448,7 +3119,9 @@ document.getElementById('backbtn').onclick=()=>{ location.hash=lastGuide; };
 function route(){
   const h=(location.hash||'#koti').slice(1);
   ['nav-home','nav-cards','nav-near','nav-arch','nav-map'].forEach(id=>document.getElementById(id).classList.remove('on'));
-  if(h==='synty'){ if(Narr.entry) Narr.stop(); showMap(HKI); setTimeout(()=>Synty.start('hki'),150); return; }
+  if(h==='synty'){ if(Narr.entry) Narr.stop(); if(typeof Tours!=='undefined') Tours.stop(true); showMap(HKI,true).then(()=>setTimeout(()=>Synty.start('hki'),60)); return; }
+  if(h.startsWith('kierros-')){ Tours.start(h.slice(8)); return; }
+  if(Tours.on) Tours.stop();
   if(Synty.on&&!h.startsWith('kartta')) Synty.stop(true);
   if(h.startsWith('kartta')){ if(Narr.entry) Narr.stop(); showMap(h==='kartta-tapiola'?TAP:HKI); return; }
   document.body.classList.remove('map-on'); closeInfo&&cur&&closeInfo();
@@ -2456,7 +3129,7 @@ function route(){
   if(h==='arkkitehdit'||h.startsWith('arkkitehti-')){ showView('view-arch'); document.getElementById('nav-arch').classList.add('on'); h==='arkkitehdit'?renderArchList():renderArch(h.slice(11)); window.scrollTo(0,0); lastGuide='#'+h; return; }
   document.getElementById('view-arch').classList.remove('on');
   if(h.startsWith('alue-')||h.startsWith('tyyli-')||h==='lahella'){ home.classList.remove('on'); cards.classList.add('on'); document.getElementById(h==='lahella'?'nav-near':'nav-cards').classList.add('on'); renderCards(h); window.scrollTo(0,0); }
-  else { cards.classList.remove('on'); home.classList.add('on'); document.getElementById('nav-home').classList.add('on'); }
+  else { cards.classList.remove('on'); home.classList.add('on'); document.getElementById('nav-home').classList.add('on'); if(h==='kierrokset') setTimeout(()=>{ const k=document.getElementById('kierrokset'); if(k) k.scrollIntoView({behavior:'auto'}); },30); }
   lastGuide='#'+h;
 }
 addEventListener('hashchange',route);
