@@ -131,6 +131,7 @@ nav.top .links a.on,nav.top .links a:hover{color:var(--ink);background:rgba(25,2
 .kicker{font-size:12px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin:0 0 18px}
 .hero h1{font-size:clamp(60px,10.5vw,148px);line-height:.86;letter-spacing:-.035em;margin:0;font-weight:500}
 .hero h1 em{font-style:italic;color:var(--patina);font-weight:400}
+.tagline{font-family:var(--f-display);font-style:italic;font-size:clamp(18px,2vw,24px);line-height:1.35;color:#3a4043;margin:18px 0 0;max-width:30ch}
 .lede{font-size:clamp(16px,1.5vw,19px);line-height:1.55;max-width:42ch;margin:0 0 22px;color:#2c3133}
 .cta{display:flex;flex-wrap:wrap;gap:10px}
 .skyline{display:block;width:100%;height:clamp(260px,34vw,440px);margin-top:-30px}
@@ -548,7 +549,8 @@ body.s-open{overflow:hidden}
       <div class="hero-text">
         <div>
           <p class="kicker mono" id="kicker">Helsinki · Espoo</p>
-          <h1 class="display" data-i18n="h1">Kivi,<br>rappaus <em>&amp;</em><br>valo</h1>
+          <h1 class="display" data-i18n="h1">Kivi <em>&amp;</em><br>valo</h1>
+          <p class="tagline" data-i18n="tagline">Helsingin ja Tapiolan arkkitehtuuria – graniittia, rappausta ja valoa kahden vuosisadan ajalta.</p>
         </div>
         <div>
           <p class="lede" id="lede"></p>
@@ -591,7 +593,7 @@ body.s-open{overflow:hidden}
 
     <section class="sec" id="sec-arch"><div class="wrap">
       <div class="sec-head">
-        <div><p class="eyebrow" data-i18n="ah_e">Arkkitehdit</p><h2 class="display" data-i18n="ah_h">Ihmiset kiven takana</h2></div>
+        <div><p class="eyebrow" data-i18n="ah_e">Rakennustaide</p><h2 class="display" data-i18n="ah_h">Arkkitehdit ja heidän tarinansa</h2></div>
         <p data-i18n="ah_p">Engelin empirestä Aallon ja Pietilöiden orgaaniseen modernismiin. Lue suunnittelijoiden tarinat ja katso, mitä kukin rakensi.</p>
       </div>
       <div class="archgrid hs2" id="archgrid"></div>
@@ -1469,7 +1471,7 @@ const EN_AREAS={
 };
 const UI={
   nav:["Päävalikko","Main menu"], guide:["Arkkitehtuuriopas","Architecture guide"], home:["Etusivu","Home"], sights:["Kohteet","Sights"], near:["Lähellä","Near me"], map3d:["3D-kartta","3D map"],
-  h1:["Kivi,<br>rappaus <em>&amp;</em><br>valo","Stone,<br>stucco <em>&amp;</em><br>light"],
+  h1:["Kivi <em>&amp;</em><br>valo","Stone <em>&amp;</em><br>light"], tagline:["Helsingin ja Tapiolan arkkitehtuuria – graniittia, rappausta ja valoa kahden vuosisadan ajalta.","The architecture of Helsinki and Tapiola – granite, stucco and light across two centuries."],
   start:["Aloita kierros →","Start a tour →"], openmap:["Avaa 3D-kartta","Open the 3D map"],
   sky:["Piirretty Helsingin siluetti: Huvilakadun talot, Kallion kirkko, Kansallismuseo, rautatieasema, Tuomiokirkko, Olympiastadionin torni ja Tapiolan tornit","Drawn Helsinki skyline: Huvilakatu houses, Kallio Church, National Museum, railway station, Cathedral, Olympic Stadium tower and Tapiola towers"],
   wf_h:["Kuuntele ja kävele","Listen and walk"],
@@ -1490,7 +1492,7 @@ const UI={
   hint:["Vedä kääntääksesi · nipistä tai rullaa zoomataksesi · napauta rakennusta.<br>Kohteet todellisessa mittakaavassa. Taustakorttelit ja puut ovat havainnollistavia.","Drag to rotate · pinch or scroll to zoom · tap a building.<br>Sights are at true scale. Background blocks and trees are illustrative."],
   q:["Hae nimellä, arkkitehdilla tai vuodella…","Search by name, architect or year…"], close:["Sulje","Close"],
   capdraw:["Julkisivupiirros todellisten värien, materiaalien ja muotojen mukaan – ei valokuva.","Facade drawing based on the real colours, materials and forms – not a photograph."],
-  archs:["Arkkitehdit","Architects"], search:["Hae","Search"], search_al:["Hae kohteita ja arkkitehteja","Search sights and architects"], q_tours:["Kierrokset","Tours"], q_styles:["Tyylit","Styles"], q_archs:["Arkkitehdit","Architects"], q_near:["Lähellä minua","Near me"], q_search:["Hae…","Search…"], ah_e:["Arkkitehdit","Architects"], ah_h:["Ihmiset kiven takana","The people behind the stone"], ah_p:["Engelin empirestä Aallon ja Pietilöiden orgaaniseen modernismiin. Lue suunnittelijoiden tarinat ja katso, mitä kukin rakensi.","From Engel’s Empire to the organic modernism of Aalto and the Pietiläs. Read the designers’ stories and see what each of them built."], ah_all:["Kaikki arkkitehdit ja muut suunnittelijat →","All architects and other designers →"],
+  archs:["Arkkitehdit","Architects"], search:["Hae","Search"], search_al:["Hae kohteita ja arkkitehteja","Search sights and architects"], q_tours:["Kierrokset","Tours"], q_styles:["Tyylit","Styles"], q_archs:["Arkkitehdit","Architects"], q_near:["Lähellä minua","Near me"], q_search:["Hae…","Search…"], ah_e:["Rakennustaide","Architecture"], ah_h:["Arkkitehdit ja heidän tarinansa","The architects and their stories"], ah_p:["Engelin empirestä Aallon ja Pietilöiden orgaaniseen modernismiin. Lue suunnittelijoiden tarinat ja katso, mitä kukin rakensi.","From Engel’s Empire to the organic modernism of Aalto and the Pietiläs. Read the designers’ stories and see what each of them built."], ah_all:["Kaikki arkkitehdit ja muut suunnittelijat →","All architects and other designers →"],
   arch:["Arkkitehti","Architect"], built:["Valmistunut","Completed"], addr:["Osoite","Address"]
 };
 function applyStatic(){
@@ -1661,7 +1663,7 @@ function skylineSVG(){
 function renderHome(){
   const yrs=ALL.map(e=>year(e.it)).filter(n=>!isNaN(n)); const y0=Math.min(...yrs), y1=Math.max(...yrs);
   document.getElementById('kicker').textContent=`Helsinki · Espoo · ${y0}–${y1}`;
-  document.getElementById('lede').textContent=T(`Opas Helsingin ja Tapiolan arkkitehtuuriin. Mukana on ${ALL.length} kohdetta ${AREAS.length} alueelta, ja kierrokset kulkevat Engelin empirestä jugendin ja funktionalismin kautta Tapiolan puutarhakaupunkiin.`,`A guide to the architecture of Helsinki and Tapiola: ${ALL.length} sights in ${AREAS.length} areas, with tours running from Engel's Empire through Art Nouveau and Functionalism to the garden city of Tapiola.`);
+  document.getElementById('lede').textContent=T(`${ALL.length} kohdetta ja ${AREAS.length} kävelykierrosta. Kierrokset kulkevat Engelin empirestä jugendin ja funktionalismin kautta Tapiolan puutarhakaupunkiin.`,`${ALL.length} sights and ${AREAS.length} walking tours, running from Engel's Empire through Art Nouveau and Functionalism to the garden city of Tapiola.`);
   document.getElementById('skyline').innerHTML=skylineSVG();
   document.getElementById('stats').innerHTML=`<div><b>${ALL.length}</b><span>${T('kohdetta','sights')}</span></div><div><b>${AREAS.length}</b><span>${T('kävelykierrosta','walking tours')}</span></div><div><b>${new Set(ALL.map(e=>e.it.ar.split(/[;,&]/)[0].trim())).size}</b><span>${T('arkkitehtia tai toimistoa','architects or firms')}</span></div><div><b>${y1-y0}</b><span>${T('vuotta','years')}, ${y0}–${y1}</span></div>`;
   // timeline
@@ -2100,7 +2102,7 @@ function renderArchList(){
   const others=otherDesigners();
   v.innerHTML=`<div class="wrap arch-head">
     <div class="crumbs"><a href="#koti">${T('Etusivu','Home')}</a><span class="sep">/</span><span>${T('Arkkitehdit','Architects')}</span></div>
-    <div class="area-title"><div><p class="eyebrow">${T('Ihmiset rakennusten takana','The people behind the buildings')}</p><h2 class="display">${T('Arkkitehdit','Architects')}</h2></div>
+    <div class="area-title"><div><p class="eyebrow">${T('Tarinat ja teokset','Stories and works')}</p><h2 class="display">${T('Arkkitehdit','Architects')}</h2></div>
     <div><p>${T('Engelistä Aaltoon ja Pietilöihin: tarinat suunnittelijoista, heidän työtovereistaan ja siitä, miten yksi ura voi kulkea tyylistä toiseen. Napauta nimeä, niin näet arkkitehdin kohteet.','From Engel to Aalto and the Pietiläs: stories of the designers, their collaborators and how one career can move from style to style. Tap a name to see the architect’s sights.')}</p></div></div></div>
     <div class="wrap"><div class="archgrid big">${list.map(archTile).join('')}</div>
     <h3 class="arch-sub">${T('Muut suunnittelijat','Other designers')}</h3>
