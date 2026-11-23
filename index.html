@@ -518,10 +518,22 @@ body.s-open{overflow:hidden}
   .tl2-lane em{font-size:11px;top:3px}
   .tl2-lane{height:20px}
   .tl2-bar{top:5px;height:10px}
-  .tl2-cards{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:clamp(16px,4vw,40px);gap:12px;margin:0 calc(-1*clamp(16px,4vw,40px));padding:0 clamp(16px,4vw,40px) 10px;scrollbar-width:none}
-  .tl2-cards::-webkit-scrollbar{display:none}
-  .tl2-card{flex:0 0 74%;scroll-snap-align:start}
 }
+.areas2{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:40px}
+.area-c .tl2-body small{-webkit-line-clamp:3}
+.hs-wrap{position:relative}
+@media (max-width:760px){
+  .hs,.hs2{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:clamp(16px,4vw,40px);gap:12px;margin-left:calc(-1*clamp(16px,4vw,40px));margin-right:calc(-1*clamp(16px,4vw,40px));padding:0 clamp(16px,4vw,40px) 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .hs::-webkit-scrollbar,.hs2::-webkit-scrollbar{display:none}
+  .hs>*{flex:0 0 78%;scroll-snap-align:start}
+  .styles.hs>.style{flex-basis:82%}
+  .hs2{display:grid;grid-template-rows:repeat(2,auto);grid-auto-flow:column;grid-auto-columns:80%;grid-template-columns:none}
+  .hs2>*{scroll-snap-align:start}
+  .hs-dots{display:flex;justify-content:center;gap:6px;margin:4px 0 0}
+  .hs-dots i{width:6px;height:6px;border-radius:3px;background:#c9c7bf;transition:width .2s,background .2s}
+  .hs-dots i.on{width:18px;background:var(--ink)}
+}
+@media (min-width:761px){ .hs-dots{display:none} }
 </style>
 </head>
 <body>
@@ -574,7 +586,7 @@ body.s-open{overflow:hidden}
         <div><p class="eyebrow" data-i18n="st_e">Tunnistusopas</p><h2 class="display" data-i18n="st_h">Miten tyylit erottaa kadulla</h2></div>
         <p data-i18n="st_p">Kuusi aikakautta ja niiden tuntomerkit. Kuvituksena on kunkin tyylin tyyppiesimerkki.</p>
       </div>
-      <div class="styles" id="styles"></div>
+      <div class="styles hs" id="styles"></div>
     </div></section>
 
     <section class="sec" id="sec-arch"><div class="wrap">
@@ -582,7 +594,7 @@ body.s-open{overflow:hidden}
         <div><p class="eyebrow" data-i18n="ah_e">Arkkitehdit</p><h2 class="display" data-i18n="ah_h">Ihmiset kiven takana</h2></div>
         <p data-i18n="ah_p">Engelin empirestä Aallon ja Pietilöiden orgaaniseen modernismiin. Lue suunnittelijoiden tarinat ja katso, mitä kukin rakensi.</p>
       </div>
-      <div class="archgrid" id="archgrid"></div>
+      <div class="archgrid hs2" id="archgrid"></div>
       <p style="margin-top:22px"><a class="btn" href="#arkkitehdit" data-i18n="ah_all">Kaikki arkkitehdit ja muut suunnittelijat →</a></p>
     </div></section>
 
@@ -1503,7 +1515,7 @@ const IY=it=>EN()?Narr.yEn(it.y):it.y;
 const PL=(n,fi1,fin,en1,enn)=>`${n} ${EN()?(n===1?en1:enn):(n===1?fi1:fin)}`;
 function setLang(l){
   if(l===LANG) return; LANG=l; try{ localStorage.setItem('kv.lang',JSON.stringify(l)); }catch(e){}
-  applyStatic(); renderHome(); renderArchGrid(); if(document.getElementById('view-arch').classList.contains('on')) route();
+  applyStatic(); renderHome(); renderArchGrid(); hsPagers(); if(document.getElementById('view-arch').classList.contains('on')) route();
   if(document.getElementById('view-cards').classList.contains('on')){ const i=cardIndex(); renderCards(curKey); requestAnimationFrame(()=>scrollToCard(Math.min(i,track.children.length-1),true)); }
   if(typeof cur!=='undefined'&&cur){ renderLegend(); renderList(document.getElementById('q').value||''); document.getElementById('subtitle').textContent=EN()?EN_TITLE[cur.key]:cur.title; buildings.forEach(B=>{ const sp=B.label.querySelector('span'); if(sp) sp.textContent=IN(B.item); }); if(selected) openInfo(selected); }
   Narr.warned=false; if(Narr.entry) Narr.play(Narr.entry); updateWalkbar(); Player.update(); updateDistances();
@@ -1663,7 +1675,7 @@ function renderHome(){
     <div class="tl2-grid">${[1850,1900,1950,2000].map(y=>`<span style="left:${pct(y)}"><b>${y}</b></span>`).join('')}</div>
     ${eras.map(r=>`<a class="tl2-lane" href="#tyyli-${r.k}" style="--c:${r.s.col}" title="${SN(r.s)} ${r.a}–${r.b}"><span class="tl2-bar" style="left:${pct(r.a)};width:max(24px,calc(${pct(r.b)} - ${pct(r.a)}))"></span>${r.b>1935?`<em class="lft" style="right:calc(100% - ${pct(r.a)} + 10px)">${SN(r.s)}</em>`:`<em style="left:calc(${pct(r.b)} + 10px)">${SN(r.s)}</em>`}</a>`).join('')}
   </div>
-  <div class="tl2-cards">${eras.map(r=>{ const ph=r.list.filter(e=>e.it.photo).slice(0,3);
+  <div class="tl2-cards hs">${eras.map(r=>{ const ph=r.list.filter(e=>e.it.photo).slice(0,3);
     return `<a class="tl2-card" href="#tyyli-${r.k}" style="--c:${r.s.col}">
       <span class="tl2-img n${ph.length}">${ph.map(e=>`<img loading="lazy" src="${e.it.photo.src}" alt="">`).join('')||facadeUnique(resolve(r.list[0].D,r.list[0].it))}</span>
       <span class="tl2-body"><span class="tl2-yrs">${r.a===r.b?r.a:r.a+'–'+r.b}</span><b>${SN(r.s)}</b><small>${first(ST(r.s))}</small>
@@ -1671,10 +1683,11 @@ function renderHome(){
   document.getElementById('timeline').innerHTML=tl;
   // areas
   let ah=''; ['hki','tap'].forEach(c=>{ const as=AREAS.filter(a=>a.city===c);
-    ah+=`<div class="city-h"><h3>${CITY[c].name}</h3><span>${as.reduce((n,a)=>n+a.list.length,0)} ${T('kohdetta','sights')}</span></div><div class="areas">`;
-    as.forEach(a=>{ const i=AREAS.indexOf(a)+1; const ys=a.list.map(e=>year(e.it));
-      ah+=`<a class="area" href="#alue-${a.id}"><span class="no"><span>${String(i).padStart(2,'0')} · ${a.list.length} ${T('kohdetta','sights')}</span><span>${Math.min(...ys)}–${Math.max(...ys)}</span></span><h4>${AN(a)}</h4><p>${AI(a)}</p>
-        <span class="dots">${a.list.map(e=>`<i style="background:${styOf(e).col}" title="${esc(IN(e.it))}"></i>`).join('')}</span><span class="go">${T('Aloita kierros →','Start the tour →')}</span></a>`; });
+    ah+=`<div class="city-h"><h3>${CITY[c].name}</h3><span>${as.reduce((n,a)=>n+a.list.length,0)} ${T('kohdetta','sights')}</span></div><div class="areas2 hs">`;
+    as.forEach(a=>{ const i=AREAS.indexOf(a)+1; const ys=a.list.map(e=>year(e.it)); const ph=a.list.filter(e=>e.it.photo).slice(0,3);
+      ah+=`<a class="tl2-card area-c" href="#alue-${a.id}" style="--c:${c==='tap'?'#8a7a52':'#2b7865'}"><span class="tl2-img n${ph.length}">${ph.map(e=>`<img loading="lazy" src="${e.it.photo.src}" alt="">`).join('')}</span>
+        <span class="tl2-body"><span class="tl2-yrs">${String(i).padStart(2,'0')} · ${Math.min(...ys)}–${Math.max(...ys)}</span><b>${AN(a)}</b><small>${AI(a)}</small>
+        <span class="tl2-ft"><span>${a.list.length} ${T('kohdetta','sights')}</span><span class="go">${T('Aloita kierros','Start the tour')} →</span></span></span></a>`; });
     ah+='</div>'; });
   document.getElementById('areas').innerHTML=ah;
   // styles
@@ -2227,6 +2240,16 @@ function markTab(){
   document.querySelectorAll('#tabbar a').forEach(a=>{ const on=a.dataset.tab===key; a.classList.toggle('on',on); on?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'); });
 }
 
+
+function hsPagers(){
+  document.querySelectorAll('#view-home .hs, #view-home .hs2').forEach(el=>{
+    let d=el.nextElementSibling; if(!d||!d.classList.contains('hs-dots')){ d=document.createElement('div'); d.className='hs-dots'; d.setAttribute('aria-hidden','true'); el.after(d); }
+    const n=el.classList.contains('hs2')?Math.ceil(el.children.length/2):el.children.length; if(n<2){ d.innerHTML=''; return; }
+    d.innerHTML='<i></i>'.repeat(Math.min(n,12));
+    const upd=()=>{ const max=el.scrollWidth-el.clientWidth; const k=max>0?Math.round(el.scrollLeft/max*(Math.min(n,12)-1)):0; d.querySelectorAll('i').forEach((x,i)=>x.classList.toggle('on',i===k)); };
+    el.onscroll=()=>requestAnimationFrame(upd); upd(); });
+}
+
 /* ---------- map bridge ---------- */
 let lastGuide='#koti', pendingSel=null;
 function openOnMap(name){ const e=BYNAME[name]; pendingSel=name; location.hash= e.city==='tap'?'#kartta-tapiola':'#kartta-helsinki'; }
@@ -2265,7 +2288,7 @@ document.querySelectorAll('[data-scroll]').forEach(b=>b.onclick=()=>{ const t=do
 addEventListener('hashchange',markTab);
 document.getElementById('home-off').onclick=()=>{ if(Off.state==='done'){ toast(T('Opas on jo tallennettu laitteelle.','The guide is already saved on this device.')); return; } Off.start(); if(Off.supported()) toast(T('Tallennus aloitettu. Edistyminen näkyy kierroksen työkaluriviltä.','Saving started. Progress is shown in the tour toolbar.')); };
 document.getElementById('locbtn').onclick=()=>locateOnMap();
-renderHome(); renderArchGrid(); route(); markTab();
+renderHome(); renderArchGrid(); hsPagers(); route(); markTab();
 requestAnimationFrame(tick);
 
 </script>
