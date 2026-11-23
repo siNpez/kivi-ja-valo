@@ -535,6 +535,48 @@ body.s-open{overflow:hidden}
   .hs-dots i.on{width:18px;background:var(--ink)}
 }
 @media (min-width:761px){ .hs-dots{display:none} }
+.tl-cta{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:26px 0 0}
+.tl-cta span{font-size:13.5px;color:var(--muted);max-width:44ch}
+#synty{display:none}
+body.synty-on #synty{display:block}
+#storybtn{all:unset;position:fixed;right:12px;bottom:12px;z-index:5;cursor:pointer;display:inline-flex;align-items:center;gap:8px;background:#2b7865;color:#fff;font:600 13.5px var(--f-body);padding:10px 16px 10px 12px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+#storybtn .ico{width:16px;height:16px}
+#storybtn:hover{background:#226653}
+#storybtn:focus-visible{outline:2px solid #8fc7b5;outline-offset:2px}
+body:not(.map-on) #storybtn,body.synty-on #storybtn{display:none}
+body.synty-on #legend,body.synty-on #hint{display:none}
+.sy-year{position:fixed;left:18px;top:calc(var(--mh,60px) + 14px);z-index:6;pointer-events:none;display:flex;flex-direction:column;text-shadow:0 2px 18px rgba(0,0,0,.55)}
+.sy-year b{font-family:var(--f-display);font-weight:500;font-size:clamp(54px,9vw,96px);line-height:.9;color:#fff;letter-spacing:-.02em}
+.sy-year span{font:600 12px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:#cfe3dc;margin-top:6px}
+.sy-cap{position:fixed;left:50%;bottom:92px;transform:translate(-50%,12px);z-index:6;max-width:min(620px,calc(100vw - 24px));background:rgba(15,18,20,.82);backdrop-filter:blur(6px);color:#f1f2ee;font:500 15px/1.45 var(--f-body);padding:10px 16px;border-radius:12px;opacity:0;transition:opacity .35s,transform .35s;pointer-events:none;text-align:center}
+.sy-cap.show{opacity:1;transform:translate(-50%,0)}
+.sy-bar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:7;display:flex;align-items:center;gap:6px;width:min(620px,calc(100vw - 20px));background:rgba(15,18,20,.88);backdrop-filter:blur(8px);border-radius:16px;padding:8px 10px;box-shadow:0 12px 36px rgba(0,0,0,.4)}
+.sy-btn{all:unset;cursor:pointer;display:grid;place-items:center;min-width:38px;height:38px;border-radius:999px;color:#f1f2ee;font:600 12.5px var(--f-mono)}
+.sy-btn:hover{background:rgba(255,255,255,.1)}
+.sy-btn:focus-visible{outline:2px solid #8fc7b5}
+.sy-btn.big{width:46px;height:46px;background:#2b7865}
+.sy-btn.big .ico{width:20px;height:20px}
+.sy-btn.txt{padding:0 10px;font-family:var(--f-body)}
+.sy-btn[aria-pressed=true]{background:rgba(143,199,181,.25);color:#8fc7b5}
+#sy-range{flex:1;min-width:60px;accent-color:#8fc7b5}
+.sy-end{position:fixed;inset:0;z-index:8;display:grid;place-items:center;background:rgba(10,12,14,.35);padding:16px}
+.sy-end[hidden]{display:none}
+.sy-end-in{background:#f6f5f1;color:#191c1e;border-radius:18px;padding:26px 24px;max-width:440px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.sy-end-in .eyebrow{color:#2b7865;margin:0}
+.sy-end-in h3{font-family:var(--f-display);font-weight:500;font-size:34px;margin:6px 0 8px;color:#191c1e}
+.sy-end-in p{color:#3d4244;margin:0 0 16px;line-height:1.5}
+.sy-end-b{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.sy-end-b .btn{color:#191c1e;border-color:rgba(25,28,30,.2)}
+.sy-end-b .btn.primary{color:#fff;background:#191c1e;border-color:#191c1e}
+body.synty-dim #view-map canvas{filter:grayscale(.75) brightness(.72);transition:filter 1s}
+#view-map canvas{transition:filter 1s}
+@media (max-width:760px){
+  #storybtn{bottom:auto;top:calc(var(--mh,160px) + 10px);right:10px;padding:8px 12px 8px 10px;font-size:12.5px}
+  .sy-year{left:12px}
+  .sy-cap{bottom:84px;font-size:14px}
+  #sy-voice{display:none}
+}
+@media (prefers-reduced-motion:reduce){ .sy-cap{transition:none} #view-map canvas{transition:none} }
 </style>
 </head>
 <body>
@@ -573,6 +615,7 @@ body.s-open{overflow:hidden}
         <p data-i18n="tl_p">Jokainen palkki kattaa kohteiden valmistumisvuodet. Napauta tyyliä, niin näet sen kohteet aikajärjestyksessä.</p>
       </div>
       <div class="tl" id="timeline"></div>
+      <p class="tl-cta"><a class="btn primary" href="#synty" data-i18n="synty_cta">▶ Katso kaupungin synty kartalla</a><span data-i18n="synty_hint">Noin minuutin animaatio: rakennukset nousevat kartalle valmistumisjärjestyksessä.</span></p>
     </div></section>
 
     <section class="block"><div class="wrap">
@@ -1390,6 +1433,7 @@ function resetView(instant){ const d=cur.camDist,a=-0.45,pol=1.0; const t=new TH
   if(instant){controls.target.copy(t);camera.position.copy(p);controls.update();} else flyTo(t,d,pol,a); }
 document.getElementById('resetbtn').onclick=()=>{closeInfo();resetView(false);};
 function select(B){
+  if(typeof Synty!=='undefined'&&Synty.on&&Synty.playing) Synty.pause();
   if(selected){selected.label.classList.remove('sel');selected.ring.material.opacity=0;}
   selected=B; B.label.classList.add('sel'); B.ring.material.opacity=.9; openInfo(B);
   const t=new THREE.Vector3(B.pos.x,B.top*0.3,B.pos.y); flyTo(t,Math.max(170,B.radius*3.2+B.top*2.2),1.08); setOffset(true);
@@ -1417,6 +1461,7 @@ const ease=t=>1-Math.pow(1-t,3), tmp=new THREE.Vector3();
 function tick(now){
   requestAnimationFrame(tick);
   if(!document.body.classList.contains('map-on')) return;
+  if(typeof Synty!=='undefined'&&Synty.on) Synty.tick(now);
   if(fly){const k=Math.min(1,(now-fly.s)/fly.d),e=ease(k);controls.target.lerpVectors(fly.from.t,fly.to.t,e);camera.position.lerpVectors(fly.from.p,fly.to.p,e);if(k>=1)fly=null;}
   controls.update();
   const dist=camera.position.distanceTo(controls.target);
@@ -1492,6 +1537,7 @@ const UI={
   hint:["Vedä kääntääksesi · nipistä tai rullaa zoomataksesi · napauta rakennusta.<br>Kohteet todellisessa mittakaavassa. Taustakorttelit ja puut ovat havainnollistavia.","Drag to rotate · pinch or scroll to zoom · tap a building.<br>Sights are at true scale. Background blocks and trees are illustrative."],
   q:["Hae nimellä, arkkitehdilla tai vuodella…","Search by name, architect or year…"], close:["Sulje","Close"],
   capdraw:["Julkisivupiirros todellisten värien, materiaalien ja muotojen mukaan – ei valokuva.","Facade drawing based on the real colours, materials and forms – not a photograph."],
+  synty_cta:["▶ Katso kaupungin synty kartalla","▶ Watch the city grow on the map"], synty_hint:["Noin minuutin animaatio: rakennukset nousevat kartalle valmistumisjärjestyksessä.","A one-minute animation: buildings rise on the map in the order they were completed."],
   archs:["Arkkitehdit","Architects"], search:["Hae","Search"], search_al:["Hae kohteita ja arkkitehteja","Search sights and architects"], q_tours:["Kierrokset","Tours"], q_styles:["Tyylit","Styles"], q_archs:["Arkkitehdit","Architects"], q_near:["Lähellä minua","Near me"], q_search:["Hae…","Search…"], ah_e:["Rakennustaide","Architecture"], ah_h:["Arkkitehdit ja heidän tarinansa","The architects and their stories"], ah_p:["Engelin empirestä Aallon ja Pietilöiden orgaaniseen modernismiin. Lue suunnittelijoiden tarinat ja katso, mitä kukin rakensi.","From Engel’s Empire to the organic modernism of Aalto and the Pietiläs. Read the designers’ stories and see what each of them built."], ah_all:["Kaikki arkkitehdit ja muut suunnittelijat →","All architects and other designers →"],
   arch:["Arkkitehti","Architect"], built:["Valmistunut","Completed"], addr:["Osoite","Address"]
 };
@@ -1520,7 +1566,7 @@ function setLang(l){
   applyStatic(); renderHome(); renderArchGrid(); hsPagers(); if(document.getElementById('view-arch').classList.contains('on')) route();
   if(document.getElementById('view-cards').classList.contains('on')){ const i=cardIndex(); renderCards(curKey); requestAnimationFrame(()=>scrollToCard(Math.min(i,track.children.length-1),true)); }
   if(typeof cur!=='undefined'&&cur){ renderLegend(); renderList(document.getElementById('q').value||''); document.getElementById('subtitle').textContent=EN()?EN_TITLE[cur.key]:cur.title; buildings.forEach(B=>{ const sp=B.label.querySelector('span'); if(sp) sp.textContent=IN(B.item); }); if(selected) openInfo(selected); }
-  Narr.warned=false; if(Narr.entry) Narr.play(Narr.entry); updateWalkbar(); Player.update(); updateDistances();
+  Narr.warned=false; if(Narr.entry) Narr.play(Narr.entry); updateWalkbar(); Player.update(); updateDistances(); Synty.labels();
 }
 
 const STY = {
@@ -2252,11 +2298,139 @@ function hsPagers(){
     el.onscroll=()=>requestAnimationFrame(upd); upd(); });
 }
 
+
+/* ---------------- Kaupungin synty: aika-animaatio kartalla ---------------- */
+const SYNTY_EV=[
+  [1812,'Helsingistä tulee suuriruhtinaskunnan pääkaupunki.','Helsinki becomes the capital of the Grand Duchy.'],
+  [1816,'C. L. Engel kutsutaan rakentamaan uutta pääkaupunkia.','C. L. Engel is called in to build the new capital.'],
+  [1827,'Turun palo – yliopisto muuttaa Helsinkiin.','The Great Fire of Turku – the university moves to Helsinki.'],
+  [1862,'Ensimmäinen rautatie avataan, ja kaupunki alkaa kasvaa.','The first railway opens and the city starts to grow.'],
+  [1899,'Venäläistäminen alkaa. Kansallisromantiikka vastaa graniitilla.','Russification begins. National Romanticism answers in granite.'],
+  [1917,'Suomi itsenäistyy.','Finland becomes independent.'],
+  [1918,'Sisällissota.','Civil War.'],
+  [1939,'Sodat pysäyttävät rakentamisen.','The wars halt building.'],
+  [1952,'Helsingin olympialaiset.','The Helsinki Olympic Games.'],
+  [1953,'Kaupunki kasvaa Espooseen: Tapiolan puutarhakaupunki syntyy.','The city grows into Espoo: the garden city of Tapiola is born.']
+];
+const Synty={
+  on:false, playing:false, y:1812, speed:1, phase:'hki', last:0, acc:0, ui:null, shown:new Set(), voice:false, evShown:new Set(), capT:0,
+  reduce:()=>matchMedia('(prefers-reduced-motion: reduce)').matches,
+  years(){ return {hki:HKI.items.map(it=>year(it)), tap:TAP.items.map(it=>year(it))}; },
+  build(){
+    if(this.ui) return;
+    const u=document.createElement('div'); u.id='synty'; u.innerHTML=`
+      <div class="sy-year" aria-live="off"><b id="sy-y">1812</b><span id="sy-city"></span></div>
+      <div class="sy-cap" id="sy-cap" aria-live="polite"></div>
+      <div class="sy-bar" role="group">
+        <button type="button" id="sy-play" class="sy-btn big"></button>
+        <input type="range" id="sy-range" min="1812" max="2001" step="1" value="1812">
+        <button type="button" id="sy-speed" class="sy-btn"></button>
+        <button type="button" id="sy-voice" class="sy-btn" aria-pressed="false"></button>
+        <button type="button" id="sy-skip" class="sy-btn txt"></button>
+        <button type="button" id="sy-close" class="sy-btn"></button>
+      </div>
+      <div class="sy-end" id="sy-end" hidden><div class="sy-end-in"><p class="eyebrow" id="sy-end-e"></p><h3 id="sy-end-h"></h3><p id="sy-end-p"></p><div class="sy-end-b"><button type="button" class="btn primary" id="sy-again"></button><button type="button" class="btn" id="sy-other"></button><a class="btn" href="#alue-senaatintori" id="sy-browse"></a></div></div></div>`;
+    document.getElementById('view-map').appendChild(u); this.ui=u;
+    const $=id=>u.querySelector('#'+id);
+    $('sy-play').onclick=()=>this.playing?this.pause():this.play();
+    $('sy-speed').onclick=()=>{ this.speed=this.speed===1?2:1; this.labels(); };
+    $('sy-voice').onclick=()=>{ this.voice=!this.voice; if(!this.voice&&Narr.supported) speechSynthesis.cancel(); this.labels(); };
+    $('sy-skip').onclick=()=>this.finish();
+    $('sy-close').onclick=()=>this.stop();
+    $('sy-again').onclick=()=>this.start('hki');
+    $('sy-other').onclick=()=>this.start(this.phase==='tap'?'hki':'tap');
+    $('sy-browse').onclick=()=>this.stop(true);
+    const r=$('sy-range');
+    r.addEventListener('input',()=>{ this.pause(); this.seek(+r.value); });
+    const mh=()=>{ const h=document.querySelector('#view-map header'); if(h&&h.offsetHeight) document.documentElement.style.setProperty('--mh',(h.getBoundingClientRect().bottom)+'px'); }; addEventListener('resize',mh); this.mh=mh;
+    const sb=document.createElement('button'); sb.type='button'; sb.id='storybtn'; document.getElementById('view-map').appendChild(sb);
+    sb.onclick=()=>this.start(cur===TAP?'tap':'hki');
+    this.labels();
+  },
+  labels(){
+    if(!this.ui) return; const $=id=>this.ui.querySelector('#'+id);
+    const PLAY='<svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.4-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>';
+    const PAUSE='<svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
+    $('sy-play').innerHTML=this.playing?PAUSE:PLAY; $('sy-play').setAttribute('aria-label',this.playing?T('Tauko','Pause'):T('Toista','Play'));
+    $('sy-speed').textContent=this.speed+'×'; $('sy-speed').setAttribute('aria-label',T('Nopeus','Speed'));
+    $('sy-voice').innerHTML=ICO.speaker; $('sy-voice').setAttribute('aria-pressed',this.voice); $('sy-voice').setAttribute('aria-label',T('Kertoja','Narrator')); $('sy-voice').title=T('Kertoja lukee tapahtumat ääneen','Narrator reads the events aloud');
+    $('sy-skip').textContent=T('Ohita','Skip');
+    $('sy-close').innerHTML=ICO.stop; $('sy-close').setAttribute('aria-label',T('Sulje esitys','Close'));
+    $('sy-range').setAttribute('aria-label',T('Vuosi','Year'));
+    const sb=document.getElementById('storybtn'); if(sb) sb.innerHTML=`${PLAY}<span>${T('Katso kaupungin synty','Watch the city grow')}</span>`;
+  },
+  start(phase){
+    this.build(); this.mh(); closeInfo&&closeInfo(); hidden.clear(); if(typeof applyFilter==='function') applyFilter();
+    this.on=true; document.body.classList.add('synty-on'); this.ui.querySelector('#sy-end').hidden=true;
+    const go=()=>{ this.phase=phase; this.evShown.clear(); this.shown.clear();
+      const r=this.ui.querySelector('#sy-range'); const ys=this.years();
+      const lo=phase==='hki'?1812:1950, hi=phase==='hki'?Math.max(...ys.hki):2001; r.min=lo; r.max=hi; this.hi=hi;
+      this.ui.querySelector('#sy-city').textContent=phase==='hki'?'Helsinki':'Espoo · Tapiola';
+      buildings.forEach(B=>{ B.born=Infinity; B.delay=0; B.label.style.opacity=0; }); ctxMeshes.forEach(m=>m.visible=false);
+      this.y=lo; this.acc=0; this.caption('');
+      const d=cur.camDist*0.55; const t=new THREE.Vector3(); this.reduce()?resetView(true):flyTo(t,d,0.95,-0.45);
+      this.setYear(lo); this.play(); };
+    const want=phase==='hki'?HKI:TAP;
+    if(cur!==want){ const ld=document.getElementById('loading'); ld.style.display='grid'; setTimeout(()=>{ switchTo(want); ld.style.display='none'; go(); },40); } else go();
+  },
+  play(){ this.playing=true; this.last=performance.now(); this.labels(); },
+  pause(){ this.playing=false; this.labels(); },
+  stop(toGuide){ this.on=false; this.playing=false; document.body.classList.remove('synty-on','synty-dim'); if(this.ui){ this.ui.querySelector('#sy-end').hidden=true; this.caption(''); }
+    if(Narr.supported&&this.voice) speechSynthesis.cancel();
+    buildings.forEach(B=>{ if(B.born===Infinity){ B.born=performance.now(); B.delay=0; } }); ctxMeshes.forEach(m=>m.visible=showCtx); if(!toGuide) resetView(false); },
+  finish(){ this.seek(this.hi); this.pause(); this.end(); },
+  end(){ this.playing=false; this.labels(); document.body.classList.remove('synty-dim'); if(!this.reduce()) resetView(false); else resetView(true);
+    const n=buildings.length, e=this.ui.querySelector('#sy-end'); e.hidden=false;
+    this.ui.querySelector('#sy-end-e').textContent=this.phase==='hki'?'Helsinki 1820–'+this.hi:'Tapiola 1952–2001';
+    this.ui.querySelector('#sy-end-h').textContent=T('Kaupunki on rakentunut','The city has taken shape');
+    this.ui.querySelector('#sy-end-p').textContent=T(`${n} kohdetta kahdelta vuosisadalta. Napauta rakennusta, niin näet sen tarinan.`,`${n} sights from two centuries. Tap a building to read its story.`);
+    this.ui.querySelector('#sy-again').textContent=T('Katso uudelleen','Watch again');
+    this.ui.querySelector('#sy-other').textContent=this.phase==='hki'?T('Jatka Tapiolaan →','Continue to Tapiola →'):T('Katso Helsinki','Watch Helsinki');
+    this.ui.querySelector('#sy-browse').textContent=T('Selaa kohteita','Browse sights'); },
+  caption(t){ const c=this.ui&&this.ui.querySelector('#sy-cap'); if(!c) return; c.textContent=t; c.classList.toggle('show',!!t); },
+  say(t){ if(!this.voice||!Narr.supported) return; Narr.loadVoices(); const u=new SpeechSynthesisUtterance(t); const v=Narr.voices[LANG]; if(v){u.voice=v;u.lang=v.lang;} else u.lang=EN()?'en-GB':'fi-FI'; u.rate=Narr.rate; speechSynthesis.speak(u); },
+  setYear(y){ this.y=y; const yy=Math.floor(y); this.ui.querySelector('#sy-y').textContent=yy; this.ui.querySelector('#sy-range').value=yy;
+    document.body.classList.toggle('synty-dim', yy>=1939&&yy<=1944); },
+  seek(y){ this.setYear(y); const now=performance.now();
+    buildings.forEach(B=>{ const by=year(B.item); if(by<=y){ if(B.born===Infinity) B.born=now-5000; } else { B.born=Infinity; } });
+    this.shown=new Set(buildings.filter(B=>year(B.item)<=y)); this.evShown=new Set(SYNTY_EV.filter(e=>e[0]<=y).map(e=>e[0])); this.caption(''); },
+  // aika etenee: tyhjinä vuosina nopeasti, rakennusvuosina hitaammin
+  rate(y){ const yy=Math.floor(y); const has=buildings.some(B=>year(B.item)===yy); const ev=SYNTY_EV.some(e=>e[0]===yy&&(this.phase==='hki'?yy<1953:yy>=1952));
+    return (has?1/1.1:ev?1/1.6:1/0.11)*this.speed; },
+  tick(now){
+    if(!this.on||!this.playing) return;
+    const dt=Math.min(0.1,(now-this.last)/1000); this.last=now;
+    const prev=Math.floor(this.y); let y=this.y+dt*this.rate(this.y);
+    if(y>=this.hi+1){ this.setYear(this.hi); this.end(); return; }
+    this.setYear(y); const yy=Math.floor(y);
+    if(yy!==prev){
+      for(let k=prev+1;k<=yy;k++) this.onYear(k);
+    }
+  },
+  onYear(yy){
+    const ev=SYNTY_EV.find(e=>e[0]===yy&&!this.evShown.has(e[0])&&(this.phase==='hki'?yy<1953:yy>=1952));
+    if(ev){ this.evShown.add(ev[0]); const t=T(ev[1],ev[2]); this.caption(`${ev[0]} · ${t}`); clearTimeout(this.capT); this.capT=setTimeout(()=>this.caption(''),3600/this.speed); this.say(t); }
+    const born=buildings.filter(B=>year(B.item)===yy&&!this.shown.has(B));
+    if(!born.length) return;
+    const now=performance.now();
+    born.forEach((B,i)=>{ this.shown.add(B); B.born=now; B.delay=i*180/this.speed; });
+    if(!ev){ this.caption(`${yy} · ${born.map(B=>IN(B.item)).join(', ')}`); clearTimeout(this.capT); this.capT=setTimeout(()=>this.caption(''),2200/this.speed); }
+    // kamera: rakennusten keskelle
+    const c=new THREE.Vector3(); born.forEach(B=>{ c.x+=B.pos.x; c.z+=B.pos.y; }); c.x/=born.length; c.z/=born.length;
+    const spread=Math.max(...born.map(B=>Math.hypot(B.pos.x-c.x,B.pos.y-c.z)),0);
+    const dist=Math.min(cur.camDist*0.7,Math.max(520,spread*2.6+420));
+    const ct=controls.target; const far=Math.hypot(ct.x-c.x,ct.z-c.z);
+    if(far>120||Math.abs(camera.position.distanceTo(ct)-dist)>250){
+      if(this.reduce()){ const a=-0.45,pol=0.95; controls.target.copy(c); camera.position.set(c.x+dist*Math.sin(pol)*Math.sin(a),dist*Math.cos(pol),c.z+dist*Math.sin(pol)*Math.cos(a)); }
+      else flyTo(c,dist,0.95); }
+  }
+};
+
 /* ---------- map bridge ---------- */
 let lastGuide='#koti', pendingSel=null;
 function openOnMap(name){ const e=BYNAME[name]; pendingSel=name; location.hash= e.city==='tap'?'#kartta-tapiola':'#kartta-helsinki'; }
 function showMap(D){
-  document.body.classList.add('map-on'); window.scrollTo(0,0);
+  document.body.classList.add('map-on'); window.scrollTo(0,0); setTimeout(()=>Synty.mh&&Synty.mh(),60);
   camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight);
   const doSel=()=>{ if(pendingSel){ const B=buildings.find(b=>b.item.n===pendingSel); pendingSel=null; if(B) setTimeout(()=>select(B),400);} };
   if(cur!==D){ const ld=document.getElementById('loading'); ld.style.display='grid'; setTimeout(()=>{ switchTo(D); ld.style.display='none'; doSel(); },40); }
@@ -2268,6 +2442,8 @@ document.getElementById('backbtn').onclick=()=>{ location.hash=lastGuide; };
 function route(){
   const h=(location.hash||'#koti').slice(1);
   ['nav-home','nav-cards','nav-near','nav-arch','nav-map'].forEach(id=>document.getElementById(id).classList.remove('on'));
+  if(h==='synty'){ if(Narr.entry) Narr.stop(); showMap(HKI); setTimeout(()=>Synty.start('hki'),150); return; }
+  if(Synty.on&&!h.startsWith('kartta')) Synty.stop(true);
   if(h.startsWith('kartta')){ if(Narr.entry) Narr.stop(); showMap(h==='kartta-tapiola'?TAP:HKI); return; }
   document.body.classList.remove('map-on'); closeInfo&&cur&&closeInfo();
   const home=document.getElementById('view-home'), cards=document.getElementById('view-cards');
@@ -2283,7 +2459,7 @@ applyStatic();
 document.getElementById('langbtn').onclick=()=>setLang(EN()?'fi':'en');
 Player.init();
 Off.init();
-Search.init(); initTabbar();
+Search.init(); initTabbar(); Synty.build();
 document.getElementById('searchbtn').onclick=()=>Search.open();
 document.querySelectorAll('[data-search]').forEach(b=>b.onclick=()=>Search.open());
 document.querySelectorAll('[data-scroll]').forEach(b=>b.onclick=()=>{ const t=document.getElementById(b.dataset.scroll); if(t) t.closest('section').scrollIntoView({behavior:'smooth'}); });
