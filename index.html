@@ -605,7 +605,7 @@ body[data-tour=piirustus] .tmk:not(.on){background:rgba(10,28,44,.85)}
 .tour-card{display:flex;flex-direction:column;text-decoration:none;color:#f1f2ee;background:#15191b;border-radius:18px;overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,.18);transition:transform .2s}
 .tour-card:hover{transform:translateY(-3px)}
 .tour-card:focus-visible{outline:3px solid var(--tc);outline-offset:3px}
-.tc-img{display:block;aspect-ratio:16/10;background-size:cover;background-position:center;filter:grayscale(.15) contrast(1.05);position:relative}
+.tc-img{display:block;aspect-ratio:16/10;background-size:cover;background-position:center;position:relative}
 .tc-img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(21,25,27,.95))}
 .tc-body{display:flex;flex-direction:column;gap:6px;padding:4px 18px 18px;margin-top:-34px;position:relative}
 .tc-k{font:600 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--tc)}
@@ -2480,7 +2480,7 @@ function renderArch(id){
 
 /* ---------------- Offline ---------------- */
 const Off={ sw:null, state:store.get('offline','none'), done:0, total:0, failed:0,
-  urls(){ const u=new Set(); const A=x=>u.add(new URL(x,location.href).href); ALL.forEach(e=>{ if(e.it.photo) A(e.it.photo.src); if(e.it.old) A(e.it.old.src); }); ['data/city-hki.json','data/city-tap.json'].forEach(A); if(typeof TOURS!=='undefined') Object.values(TOURS).forEach(t=>t.stops.forEach(st=>(st.img||[]).forEach(im=>A(im.src)))); return [...u]; },
+  urls(){ const u=new Set(); const A=x=>u.add(new URL(x,location.href).href); ALL.forEach(e=>{ if(e.it.photo) A(e.it.photo.src); if(e.it.old) A(e.it.old.src); }); ['data/city-hki.json','data/city-tap.json'].forEach(A); if(typeof TOURS!=='undefined') Object.values(TOURS).forEach(t=>{ A('img/tour/cover-'+t.id+'.jpg'); t.stops.forEach(st=>(st.img||[]).forEach(im=>A(im.src))); }); return [...u]; },
   supported(){ return 'serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost'); },
   async init(){
     const nb=document.createElement('div'); nb.id='netbadge'; nb.setAttribute('role','status'); document.body.appendChild(nb);
@@ -3100,7 +3100,7 @@ const Tours={
   }
 };
 City.hidePts=Tours.hidePts();
-function tourCards(){ return Object.values(TOURS).map(tr=>{ const L=EN()?tr.en:tr.fi; const s0=tr.stops.find(s=>s.img&&s.img.length); const im=s0?s0.img[0].src:'';
+function tourCards(){ return Object.values(TOURS).map(tr=>{ const L=EN()?tr.en:tr.fi; const im='img/tour/cover-'+tr.id+'.jpg';
   return `<a class="tour-card" href="#kierros-${tr.id}" style="--tc:${tr.col}"><span class="tc-img" style="background-image:url('${im}')"></span><span class="tc-body"><span class="tc-k">${esc(L.k)} · ${tr.stops.length} ${T('kohdetta','stops')}</span><b>${esc(L.t)}</b><span class="tc-s">${esc(L.s)}</span><span class="tc-go">${T('Aloita kierros','Start the tour')} →</span></span></a>`; }).join(''); }
 
 /* ---------- map bridge ---------- */
