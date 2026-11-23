@@ -488,6 +488,40 @@ body.s-open{overflow:hidden}
   #search{padding-top:12px}
   .s-box{max-height:calc(100vh - 24px)}
 }
+.tl2-ov{position:relative;padding:30px 0 6px;margin-bottom:26px}
+.tl2-grid{position:absolute;inset:0 0 0 0;pointer-events:none}
+.tl2-grid span{position:absolute;top:0;bottom:0;border-left:1px dashed rgba(25,28,30,.14)}
+.tl2-grid b{position:absolute;top:2px;left:6px;font:500 11.5px var(--f-mono);color:var(--muted)}
+.tl2-grid span:last-child b{left:auto;right:6px}
+.tl2-lane{position:relative;display:block;height:26px;text-decoration:none}
+.tl2-lane:hover .tl2-bar{opacity:1}
+.tl2-lane:focus-visible{outline:2px solid var(--patina);outline-offset:2px;border-radius:6px}
+.tl2-bar{position:absolute;top:7px;height:12px;border-radius:6px;background:var(--c);opacity:.85;transition:opacity .15s}
+.tl2-lane i{position:absolute;top:9px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--c);opacity:.85}
+.tl2-lane em{position:absolute;top:5px;font:600 12.5px var(--f-body);font-style:normal;color:var(--c);white-space:nowrap}
+.tl2-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.tl2-card{display:flex;flex-direction:column;text-decoration:none;color:inherit;background:#f6f5f1;border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:transform .15s,box-shadow .15s;border-top:4px solid var(--c)}
+.tl2-card:hover{transform:translateY(-2px);box-shadow:0 14px 30px -20px rgba(0,0,0,.4)}
+.tl2-card:focus-visible{outline:2px solid var(--patina);outline-offset:2px}
+.tl2-img{display:grid;gap:2px;aspect-ratio:16/10;background:#dfe5e8;overflow:hidden}
+.tl2-img.n2{grid-template-columns:1fr 1fr}
+.tl2-img.n3{grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr}
+.tl2-img.n3 img:first-child{grid-row:1/3}
+.tl2-img img,.tl2-img svg{width:100%;height:100%;object-fit:cover;display:block;min-height:0}
+.tl2-body{display:flex;flex-direction:column;gap:4px;padding:12px 14px 14px;flex:1}
+.tl2-yrs{font:600 12px var(--f-mono);color:var(--c)}
+.tl2-body b{font-family:var(--f-display);font-weight:500;font-size:22px;line-height:1.1;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word}
+.tl2-body small{font-size:13.5px;line-height:1.45;color:#3d4244;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tl2-ft{display:flex;justify-content:space-between;margin-top:auto;padding-top:8px;font:500 12px var(--f-mono);color:var(--muted)}
+.tl2-ft .go{color:var(--ink);font-weight:600}
+@media (max-width:760px){
+  .tl2-lane em{font-size:11px;top:3px}
+  .tl2-lane{height:20px}
+  .tl2-bar{top:5px;height:10px}
+  .tl2-cards{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:clamp(16px,4vw,40px);gap:12px;margin:0 calc(-1*clamp(16px,4vw,40px));padding:0 clamp(16px,4vw,40px) 10px;scrollbar-width:none}
+  .tl2-cards::-webkit-scrollbar{display:none}
+  .tl2-card{flex:0 0 74%;scroll-snap-align:start}
+}
 </style>
 </head>
 <body>
@@ -1431,7 +1465,7 @@ const UI={
   wf_off:["Tallenna offline-käyttöön","Save for offline use"],
   wf_near:["Lähellä minua","Near me"], wf_listen:["Kuuntele kierros","Listen to a tour"],
   tl_e:["Aikajana","Timeline"], tl_h:["Kaksi vuosisataa, kymmenen tyyliä","Two centuries, ten styles"],
-  tl_p:["Jokainen palkki kattaa kohteiden valmistumisvuodet. Napauta tyyliä, niin näet sen kohteet aikajärjestyksessä.","Each bar spans the completion years of the sights. Tap a style to see its sights in chronological order."],
+  tl_p:["Palkki näyttää, minä vuosina kunkin tyylin kohteet valmistuivat. Napauta tyyliä tai korttia, niin näet sen kohteet aikajärjestyksessä.","Each bar shows the years in which a style’s sights were completed. Tap a style or card to see its sights in chronological order."],
   ar_e:["Alueet","Areas"], ar_h:["Yksitoista kävelykierrosta","Eleven walking tours"],
   ar_p:["Kohteet on järjestetty alueittain kävelyjärjestykseen. Kortteja voi selata kotisohvalta, tai ne voi ottaa mukaan kadulle. Jokaisesta kohteesta pääsee Googlen katunäkymään ja jokaisesta alueesta kävelyreitille.","Sights are grouped by area in walking order. Browse the cards from your sofa or take them out on the street. Every sight links to Google Street View and every area to a walking route."],
   st_e:["Tunnistusopas","Spotter's guide"], st_h:["Miten tyylit erottaa kadulla","How to tell the styles apart"],
@@ -1619,15 +1653,21 @@ function renderHome(){
   document.getElementById('skyline').innerHTML=skylineSVG();
   document.getElementById('stats').innerHTML=`<div><b>${ALL.length}</b><span>${T('kohdetta','sights')}</span></div><div><b>${AREAS.length}</b><span>${T('kävelykierrosta','walking tours')}</span></div><div><b>${new Set(ALL.map(e=>e.it.ar.split(/[;,&]/)[0].trim())).size}</b><span>${T('arkkitehtia tai toimistoa','architects or firms')}</span></div><div><b>${y1-y0}</b><span>${T('vuotta','years')}, ${y0}–${y1}</span></div>`;
   // timeline
-  const A=1810,B=2010, pct=y=>((y-A)/(B-A)*100).toFixed(2)+'%';
-  let tl=`<div class="tl-axis"><span></span><div class="ticks">${[1820,1850,1880,1910,1940,1970,2000].map(y=>`<span style="left:${pct(y)}">${y}</span>`).join('')}</div></div>`;
-  Object.entries(STY).forEach(([k,s])=>{ if(s.hide) return;
+  const A=1815,B=2005, pct=y=>((y-A)/(B-A)*100).toFixed(2)+'%';
+  const eras=[]; Object.entries(STY).forEach(([k,s])=>{ if(s.hide) return;
     const list=ALL.filter(e=>(e.city==='tap')===!!s.tap && (e.it.st===k||(k==='jg'&&e.it.st==='al'))); if(!list.length) return;
-    const ys=list.map(e=>year(e.it)); const a=Math.min(...ys), b=Math.max(...ys);
-    tl+=`<a class="tl-row" href="#tyyli-${k}"><span class="nm"><i style="background:${s.col}"></i>${SN(s)} <small>${list.length}</small></span><span class="lane" style="color:${s.col}">
-      <span class="bar" style="left:${pct(a)};width:calc(${pct(b)} - ${pct(a)});background:${s.col};opacity:.22"></span>
-      ${ys.map(y=>`<span class="dot" style="left:${pct(y)}"></span>`).join('')}
-      <span class="tlab" style="left:calc(${pct(b)} + 12px)">${a===b?a:a+'–'+b}</span></span></a>`; });
+    const ys=list.map(e=>year(e.it)); eras.push({k,s,list:list.slice().sort((x,y)=>year(x.it)-year(y.it)),ys,a:Math.min(...ys),b:Math.max(...ys)}); });
+  eras.sort((x,y)=>x.a-y.a||x.b-y.b);
+  const first=t=>(t||'').split(/(?<=[.!?])\s+/)[0];
+  let tl=`<div class="tl2-ov" role="img" aria-label="${T('Tyylit aikajanalla 1820–2000','Styles on a timeline 1820–2000')}">
+    <div class="tl2-grid">${[1850,1900,1950,2000].map(y=>`<span style="left:${pct(y)}"><b>${y}</b></span>`).join('')}</div>
+    ${eras.map(r=>`<a class="tl2-lane" href="#tyyli-${r.k}" style="--c:${r.s.col}" title="${SN(r.s)} ${r.a}–${r.b}"><span class="tl2-bar" style="left:${pct(r.a)};width:max(24px,calc(${pct(r.b)} - ${pct(r.a)}))"></span>${r.b>1935?`<em class="lft" style="right:calc(100% - ${pct(r.a)} + 10px)">${SN(r.s)}</em>`:`<em style="left:calc(${pct(r.b)} + 10px)">${SN(r.s)}</em>`}</a>`).join('')}
+  </div>
+  <div class="tl2-cards">${eras.map(r=>{ const ph=r.list.filter(e=>e.it.photo).slice(0,3);
+    return `<a class="tl2-card" href="#tyyli-${r.k}" style="--c:${r.s.col}">
+      <span class="tl2-img n${ph.length}">${ph.map(e=>`<img loading="lazy" src="${e.it.photo.src}" alt="">`).join('')||facadeUnique(resolve(r.list[0].D,r.list[0].it))}</span>
+      <span class="tl2-body"><span class="tl2-yrs">${r.a===r.b?r.a:r.a+'–'+r.b}</span><b>${SN(r.s)}</b><small>${first(ST(r.s))}</small>
+      <span class="tl2-ft"><span>${r.list.length} ${T('kohdetta','sights')}</span><span class="go">${T('Katso','View')} →</span></span></span></a>`; }).join('')}</div>`;
   document.getElementById('timeline').innerHTML=tl;
   // areas
   let ah=''; ['hki','tap'].forEach(c=>{ const as=AREAS.filter(a=>a.city===c);
