@@ -551,6 +551,32 @@ body.synty-on #synty{display:block}
 body:not(.map-on) .mapsrc{display:none}
 body:not(.tour-on) .mapsrc{display:none}
 @media (max-width:760px){ .mapsrc{left:auto;right:10px;bottom:auto;top:calc(var(--mh,160px) + 84px);text-align:right;max-width:70vw} }
+
+/* ---- stadion sisältä ---- */
+#fp{position:fixed;inset:0;z-index:6;pointer-events:none}
+#fp[hidden]{display:none}
+body.fp-on #labels, body.fp-on #legend, body.fp-on #storybtn, body.fp-on #hint, body.fp-on #list, body.fp-on #info, body.fp-on .mapsrc, body.fp-on #tour{display:none!important}
+.fp-top{position:absolute;left:16px;top:calc(var(--mh,64px) + 14px);display:flex;gap:10px;align-items:flex-start;background:rgba(15,18,20,.82);backdrop-filter:blur(8px);color:#f1f2ee;border-radius:16px;padding:12px 10px 12px 16px;pointer-events:auto;max-width:min(380px,calc(100vw - 32px))}
+.fp-k{margin:0;font:600 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:#e0aa3e}
+.fp-top h3{margin:2px 0 0;font-family:var(--f-display);font-weight:500;font-size:24px}
+.fp-x{all:unset;cursor:pointer;width:32px;height:32px;display:grid;place-items:center;border-radius:999px;color:#fff;flex:none}
+.fp-x:hover{background:rgba(255,255,255,.12)} .fp-x:focus-visible{outline:2px solid #fff} .fp-x .ico{width:16px;height:16px}
+.fp-hint{position:absolute;left:16px;top:calc(var(--mh,64px) + 96px);margin:0;max-width:340px;font:500 13.5px/1.45 var(--f-body);color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.8)}
+.fp-stat{position:absolute;right:18px;top:calc(var(--mh,64px) + 14px);margin:0;font:600 15px var(--f-mono);color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.8)}
+.fp-modes{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex;flex-wrap:wrap;justify-content:center;gap:6px;background:rgba(15,18,20,.86);backdrop-filter:blur(8px);border-radius:16px;padding:8px;pointer-events:auto;max-width:calc(100vw - 20px)}
+.fp-modes button{all:unset;cursor:pointer;padding:9px 13px;border-radius:11px;color:#e9ecea;font:600 13.5px var(--f-body);white-space:nowrap}
+.fp-modes button:hover{background:rgba(255,255,255,.1)}
+.fp-modes button[aria-pressed=true]{background:#e0aa3e;color:#15181a}
+.fp-modes button:focus-visible{outline:2px solid #fff}
+.fp-modes button[hidden]{display:none}
+.fp-joy{position:absolute;left:22px;bottom:96px;width:110px;height:110px;border-radius:50%;background:rgba(15,18,20,.45);border:2px solid rgba(255,255,255,.5);pointer-events:auto;touch-action:none;display:grid;place-items:center}
+.fp-joy[hidden]{display:none}
+.fp-joy span{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.85);transition:transform .05s}
+body.fp-on #scene canvas{touch-action:none}
+#i-enter .enter-btn{display:inline-flex;margin-top:12px}
+.enter-p{font-size:13px;color:var(--muted,#5d6466);margin:6px 0 0}
+#tr-act .btn{margin:0 0 12px}
+@media (max-width:760px){ .fp-top{left:8px;right:8px;max-width:none} .fp-top h3{font-size:19px} .fp-hint{left:10px;right:10px;top:calc(var(--mh,160px) + 86px);font-size:12.5px} .fp-stat{right:12px;top:auto;bottom:74px} .fp-modes{bottom:10px;left:8px;right:8px;transform:none;flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;gap:3px;padding:6px;scrollbar-width:none} .fp-modes::-webkit-scrollbar{display:none} .fp-modes button{padding:9px 11px;font-size:13px;flex:none} .fp-joy{bottom:132px} }
 /* ---- erikoiskierrokset ---- */
 body[data-tour=olympia]{--tc:#e0aa3e} body[data-tour=kadonnut]{--tc:#e9d9b4} body[data-tour=piirustus]{--tc:#7fd3ff}
 #tour{display:none} body.tour-on #tour{display:block}
@@ -776,6 +802,7 @@ body.synty-dim #view-map canvas{filter:grayscale(.75) brightness(.72)}
   <dl><dt data-i18n="arch">Arkkitehti</dt><dd id="i-arch"></dd><dt data-i18n="built">Valmistunut</dt><dd id="i-year"></dd><dt data-i18n="addr">Osoite</dt><dd id="i-addr"></dd></dl>
   <p id="i-text"></p>
   <div class="approx" id="i-approx"></div>
+  <div id="i-enter"></div>
   <span class="src" id="i-src"></span>
 </aside>
 
@@ -1697,6 +1724,7 @@ function openInfo(B){
   document.getElementById('i-year').textContent=IY(it);
   document.getElementById('i-addr').textContent=it.a+', '+cur.city;
   document.getElementById('i-text').textContent=ITX(it);
+  document.getElementById('i-enter').innerHTML=it.special==='stadium'?`<a class="btn primary enter-btn" href="#stadion">${T('Astu stadionille','Step inside the stadium')} →</a><p class="enter-p">${T('Istu katsomoon, kävele rataa tai nouse torniin.','Take a seat, walk the track or ride up the tower.')}</p>`:'';
   document.getElementById('i-approx').textContent=it.approx?T('◌ Sijainti ja mitat kartalla ovat likimääräisiä.','◌ Location and dimensions on the map are approximate.'):'';
   document.getElementById('i-src').innerHTML=`${T('Lähde','Source')}: <a href="${it.src}" target="_blank" rel="noopener">${new URL(it.src).hostname.replace('www.','')}</a>`;
   document.getElementById('info').classList.add('open');
@@ -1725,6 +1753,7 @@ const ray=new THREE.Raycaster(),mouse=new THREE.Vector2(); let down=null;
 renderer.domElement.addEventListener('pointerdown',e=>{down={x:e.clientX,y:e.clientY};});
 renderer.domElement.addEventListener('pointerup',e=>{
   if(!down) return; const moved=Math.hypot(e.clientX-down.x,e.clientY-down.y); down=null; if(moved>7) return;
+  if(typeof Stadium!=='undefined'&&Stadium.on) return;
   const r=renderer.domElement.getBoundingClientRect(); mouse.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1); ray.setFromCamera(mouse,camera);
   if(typeof Tours!=='undefined'&&Tours.on){ if(City.mesh){ const h=ray.intersectObject(City.mesh,false)[0]; const rr=City.info(h); if(rr) cityTip(rr,e.clientX,e.clientY); } return; }
   const groups=buildings.filter(B=>B.group.visible).map(B=>B.group);
@@ -1741,15 +1770,17 @@ const tabSwitch=D=>{ if(cur===D) return; const ld=document.getElementById('loadi
 document.getElementById('tab-hki').onclick=()=>tabSwitch(HKI);
 document.getElementById('tab-tap').onclick=()=>tabSwitch(TAP);
 function switchTo(D,keepHash){ document.getElementById('tab-hki').classList.toggle('on',D===HKI); document.getElementById('tab-tap').classList.toggle('on',D===TAP);
-  return City.ensure(D.key).then(()=>{ buildWorld(D); if(typeof Tours!=='undefined') Tours.onWorld(); if(!keepHash){ try{history.replaceState(null,'',D===HKI?'#kartta-helsinki':'#kartta-tapiola');}catch(e){} } }); }
+  return City.ensure(D.key).then(()=>{ if(typeof Stadium!=='undefined'){ if(Stadium.on) Stadium.exit(); Stadium.g=null; Stadium.crowd=null; } buildWorld(D); if(typeof Tours!=='undefined') Tours.onWorld(); if(!keepHash){ try{history.replaceState(null,'',D===HKI?'#kartta-helsinki':'#kartta-tapiola');}catch(e){} } }); }
 
 const ease=t=>1-Math.pow(1-t,3), tmp=new THREE.Vector3(); const shLx=new THREE.Vector3(), shLy=new THREE.Vector3(), shLz=new THREE.Vector3();
+let lastT=0;
 function tick(now){
   requestAnimationFrame(tick);
+  const dt=Math.min(0.1,(now-(lastT||now))/1000); lastT=now;
   if(!document.body.classList.contains('map-on')) return;
   if(typeof Synty!=='undefined'&&Synty.on) Synty.tick(now);
   if(fly){const k=Math.min(1,(now-fly.s)/fly.d),e=ease(k);controls.target.lerpVectors(fly.from.t,fly.to.t,e);camera.position.lerpVectors(fly.from.p,fly.to.p,e);if(k>=1)fly=null;}
-  controls.update();
+  if(typeof Stadium!=='undefined'&&Stadium.on) Stadium.tick(now,dt); else controls.update();
   const dist=camera.position.distanceTo(controls.target);
   // shadow frustum follows view
   // varjokartan vakautus: koko porrastetaan ja keskipiste lukitaan varjotekseleihin, jotta varjot eivät välky kameran liikkuessa
@@ -1860,6 +1891,7 @@ function setLang(l){
   if(document.getElementById('view-cards').classList.contains('on')){ const i=cardIndex(); renderCards(curKey); requestAnimationFrame(()=>scrollToCard(Math.min(i,track.children.length-1),true)); }
   if(typeof cur!=='undefined'&&cur){ renderLegend(); renderList(document.getElementById('q').value||''); document.getElementById('subtitle').textContent=EN()?EN_TITLE[cur.key]:cur.title; buildings.forEach(B=>{ const sp=B.label.querySelector('span'); if(sp) sp.textContent=IN(B.item); }); if(selected) openInfo(selected); }
   Narr.warned=false; if(Narr.entry) Narr.play(Narr.entry); updateWalkbar(); Player.update(); updateDistances(); Synty.labels();
+  if(Stadium.ui) Stadium.labels();
   if(Tours.on){ Tours.labels(); Tours.marksBuild(); Tours.marks.forEach((m,j)=>m.el.classList.toggle('on',j===Tours.i)); }
 }
 
@@ -2893,7 +2925,7 @@ const Tours={
         <div class="tr-top"><span class="tr-kick" id="tr-kick"></span><button type="button" class="tr-x" id="tr-x"></button></div>
         <h3 id="tr-n"></h3><p class="tr-meta" id="tr-meta"></p>
         <figure class="tr-fig" id="tr-fig"></figure>
-        <p class="tr-t" id="tr-t"></p>
+        <p class="tr-t" id="tr-t"></p><div id="tr-act"></div>
         <div class="tr-dots" id="tr-dots" role="tablist"></div>
       </aside>
       <div class="tr-bar" role="group">
@@ -2954,6 +2986,7 @@ const Tours={
   panel(){
     const TT=this.T, s=this.stop0(), L=this.L(s), $=id=>this.ui.querySelector('#'+id);
     $('tr-kick').textContent=`${this.L(TT).t} · ${this.i+1}/${TT.stops.length}`;
+    $('tr-act').innerHTML=(s.fx==='opening'||s.fx==='runners')?`<a class="btn primary" href="#stadion">${T('Astu stadionille','Step inside the stadium')} →</a>`:'';
     $('tr-n').textContent=L.n; $('tr-meta').textContent=[s.y,s.ar].filter(Boolean).join(' · '); $('tr-t').textContent=L.t;
     $('tr-y').textContent=s.yb||s.y; $('tr-k').textContent=this.L(TT).t;
     const imgs=s.img||[];
@@ -3103,6 +3136,213 @@ City.hidePts=Tours.hidePts();
 function tourCards(){ return Object.values(TOURS).map(tr=>{ const L=EN()?tr.en:tr.fi; const im='img/tour/cover-'+tr.id+'.jpg';
   return `<a class="tour-card" href="#kierros-${tr.id}" style="--tc:${tr.col}"><span class="tc-img" style="background-image:url('${im}')"></span><span class="tc-body"><span class="tc-k">${esc(L.k)} · ${tr.stops.length} ${T('kohdetta','stops')}</span><b>${esc(L.t)}</b><span class="tc-s">${esc(L.s)}</span><span class="tc-go">${T('Aloita kierros','Start the tour')} →</span></span></a>`; }).join(''); }
 
+/* ============================== OLYMPIASTADION SISÄLTÄ ============================== */
+/* Pohja: Helsingin rakennusrekisterin ulkoreuna ja kenttäaukko (CC BY 4.0). Katsomot, katokset, rata ja torni on mallinnettu mittojen ja kuvien perusteella. */
+const STADIUM_FP={"o": [[-61.9, 54.3], [-58.9, 53.8], [-51.4, 52.3], [-51.4, 52.8], [-52.4, 53.3], [-54.4, 54.3], [-47.9, 65.3], [-51.4, 68.3], [-51.4, 68.8], [-52.9, 70.3], [-45.4, 78.3], [-45.9, 79.3], [-36.9, 85.8], [-37.4, 86.3], [-27.4, 91.3], [-27.4, 92.3], [-17.4, 95.8], [-17.9, 96.3], [-7.4, 98.8], [-7.4, 99.3], [-6.9, 99.3], [3.6, 99.8], [3.6, 100.8], [14.6, 100.3], [14.6, 101.3], [25.6, 99.3], [25.6, 99.8], [36.1, 96.3], [36.6, 96.8], [46.6, 92.3], [47.1, 92.8], [56.1, 87.3], [57.1, 87.8], [65.6, 80.3], [66.1, 80.8], [74.6, 71.8], [75.1, 72.3], [82.1, 61.3], [82.6, 61.8], [87.6, 49.8], [89.1, 50.3], [90.1, 45.3], [92.1, 33.8], [92.1, 22.8], [91.1, 14.3], [71.6, -86.2], [67.1, -101.2], [65.1, -105.2], [63.6, -107.7], [62.6, -106.7], [55.6, -117.7], [55.1, -117.2], [48.1, -124.2], [41.1, -130.2], [40.6, -129.7], [29.6, -136.2], [29.1, -135.2], [19.1, -139.7], [13.1, -141.2], [12.6, -140.7], [1.6, -142.7], [1.6, -142.2], [-15.4, -142.2], [-15.4, -141.7], [-31.9, -139.2], [-31.4, -138.2], [-44.4, -134.2], [-46.9, -132.7], [-46.9, -131.7], [-56.4, -126.7], [-55.9, -125.7], [-64.4, -119.2], [-63.9, -118.7], [-71.9, -111.2], [-71.4, -110.7], [-78.4, -101.2], [-77.4, -100.7], [-82.4, -90.7], [-81.9, -90.7], [-84.9, -80.2], [-83.9, -79.7], [-84.9, -72.2], [-93.4, -70.7], [-101.4, -112.2], [-110.9, -110.2], [-108.9, -98.7], [-126.9, -95.2], [-118.9, -53.7], [-104.9, -56.2], [-84.9, -60.2], [-64.9, 44.3], [-65.9, 44.3], [-64.9, 47.8], [-67.9, 48.3], [-66.4, 55.3], [-65.4, 56.3], [-64.9, 54.8]], "h": [[26.6, -97.7], [32.6, -89.7], [36.1, -80.2], [36.6, -76.2], [40.6, -77.2], [41.6, -71.7], [38.6, -71.2], [54.6, 12.8], [57.6, 12.3], [58.6, 17.8], [56.1, 18.3], [57.6, 27.3], [56.6, 36.8], [54.6, 42.3], [52.1, 41.3], [47.6, 49.8], [44.6, 53.8], [39.1, 58.3], [40.1, 59.8], [39.1, 60.3], [38.1, 59.3], [27.6, 65.8], [15.6, 69.8], [3.6, 70.8], [-10.4, 68.8], [-10.9, 70.3], [-12.4, 69.8], [-11.9, 68.3], [-22.4, 63.8], [-30.4, 57.3], [-31.4, 58.3], [-36.4, 51.3], [-39.9, 43.3], [-60.4, -62.2], [-60.9, -68.2], [-59.9, -75.2], [-56.9, -85.2], [-55.4, -84.7], [-51.4, -90.7], [-44.4, -97.7], [-35.4, -103.7], [-35.9, -105.2], [-34.4, -105.7], [-33.9, -104.2], [-21.4, -108.7], [-22.4, -115.7], [-19.4, -116.2], [-17.9, -109.7], [-5.9, -110.2], [5.6, -108.2], [6.1, -109.7], [7.6, -109.2], [7.6, -107.7], [17.1, -103.7], [25.6, -96.7]]};
+const Stadium={
+  on:false, mode:null, g:null, B:null, seats:[], yaw:0, pitch:0, keys:{}, joy:{x:0,y:0}, s:0, run:false, crowd:null, saved:null, tw:null, t0:0,
+  // ---------- malli ----------
+  hits(poly,c,d){ const out=[]; for(let i=0;i<poly.length;i++){ const a=poly[i],b=poly[(i+1)%poly.length]; const ex=b[0]-a[0],ey=b[1]-a[1]; const den=d.x*ey-d.y*ex; if(Math.abs(den)<1e-9) continue;
+      const t=((a[0]-c.x)*ey-(a[1]-c.y)*ex)/den, u=((a[0]-c.x)*d.y-(a[1]-c.y)*d.x)/den; if(t>0&&u>=0&&u<=1) out.push(t); } return out.sort((p,q)=>p-q); },
+  build(){
+    if(this.g&&this.g.parent) return this.g;
+    const B=buildings.find(b=>b.item.n==='Olympiastadion'); if(!B) return null; this.B=B;
+    const g=new THREE.Group(); g.name='stadium'; g.position.set(B.pos.x,0,B.pos.y); world.add(g); this.g=g;
+    const H=STADIUM_FP.h, O=STADIUM_FP.o; let cx=0,cy=0; H.forEach(p=>{cx+=p[0];cy+=p[1];}); cx/=H.length; cy/=H.length; const C=new THREE.Vector2(cx,cy); this.C=C;
+    let sxx=0,syy=0,sxy=0; H.forEach(p=>{const dx=p[0]-cx,dy=p[1]-cy; sxx+=dx*dx; syy+=dy*dy; sxy+=dx*dy;}); const ang=0.5*Math.atan2(2*sxy,sxx-syy); this.ang=ang;
+    const U=new THREE.Vector2(Math.cos(ang),Math.sin(ang)), V=new THREE.Vector2(-Math.sin(ang),Math.cos(ang)); this.U=U; this.V=V;
+    // säteittäinen näytteistys: katsomon etu- ja takareuna
+    const N=isMobile?200:280, R=40, rise=0.42, front=1.4; this.R=R; this.rise=rise; this.front=front;
+    const inn=[],out=[],dirs=[];
+    for(let i=0;i<N;i++){ const a=i/N*Math.PI*2, d=new THREE.Vector2(Math.cos(a),Math.sin(a)); const hi=this.hits(H,C,d)[0]||60; const ho=this.hits(O,C,d).filter(t=>t>hi+8);
+      const ri=hi+2.5, ro=Math.min((ho[0]||hi+38)-3.5, ri+38); inn.push(C.clone().addScaledVector(d,ri)); out.push(C.clone().addScaledVector(d,Math.max(ro,ri+18))); dirs.push(d); }
+    this.inn=inn; this.out=out; const top=front+R*rise; this.top=top;
+    const P=(i,k)=>{ const t=k/R; return inn[i].clone().lerp(out[i],t); };
+    // porrasmainen katsomo
+    const pos=[];
+    const quad=(a,b,c,d)=>{ pos.push(a.x,a.y,a.z, b.x,b.y,b.z, c.x,c.y,c.z, a.x,a.y,a.z, c.x,c.y,c.z, d.x,d.y,d.z); };
+    const V3=(p,y)=>new THREE.Vector3(p.x,y,p.y);
+    for(let i=0;i<N;i++){ const j=(i+1)%N;
+      quad(V3(inn[i],0),V3(inn[j],0),V3(inn[j],front),V3(inn[i],front)); // etuseinä
+      for(let k=0;k<R;k++){ const y=front+k*rise; const a=P(i,k),b=P(j,k),c=P(j,k+1),d=P(i,k+1);
+        quad(V3(a,y),V3(b,y),V3(c,y),V3(d,y)); quad(V3(d,y),V3(c,y),V3(c,y+rise),V3(d,y+rise)); }
+    }
+    const sg=new THREE.BufferGeometry(); sg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3)); sg.computeVertexNormals();
+    const stands=new THREE.Mesh(sg,new THREE.MeshStandardMaterial({color:new THREE.Color('#c9c4ba').convertSRGBToLinear(),roughness:.95,side:THREE.DoubleSide})); stands.castShadow=stands.receiveShadow=true; g.add(stands); this.stands=stands;
+    // julkisivu: rekisterin ulkoreuna, katsomon takareuna aukkona
+    const shp=new THREE.Shape(O.map(p=>new THREE.Vector2(p[0],-p[1]))); shp.holes.push(new THREE.Path(out.slice().reverse().map(p=>new THREE.Vector2(p.x,-p.y))));
+    const fg=new THREE.ExtrudeGeometry(shp,{depth:top+5,bevelEnabled:false}); fg.rotateX(-Math.PI/2);
+    const facade=new THREE.Mesh(fg,stdMat('#f1efe9',{roughness:.9})); facade.castShadow=facade.receiveShadow=true; g.add(facade);
+    // kenttä: punainen pohja, rata, nurmi, viivat
+    const hs=new THREE.Shape(H.map(p=>new THREE.Vector2(p[0],-p[1]))); const hg=new THREE.ShapeGeometry(hs); hg.rotateX(-Math.PI/2);
+    const apron=new THREE.Mesh(hg,stdMat('#a9503b',{roughness:1})); apron.position.y=0.04; apron.receiveShadow=true; g.add(apron);
+    let umin=1e9,umax=-1e9,vmin=1e9,vmax=-1e9; H.forEach(p=>{ const d=new THREE.Vector2(p[0]-cx,p[1]-cy); const u=d.dot(U),v=d.dot(V); umin=Math.min(umin,u);umax=Math.max(umax,u);vmin=Math.min(vmin,v);vmax=Math.max(vmax,v); });
+    const TC=C.clone().addScaledVector(U,(umin+umax)/2).addScaledVector(V,(vmin+vmax)/2); this.TC=TC;
+    const L=84.39, r0=36.5, lane=1.22, lanes=8; this.L=L; this.r0=r0;
+    const loop=(r,n=72)=>{ const pts=[]; for(let s=0;s<=n;s++){ const t=s/n*Math.PI; pts.push([L/2+Math.sin(t)*r, -Math.cos(t)*r]); } for(let s=0;s<=n;s++){ const t=s/n*Math.PI; pts.push([-L/2-Math.sin(t)*r, Math.cos(t)*r]); } return pts.map(([u,v])=>TC.clone().addScaledVector(U,u).addScaledVector(V,v)); };
+    this.loop=loop;
+    const toShape=pts=>new THREE.Shape(pts.map(p=>new THREE.Vector2(p.x,-p.y)));
+    const trS=toShape(loop(r0+lanes*lane+1.2)); trS.holes.push(new THREE.Path(loop(r0-0.3).reverse().map(p=>new THREE.Vector2(p.x,-p.y))));
+    const trG=new THREE.ShapeGeometry(trS,1); trG.rotateX(-Math.PI/2); const track=new THREE.Mesh(trG,stdMat('#b5533c',{roughness:1})); track.position.y=0.08; track.receiveShadow=true; g.add(track);
+    const gc=document.createElement('canvas'); gc.width=8; gc.height=256; const gx=gc.getContext('2d'); for(let s=0;s<16;s++){ gx.fillStyle=s%2?'#4d7f3a':'#568a41'; gx.fillRect(0,s*16,8,16); }
+    const gt=new THREE.CanvasTexture(gc); gt.encoding=THREE.sRGBEncoding; gt.wrapS=gt.wrapT=THREE.RepeatWrapping;
+    const grS=toShape(loop(r0-0.3)); const grG=new THREE.ShapeGeometry(grS,2); grG.rotateX(-Math.PI/2);
+    { const p=grG.attributes.position, uv=grG.attributes.uv; for(let i=0;i<p.count;i++){ const d=new THREE.Vector2(p.getX(i)-TC.x,p.getZ(i)-TC.y); uv.setXY(i,0.5,d.dot(U)/(L+2*r0)+0.5); } uv.needsUpdate=true; }
+    const grass=new THREE.Mesh(grG,new THREE.MeshStandardMaterial({map:gt,roughness:1})); grass.position.y=0.1; grass.receiveShadow=true; g.add(grass);
+    const lp=[]; const seg=(a,b)=>{ lp.push(a.x,0.16,a.y,b.x,0.16,b.y); }; const ring=pts=>{ for(let i=0;i<pts.length-1;i++) seg(pts[i],pts[i+1]); seg(pts[pts.length-1],pts[0]); };
+    for(let l=0;l<=lanes;l++) ring(loop(r0+l*lane));
+    const at=(u,v)=>TC.clone().addScaledVector(U,u).addScaledVector(V,v); const rect=(u0,v0,u1,v1)=>{ seg(at(u0,v0),at(u1,v0)); seg(at(u1,v0),at(u1,v1)); seg(at(u1,v1),at(u0,v1)); seg(at(u0,v1),at(u0,v0)); };
+    rect(-52.5,-34,52.5,34); seg(at(0,-34),at(0,34)); { const pts=[]; for(let s=0;s<48;s++){ const t=s/48*Math.PI*2; pts.push(at(Math.cos(t)*9.15,Math.sin(t)*9.15)); } ring(pts); }
+    [-1,1].forEach(sd=>{ rect(sd*52.5,-20.16,sd*(52.5-16.5),20.16); rect(sd*52.5,-9.16,sd*(52.5-5.5),9.16); });
+    const lines=new THREE.LineSegments(new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute(lp,3)),new THREE.LineBasicMaterial({color:0xf4f2ea})); g.add(lines);
+    // maalit
+    const white=stdMat('#ffffff',{roughness:.4});
+    [-1,1].forEach(sd=>{ const p=at(sd*52.5,0); const gg=new THREE.Group(); const post=new THREE.CylinderGeometry(0.06,0.06,2.44,8);
+      [-3.66,3.66].forEach(o=>{ const m=new THREE.Mesh(post,white); m.position.set(0,1.22,o); gg.add(m); }); const bar=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,7.32,8),white); bar.rotation.x=Math.PI/2; bar.position.y=2.44; gg.add(bar);
+      gg.position.set(p.x,0.1,p.y); gg.rotation.y=-ang; g.add(gg); });
+    // katokset: pääkatsomon (länsi) vanha katos ja uusi puukatos muualla
+    const isMain=i=>{ const d=inn[i].clone().sub(TC); return Math.abs(d.dot(U))<L/2+6 && dirs[i].x<-0.35; };
+    const cTop=[],cBot=[],mTop=[],cols=[];
+    for(let i=0;i<N;i++){ const j=(i+1)%N; const main=isMain(i)&&isMain(j);
+      const t0=main?0.3:0.07, t1=1.04; const yi=main?top+4.2:top+8.5, yo=main?top+4.2:top+4.6;
+      const a=P(i,R*t0),b=P(j,R*t0),c=P(j,R*t1),d=P(i,R*t1);
+      const q=[V3(a,yi),V3(b,yi),V3(c,yo),V3(d,yo)]; const arr=main?mTop:cTop;
+      arr.push(...[q[0],q[1],q[2],q[0],q[2],q[3]].flatMap(v=>[v.x,v.y+0.5,v.z]));
+      if(!main) cBot.push(...[q[0],q[2],q[1],q[0],q[3],q[2]].flatMap(v=>[v.x,v.y,v.z]));
+      if(i%(main?6:10)===0) cols.push(main?[P(i,R*0.62),top+4.2]:[P(i,R),top+4.6]); }
+    const mk=(arr,mat)=>{ const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.Float32BufferAttribute(arr,3)); geo.computeVertexNormals(); const m=new THREE.Mesh(geo,mat); m.castShadow=true; m.receiveShadow=true; g.add(m); return m; };
+    mk(cTop,new THREE.MeshStandardMaterial({color:new THREE.Color('#dcdad3').convertSRGBToLinear(),roughness:.7,side:THREE.DoubleSide}));
+    { const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.Float32BufferAttribute(cBot,3)); const cc=[]; const ca=new THREE.Color('#c39466').convertSRGBToLinear(), cb=new THREE.Color('#a87a50').convertSRGBToLinear();
+      for(let q=0;q<cBot.length/18;q++){ const c=q%2?ca:cb; for(let v=0;v<6;v++) cc.push(c.r,c.g,c.b); } geo.setAttribute('color',new THREE.Float32BufferAttribute(cc,3)); geo.computeVertexNormals();
+      const m=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.85,side:THREE.DoubleSide})); m.receiveShadow=true; g.add(m); } mk(mTop,new THREE.MeshStandardMaterial({color:0xf4f2ec,roughness:.8,side:THREE.DoubleSide}));
+    const colG=new THREE.CylinderGeometry(0.22,0.22,1,8); const colIM=new THREE.InstancedMesh(colG,stdMat('#9a9a96'),cols.length); const m4=new THREE.Matrix4();
+    cols.forEach(([p,h],k)=>{ const y0=front+R*rise*((p.distanceTo(inn[0])>0)?1:1)-R*rise*0; m4.makeScale(1,h,1); m4.setPosition(p.x,h/2,p.y); colIM.setMatrixAt(k,m4); }); colIM.castShadow=true; g.add(colIM);
+    // istuimet: rivit katsomon portaille, käytävä noin 22 metrin välein
+    const seatGeo=(()=>{ const a=new THREE.PlaneGeometry(0.46,0.42); a.rotateX(-Math.PI/2); a.translate(0,0.44,0); const b=new THREE.PlaneGeometry(0.46,0.42); b.translate(0,0.66,-0.2); const geo=new THREE.BufferGeometry(); const pa=[...a.toNonIndexed().attributes.position.array,...b.toNonIndexed().attributes.position.array]; geo.setAttribute('position',new THREE.Float32BufferAttribute(pa,3)); geo.computeVertexNormals(); return geo; })();
+    const seats=[]; const sp=0.52;
+    for(let k=0;k<R;k++){ const y=front+k*rise; const row=[]; for(let i=0;i<=N;i++) row.push(P(i%N,k+0.58));
+      let acc=0, next=0.3; for(let i=0;i<N;i++){ const a=row[i],b=row[i+1]; const L2=a.distanceTo(b); let s=next; while(s<L2){ const p=a.clone().lerp(b,s/L2); const pos=acc+s; if(pos%22>1.3){ const n=inn[i].clone().sub(out[i]).normalize(); seats.push({p,y,yaw:Math.atan2(n.x,n.y),row:k}); } s+=sp; } next=s-L2; acc+=L2; } }
+    this.seats=seats;
+    const sm=new THREE.MeshStandardMaterial({roughness:.8,side:THREE.DoubleSide}); const seatIM=new THREE.InstancedMesh(seatGeo,sm,seats.length); const col=new THREE.Color(); const ob=new THREE.Object3D();
+    seats.forEach((s,k)=>{ ob.position.set(s.p.x,s.y,s.p.y); ob.rotation.set(0,s.yaw,0); ob.updateMatrix(); seatIM.setMatrixAt(k,ob.matrix); col.setHSL(0.08,0.18+Math.random()*0.05,0.33+Math.random()*0.05).convertSRGBToLinear(); seatIM.setColorAt(k,col); });
+    seatIM.receiveShadow=true; g.add(seatIM); this.seatIM=seatIM;
+    // torni (72,71 m) lounaiskulmassa pääsisäänkäynnin vieressä
+    const tp=new THREE.Vector2(-57,60); this.tp=tp; const tw=new THREE.Group(); this.tw=tw; tw.position.set(tp.x,0,tp.y); tw.rotation.y=-ang; g.add(tw);
+    const shaft=new THREE.Mesh(new THREE.BoxGeometry(8,66,6.5),white); shaft.position.y=33; tw.add(shaft);
+    for(let f=-1;f<=1;f+=2){ const fin=new THREE.Mesh(new THREE.BoxGeometry(0.6,66,7.4),stdMat('#ecebe6')); fin.position.set(f*3.4,33,0); tw.add(fin); }
+    const deck=new THREE.Mesh(new THREE.BoxGeometry(10.5,4,9),white); deck.position.y=68; tw.add(deck);
+    const glass=new THREE.Mesh(new THREE.BoxGeometry(10.7,1.6,9.2),stdMat('#35444e',{roughness:.2,metalness:.3})); glass.position.y=68.4; tw.add(glass);
+    const cap=new THREE.Mesh(new THREE.BoxGeometry(7,2.7,6),white); cap.position.y=71.35; tw.add(cap);
+    tw.traverse(m=>{ if(m.isMesh){ m.castShadow=true; m.receiveShadow=true; } });
+    g.traverse(o=>{ if(o.isMesh&&o.material&&!o.material.isMeshBasicMaterial) o.material.needsUpdate=true; });
+    return g;
+  },
+  // ---------- yleisö ----------
+  setCrowd(on){
+    if(on&&!this.crowd){ const n=this.seats.length, frac=isMobile?0.45:0.7; const geo=new THREE.BoxGeometry(0.42,0.78,0.3); geo.translate(0,0.85,-0.02);
+      const pick=this.seats.filter(()=>Math.random()<frac); const im=new THREE.InstancedMesh(geo,new THREE.MeshStandardMaterial({roughness:.9}),pick.length); const ob=new THREE.Object3D(), col=new THREE.Color();
+      const pal=['#1d2b4f','#d8d4cc','#2b5fd8','#3b3f44','#7a2d2a','#e8e2d0','#566e48','#c9a24a','#24262a','#ffffff'];
+      pick.forEach((s,k)=>{ ob.position.set(s.p.x,s.y,s.p.y); ob.rotation.set(0,s.yaw,0); ob.updateMatrix(); im.setMatrixAt(k,ob.matrix); col.set(pal[(Math.random()*pal.length)|0]).convertSRGBToLinear(); im.setColorAt(k,col); });
+      this.g.add(im); this.crowd=im; }
+    if(this.crowd) this.crowd.visible=on; this.crowdOn=on;
+    if(on){ Sound.on=true; Sound.start('olympia'); } else Sound.stop();
+    this.ui&&this.ui.querySelector('#fp-crowd').setAttribute('aria-pressed',on);
+  },
+  // ---------- tila ----------
+  enter(mode){
+    if(cur!==HKI){ showMap(HKI,true).then(()=>this.enter(mode)); return; }
+    if(!this.build()) return;
+    closeInfo(); if(Tours.on) Tours.stop(true); if(Synty.on) Synty.stop(true);
+    if(!this.on){ this.saved={p:camera.position.clone(),t:controls.target.clone(),near:camera.near,far:camera.far}; }
+    this.on=true; this.B.group.visible=false; fly=null; setOffset(false); controls.enabled=false;
+    camera.near=0.15; camera.far=9000; camera.updateProjectionMatrix();
+    document.body.classList.add('fp-on'); this.ui||this.buildUI(); this.ui.hidden=false; this.labels(); this.setMode(mode||'seat');
+  },
+  exit(){
+    if(!this.on) return; this.on=false; this.mode=null; document.body.classList.remove('fp-on'); if(this.ui) this.ui.hidden=true;
+    if(this.crowdOn) this.setCrowd(false); if(this.tw) this.tw.visible=true;
+    camera.near=this.saved.near; camera.far=this.saved.far; camera.updateProjectionMatrix(); controls.enabled=true;
+    const B=this.B; controls.target.set(B.pos.x,0,B.pos.y); camera.position.set(B.pos.x-380,330,B.pos.y+420); controls.update();
+  },
+  setMode(m){
+    this.mode=m; this.t0=performance.now(); const $=id=>this.ui.querySelector('#'+id);
+    this.ui.querySelectorAll('.fp-modes button[data-m]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===m));
+    $('fp-run').hidden=m!=='track'; $('fp-joy').hidden=m!=='free'; $('fp-seat2').hidden=m!=='seat';
+    if(m==='seat') this.sitRandom(true);
+    if(m==='track'){ this.s=0; this.lookAhead(); }
+    if(m==='tower'){ const tpw=this.wp(this.tp.x,0,this.tp.y); this.yaw=Math.atan2(tpw.x,tpw.z); this.pitch=-0.22; }
+    if(this.tw) this.tw.visible=m!=='tower';
+    if(m==='free'){ const p=this.TC.clone().addScaledVector(this.U,-30); this.pos=this.wp(p.x,1.7,p.y); const c=this.wp(this.TC.x,1.7,this.TC.y).sub(this.pos); this.yaw=Math.atan2(-c.x,-c.z); this.pitch=0.05; }
+    this.hint();
+  },
+  hint(){ const m=this.mode, el=this.ui.querySelector('#fp-hint');
+    el.textContent={seat:T('Vedä katsoaksesi ympärillesi. Napauta katsomoa vaihtaaksesi paikkaa.','Drag to look around. Tap the stands to change seat.'),
+      track:T('Kävelet radan ensimmäistä rataa. Vedä katsoaksesi sivuille.','You are walking lane 1. Drag to look around.'),
+      tower:T('Hissi nousee tornin näköalatasanteelle. Oikeasti nousu kestää 37 sekuntia.','The lift rises to the viewing platform. In reality the ride takes 37 seconds.'),
+      free:isMobile?T('Liiku ohjaimella, katso vetämällä.','Move with the pad, drag to look.'):T('Liiku W A S D -näppäimillä tai nuolilla, katso vetämällä.','Move with W A S D or the arrow keys, drag to look.')}[m]||''; },
+  sitRandom(front){ const S=this.seats; let s; if(front){ const mid=S.filter(x=>{ const d=x.p.clone().sub(this.TC); return x.row>10&&x.row<22&&Math.abs(d.dot(this.U))<20&&d.x>0; }); s=mid[(Math.random()*mid.length)|0]||S[(Math.random()*S.length)|0]; } else s=S[(Math.random()*S.length)|0]; this.sit(s); },
+  sit(s){ this.seat=s; const wp=this.wp(s.p.x,s.y+1.18,s.p.y); this.pos=wp; const d=this.wp(this.TC.x,0,this.TC.y).sub(wp); this.yaw=Math.atan2(-d.x,-d.z); this.pitch=Math.atan2(d.y,Math.hypot(d.x,d.z))*0.6; },
+  wp(x,y,z){ return new THREE.Vector3(x+this.g.position.x,y,z+this.g.position.z); },
+  lanePt(s){ const L=this.L, r=this.r0+0.6, per=2*L+2*Math.PI*r; s=((s%per)+per)%per; let u,v;
+    if(s<L){ u=-L/2+s; v=r; } else if(s<L+Math.PI*r){ const t=(s-L)/r; u=L/2+Math.sin(t)*r; v=Math.cos(t)*r; } else if(s<2*L+Math.PI*r){ u=L/2-(s-L-Math.PI*r); v=-r; } else { const t=(s-2*L-Math.PI*r)/r; u=-L/2-Math.sin(t)*r; v=-Math.cos(t)*r; }
+    const p=this.TC.clone().addScaledVector(this.U,u).addScaledVector(this.V,v); return {p,per}; },
+  lookAhead(){ const a=this.lanePt(this.s).p, b=this.lanePt(this.s+3).p; this.yaw=Math.atan2(-(b.x-a.x),-(b.y-a.y)); this.pitch=-0.03; this.yawOff=0; },
+  // ---------- käyttöliittymä ----------
+  buildUI(){
+    const u=document.createElement('div'); u.id='fp'; u.innerHTML=`
+      <div class="fp-top"><div><p class="fp-k" id="fp-k"></p><h3 id="fp-h"></h3></div><button type="button" class="fp-x" id="fp-x"></button></div>
+      <p class="fp-hint" id="fp-hint"></p><p class="fp-stat" id="fp-stat" aria-live="polite"></p>
+      <div class="fp-modes" role="group">
+        <button type="button" data-m="seat" id="fp-m-seat"></button><button type="button" data-m="track" id="fp-m-track"></button><button type="button" data-m="tower" id="fp-m-tower"></button><button type="button" data-m="free" id="fp-m-free"></button>
+        <span class="tr-sep"></span><button type="button" id="fp-crowd" aria-pressed="false"></button><button type="button" id="fp-run" hidden aria-pressed="false"></button><button type="button" id="fp-seat2" hidden></button>
+      </div>
+      <div class="fp-joy" id="fp-joy" hidden><span></span></div>`;
+    document.getElementById('view-map').appendChild(u); this.ui=u; const $=id=>u.querySelector('#'+id);
+    u.querySelectorAll('button[data-m]').forEach(b=>b.onclick=()=>this.setMode(b.dataset.m));
+    $('fp-x').onclick=()=>{ if(location.hash==='#stadion') history.back(); else this.exit(); };
+    $('fp-crowd').onclick=()=>this.setCrowd(!this.crowdOn);
+    $('fp-run').onclick=()=>{ this.run=!this.run; $('fp-run').setAttribute('aria-pressed',this.run); };
+    $('fp-seat2').onclick=()=>this.sitRandom(false);
+    // katsominen vetämällä
+    const cv=renderer.domElement; let drag=null;
+    cv.addEventListener('pointerdown',e=>{ if(!this.on) return; drag={x:e.clientX,y:e.clientY,m:0}; });
+    addEventListener('pointermove',e=>{ if(!this.on||!drag) return; const dx=e.clientX-drag.x, dy=e.clientY-drag.y; drag.m+=Math.abs(dx)+Math.abs(dy); drag.x=e.clientX; drag.y=e.clientY; const k=isMobile?0.006:0.0042; this.yaw+=dx*k; this.pitch=THREE.MathUtils.clamp(this.pitch+dy*k,-1.35,1.35); if(this.mode==='track') this.yawOff=(this.yawOff||0)+dx*k; });
+    addEventListener('pointerup',e=>{ if(!this.on||!drag) return; const moved=drag.m; drag=null; if(moved<6&&this.mode==='seat'&&e.target===cv) this.pickSeat(e); });
+    addEventListener('keydown',e=>{ if(!this.on||e.target.closest('input,textarea')) return; this.keys[e.key.toLowerCase()]=true; if(e.key==='Escape') $('fp-x').click(); });
+    addEventListener('keyup',e=>{ this.keys[e.key.toLowerCase()]=false; });
+    // virtuaaliohjain
+    const joy=$('fp-joy'), knob=joy.querySelector('span'); let jid=null;
+    const jm=e=>{ const r=joy.getBoundingClientRect(); let x=(e.clientX-r.left-r.width/2)/(r.width/2), y=(e.clientY-r.top-r.height/2)/(r.height/2); const l=Math.hypot(x,y); if(l>1){x/=l;y/=l;} this.joy={x,y}; knob.style.transform=`translate(${x*34}px,${y*34}px)`; };
+    joy.addEventListener('pointerdown',e=>{ e.stopPropagation(); jid=e.pointerId; joy.setPointerCapture(jid); jm(e); });
+    joy.addEventListener('pointermove',e=>{ if(e.pointerId===jid){ e.stopPropagation(); jm(e); } });
+    const jend=()=>{ jid=null; this.joy={x:0,y:0}; knob.style.transform=''; }; joy.addEventListener('pointerup',jend); joy.addEventListener('pointercancel',jend);
+  },
+  labels(){ if(!this.ui) return; const $=id=>this.ui.querySelector('#'+id);
+    $('fp-k').textContent=T('Olympiastadion sisältä','Inside the Olympic Stadium'); $('fp-h').textContent=T('Tutki stadionia','Explore the stadium');
+    $('fp-m-seat').textContent=T('Istu katsomoon','Take a seat'); $('fp-m-track').textContent=T('Kävele rataa','Walk the track'); $('fp-m-tower').textContent=T('Nouse torniin','Up the tower'); $('fp-m-free').textContent=T('Vapaa liikkuminen','Free roam');
+    $('fp-crowd').textContent=T('Yleisö','Crowd'); $('fp-run').textContent=T('Juokse','Run'); $('fp-seat2').textContent=T('Toinen paikka','Another seat');
+    $('fp-x').innerHTML=ICO.stop; $('fp-x').setAttribute('aria-label',T('Poistu stadionilta','Leave the stadium')); if(this.mode) this.hint(); },
+  pickSeat(e){ const r=renderer.domElement.getBoundingClientRect(); mouse.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1); ray.setFromCamera(mouse,camera);
+    const h=ray.intersectObject(this.stands,false)[0]; if(!h) return; const lp=this.g.worldToLocal(h.point.clone()); let best=null,bd=1e9;
+    this.seats.forEach(s=>{ const d=Math.hypot(s.p.x-lp.x,s.p.y-lp.z)+Math.abs(s.y-lp.y)*0.5; if(d<bd){bd=d;best=s;} }); if(best&&bd<3) this.sit(best); },
+  // ---------- ruutu ----------
+  tick(now,dt){
+    const m=this.mode; let p; const stat=this.ui.querySelector('#fp-stat'); let st='';
+    if(m==='seat'){ p=this.pos; st=T(`Rivi ${this.seat.row+1}`,`Row ${this.seat.row+1}`); }
+    else if(m==='track'){ const v=this.run?6.2:1.45; this.s+=v*dt; const a=this.lanePt(this.s), b=this.lanePt(this.s+3); const base=Math.atan2(-(b.p.x-a.p.x),-(b.p.y-a.p.y)); this.yaw=base+(this.yawOff||0); this.yawOff=(this.yawOff||0)*0.985;
+      p=this.wp(a.p.x,1.7+(this.run?Math.abs(Math.sin(this.s*1.6))*0.06:Math.abs(Math.sin(this.s*2.2))*0.025),a.p.y); const d=this.s%a.per; st=T(`${Math.round(d)} / ${Math.round(a.per)} m · kierros ${Math.floor(this.s/a.per)+1}`,`${Math.round(d)} / ${Math.round(a.per)} m · lap ${Math.floor(this.s/a.per)+1}`); }
+    else if(m==='tower'){ const k=Math.min(1,(now-this.t0)/9000); const e=k<0.5?2*k*k:1-Math.pow(-2*k+2,2)/2; const y=2+e*67.5;
+      const lp=this.tp.clone(); p=this.wp(lp.x,y,lp.y); if(k<1) this.yaw+=dt*0.12; st=T(`${Math.round(y)} m`,`${Math.round(y)} m`); }
+    else if(m==='free'){ const f=new THREE.Vector3(-Math.sin(this.yaw),0,-Math.cos(this.yaw)), r=new THREE.Vector3(-f.z,0,f.x); let mx=this.joy.x, mz=-this.joy.y; const K=this.keys;
+      if(K.w||K.arrowup) mz+=1; if(K.s||K.arrowdown) mz-=1; if(K.a||K.arrowleft) mx-=1; if(K.d||K.arrowright) mx+=1; const sp=(K.shift?6:2.6)*dt;
+      const np=this.pos.clone().addScaledVector(f,mz*sp).addScaledVector(r,mx*sp); const lp=[np.x-this.g.position.x,np.z-this.g.position.z];
+      if(pip(new THREE.Vector2(lp[0],lp[1]),STADIUM_FP.h.map(q=>new THREE.Vector2(q[0],q[1])))) this.pos.copy(np); p=this.pos; }
+    camera.position.copy(p); const dir=new THREE.Vector3(-Math.sin(this.yaw)*Math.cos(this.pitch),Math.sin(this.pitch),-Math.cos(this.yaw)*Math.cos(this.pitch));
+    camera.lookAt(p.clone().add(dir)); controls.target.copy(p).addScaledVector(new THREE.Vector3(dir.x,0,dir.z).normalize(),40); controls.target.y=0;
+    if(stat.textContent!==st) stat.textContent=st;
+  }
+};
+
 /* ---------- map bridge ---------- */
 let lastGuide='#koti', pendingSel=null;
 function openOnMap(name){ const e=BYNAME[name]; pendingSel=name; location.hash= e.city==='tap'?'#kartta-tapiola':'#kartta-helsinki'; }
@@ -3120,6 +3360,8 @@ function route(){
   const h=(location.hash||'#koti').slice(1);
   ['nav-home','nav-cards','nav-near','nav-arch','nav-map'].forEach(id=>document.getElementById(id).classList.remove('on'));
   if(h==='synty'){ if(Narr.entry) Narr.stop(); if(typeof Tours!=='undefined') Tours.stop(true); showMap(HKI,true).then(()=>setTimeout(()=>Synty.start('hki'),60)); return; }
+  if(h==='stadion'){ if(Tours.on) Tours.stop(); if(Synty.on) Synty.stop(true); if(Narr.entry) Narr.stop(); showMap(HKI,true).then(()=>Stadium.enter('seat')); return; }
+  if(Stadium.on) Stadium.exit();
   if(h.startsWith('kierros-')){ Tours.start(h.slice(8)); return; }
   if(Tours.on) Tours.stop();
   if(Synty.on&&!h.startsWith('kartta')) Synty.stop(true);

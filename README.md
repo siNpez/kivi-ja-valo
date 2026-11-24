@@ -146,6 +146,9 @@ Kartan rakennukset, rantaviivat, vesialueet, puistot ja kadut on muodostettu kau
 - Lähde: Espoon kaupunki, kantakartan rakennukset (kanta:Rakennus), 11/2026. https://kartat.espoo.fi/teklaogcweb/wfs.ashx.
 - Rakennusten korkeus on arvioitu kerrosluvusta, ja katot ovat yksinkertaistettuja. Valmistumisvuosi tulee rekisteristä.
 
+## Olympiastadion sisältä
+Stadionin ulkoreuna ja kenttäaukko tulevat Helsingin rakennusrekisteristä (CC BY 4.0). Katsomot, istuimet, katokset, rata (400 m, 8 rataa) ja torni (72,71 m) on mallinnettu mittojen ja julkisten kuvien perusteella, joten yksityiskohdat ovat pelkistettyjä. Tornin sijainti ja katosten muoto ovat suuntaa-antavia.
+
 ## Erikoiskierrokset: kuvat
 - Olympialaisten avajaiset Olympiastadionilla ja stadionin torni – Kohonen, Yrjö 1952, Helsingin kaupunginmuseo, PDM. https://www.finna.fi/Record/hkm.C4FF12CE-4B3A-4B07-9438-8B653A767BE3
 - Paavo Nurmi sytyttää olympiatulen Helsingin Olympiakisojen avajaisissa – Olympia-kuva Oy 1952, Tornionlaakson museo, Public domain (copyright has expired). https://www.finna.fi/Record/tornionlaakso.80469D1D-5CD8-4170-88AA-90924C5C1CEC
